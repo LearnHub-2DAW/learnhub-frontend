@@ -1,0 +1,30 @@
+/* src/pages/auth-shared.css */
+.auth-page {
+  background-color: #f0f2f5; /* El gris de fondo de tus capturas */
+  min-height: calc(100vh - 150px); /* Ajuste para que no tape el footer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.auth-card {
+  background: white;
+  border-radius: 4px; /* Casi cuadrado, como en el mockup */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: 1px solid #dee2e6;
+}
+
+.btn-primary {
+  background-color: #f8f9fa; /* En tu mockup los botones parecen claros con borde */
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.btn-primary:hover {
+  background-color: #e2e6ea;
+}

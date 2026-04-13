@@ -1,0 +1,138 @@
+
+
+.auth-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0; 
+  gap: 0;
+}
+
+.login-container-custom {
+  background-color: #1a2e26;
+  padding: 30px 40px;
+  width: 95%;
+  max-width: 850px;
+  color: white;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.login-title-custom {
+  font-size: 1.8rem;
+  font-weight: 400;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+}
+
+.form-row-custom {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.input-block-custom {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-wrapper-custom {
+  background: white;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.input-wrapper-custom input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  outline: none;
+  color: #333;
+  font-size: 1rem;
+}
+
+.input-icon-custom {
+  padding-right: 12px;
+  color: #1a2e26;
+  opacity: 0.7;
+}
+
+.extra-links-custom {
+  margin: 15px 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 0.9rem;
+}
+
+.forgot-link-custom {
+  color: white !important;
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.forgot-link-custom:hover {
+  opacity: 1;
+}
+
+.remember-custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.register-invite-box-custom {
+  background-color: #1a2e26;
+  width: 95%;
+  max-width: 850px;
+  padding: 30px 40px;
+  border-radius: 0 0 8px 8px;
+  color: white;
+  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+.register-invite-box-custom h3 {
+  font-size: 1.5rem;
+  margin: 0 0 15px 0;
+  font-weight: 400;
+}
+
+.btn-acc-custom, 
+.btn-guest-custom, 
+.btn-go-register-custom {
+  background: white;
+  color: #1a2e26;
+  border: none;
+  padding: 10px 25px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.btn-acc-custom:hover, 
+.btn-guest-custom:hover, 
+.btn-go-register-custom:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .form-row-custom {
+    flex-direction: column;
+  }
+  .extra-links-custom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
