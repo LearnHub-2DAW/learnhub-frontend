@@ -1,0 +1,141 @@
+/* src/pages/Register.css */
+
+.auth-page {
+  background-color: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.register-card {
+  background: white;
+  width: 100%;
+  max-width: 700px;
+  padding: 40px;
+  border-radius: 8px; /* Menos redondeado para estilo más formal */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.auth-logo-small {
+  width: 60px;
+  display: block;
+  margin: 0 auto 15px auto;
+  filter: brightness(0) saturate(100%) opacity(0.7);
+}
+
+.register-card h2 {
+  color: #1a2e26;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #2d5a4c; /* Verde del logo-bar */
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 25px 0 12px 0;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 5px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.input-field input {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+/* Validación Dinámica visual */
+.input-field input:focus {
+  outline: none;
+  border-color: #2d5a4c;
+  box-shadow: 0 0 0 3px rgba(45, 90, 76, 0.1);
+}
+
+/* Clase para cuando hay error */
+.input-error {
+  border-color: #ef4444 !important;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.error-txt {
+  color: #ef4444;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-primary {
+  background-color: #2d5a4c;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  flex: 1;
+  text-transform: uppercase;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #1a2e26;
+}
+
+.btn-cancel {
+  background-color: white;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  padding: 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  flex: 1;
+  text-transform: uppercase;
+}
+
+.btn-cancel:hover {
+  background-color: #f8fafc;
+}
+
+@media (max-width: 600px) {
+  .input-row { grid-template-columns: 1fr; }
+  .form-buttons { flex-direction: column; }
+}
