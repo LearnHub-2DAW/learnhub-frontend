@@ -1,0 +1,25 @@
+/* src/App.css */
+body, html {
+  margin: 0;
+  padding: 0;
+  /* Quitamos el overflow hidden para permitir el scroll vertical */
+  overflow-x: hidden; 
+  background-color: #f1f5f9;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  /* min-height asegura que ocupe toda la pantalla, pero que pueda crecer */
+  min-height: 100vh;
+  width: 100%;
+  /* Eliminamos min-width: 100vw que a veces causa scroll lateral */
+}
+
+.main-content {
+  flex: 1; /* Esto empuja el footer hacia abajo */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}

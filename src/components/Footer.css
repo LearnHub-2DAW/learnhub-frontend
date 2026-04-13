@@ -1,0 +1,44 @@
+/* src/components/Footer.css */
+.footer-container {
+  width: 100%;
+  color: white;
+}
+
+.footer-main {
+  background-color: #2d5a4c;
+  padding: 25px 60px; /* Reducido de 40px para ahorrar espacio */
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+  gap: 30px;
+}
+
+.footer-logo {
+  max-height: 100px;
+  filter: brightness(0) invert(1);
+}
+
+.container-logo {
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+  width: 100%;         
+}
+
+.footer-col h3 {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+
+}
+
+.footer-col a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.footer-bottom {
+  background-color: #0a402f; /* El verde más oscuro de todos */
+  padding: 15px;
+  text-align: center;
+  font-size: 0.85rem;
+}
