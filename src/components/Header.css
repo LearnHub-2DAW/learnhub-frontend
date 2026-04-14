@@ -1,0 +1,61 @@
+/* src/components/Header.css */
+.header-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  background-color: #1a2e26;
+  height: 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 40px;
+  color: white;
+}
+
+.not-logged-txt {
+  font-size: 0.85rem;
+  font-weight: 300;
+}
+
+.logo-bar {
+  background-color: #2d5a4c;
+  padding: 10px 40px; /* Reducido para compactar */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 80px;
+}
+
+.main-logo {
+  height: 65px;
+  filter: brightness(0) invert(1);
+  cursor: pointer;
+}
+
+.nav-menus {
+  color: white;
+  font-size: 0.9rem;
+}
+
+.dropdown-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  color: #333;
+  list-style: none;
+  padding: 8px 0;
+  margin-top: 10px;
+  border-radius: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  min-width: 220px;
+  z-index: 1000;
+}
