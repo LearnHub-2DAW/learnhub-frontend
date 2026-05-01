@@ -1,0 +1,136 @@
+.detalle-tarea-page {
+  padding: 20px 40px;
+  background: #f1f5f9;
+  min-height: 100%;
+}
+
+.page-loading {
+  padding: 40px;
+  color: #475569;
+}
+
+.page-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.page-card-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 4px;
+}
+
+.page-breadcrumb {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.page-breadcrumb a {
+  color: #2d5a4c;
+  text-decoration: none;
+}
+
+.page-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+/* Cuerpo de la tarea */
+.tarea-body {
+  padding: 20px;
+}
+
+.tarea-titulo {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 14px;
+}
+
+.tarea-descripcion {
+  min-height: 80px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  color: #475569;
+  font-size: 0.9rem;
+  background: #fafafa;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+}
+
+/* Tabla de estado */
+.estado-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 10px;
+}
+
+.estado-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.estado-table tr {
+  border: 1px solid #ddd;
+}
+
+.estado-label {
+  background: #f8f9fa;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 10px 14px;
+  width: 180px;
+  vertical-align: top;
+  border-right: 1px solid #ddd;
+}
+
+.estado-value {
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  color: #333;
+}
+
+/* Botón */
+.tarea-actions {
+  text-align: center;
+  padding: 10px 0 4px;
+}
+
+.btn-agregar-entrega {
+  background: #1a2e26;
+  color: white;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.btn-agregar-entrega:hover {
+  background: #2d5a4c;
+}
+
+@media (max-width: 768px) {
+  .detalle-tarea-page {
+    padding: 16px;
+  }
+
+  .estado-label {
+    width: 130px;
+    font-size: 0.8rem;
+  }
+}

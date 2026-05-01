@@ -1,0 +1,124 @@
+.pref-cal-page {
+  padding: 20px 40px;
+  background: #f1f5f9;
+  min-height: 100%;
+}
+
+.page-loading {
+  padding: 40px;
+  color: #475569;
+}
+
+.pref-cal-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  max-width: 480px;
+}
+
+.pref-cal-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 16px;
+}
+
+.pref-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pref-field label {
+  font-size: 0.82rem;
+  color: #475569;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.pref-field input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  color: #333;
+  outline: none;
+}
+
+.pref-field input:focus {
+  border-color: #2d5a4c;
+}
+
+.pref-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.pref-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btn-guardar {
+  background: #1a2e26;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background: #2d5a4c;
+}
+
+.btn-guardar:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .pref-cal-page {
+    padding: 16px;
+  }
+
+  .pref-cal-card {
+    max-width: 100%;
+  }
+
+  .pref-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .pref-field label {
+    width: auto;
+  }
+
+  .pref-field input {
+    width: 100%;
+  }
+}

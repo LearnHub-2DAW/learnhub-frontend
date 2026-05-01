@@ -1,0 +1,146 @@
+.cambiar-pass-page {
+  padding: 20px 40px;
+  background: #f1f5f9;
+  min-height: 100%;
+}
+
+.cp-form-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  max-width: 480px;
+}
+
+.cp-form-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 16px;
+}
+
+.cp-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cp-field label {
+  font-size: 0.82rem;
+  color: #475569;
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.cp-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.cp-field input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  color: #333;
+  outline: none;
+}
+
+.cp-field input:focus {
+  border-color: #2d5a4c;
+}
+
+.cp-info {
+  font-size: 0.85rem;
+  color: #64748b;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+.cp-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.cp-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  margin-bottom: 10px;
+}
+
+.btn-guardar {
+  background: #1a2e26;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background: #2d5a4c;
+}
+
+.btn-guardar:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background: #e2e8f0;
+}
+
+.cp-required-note {
+  font-size: 0.8rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+@media (max-width: 768px) {
+  .cambiar-pass-page {
+    padding: 16px;
+  }
+
+  .cp-form-card {
+    max-width: 100%;
+  }
+
+  .cp-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .cp-field label {
+    width: auto;
+  }
+
+  .cp-input-row {
+    width: 100%;
+  }
+}

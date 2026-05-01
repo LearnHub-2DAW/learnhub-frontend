@@ -1,18 +1,54 @@
-/* src/components/Header.css */
+/* ── HEADER ── */
 .header-container {
   width: 100%;
   display: flex;
   flex-direction: column;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
+/* ── BARRA SUPERIOR ── */
 .top-bar {
   background-color: #1a2e26;
-  height: 40px;
+  height: 42px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  padding: 0 40px;
+  justify-content: space-between;
+  padding: 0 20px;
   color: white;
+}
+
+/* Icono de rejilla (9 puntos) */
+.grid-menu-btn {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.grid-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.grid-dot {
+  width: 5px;
+  height: 5px;
+  background: white;
+  border-radius: 1px;
+  display: block;
+}
+
+/* Lado derecho de la barra superior */
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .not-logged-txt {
@@ -20,9 +56,83 @@
   font-weight: 300;
 }
 
+.icon-btn {
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.icon-btn:hover {
+  opacity: 1;
+}
+
+.user-name {
+  font-size: 0.88rem;
+}
+
+/* Avatar circular */
+.user-avatar-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  background: #2d5a4c;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: white;
+}
+
+.user-avatar-container:hover .user-dropdown-menu {
+  display: flex;
+}
+
+.user-dropdown-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  z-index: 200;
+  overflow: hidden;
+}
+
+.user-dropdown-menu a,
+.user-dropdown-menu button {
+  padding: 9px 16px;
+  font-size: 0.88rem;
+  color: #333;
+  text-decoration: none;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+
+.user-dropdown-menu a:hover,
+.user-dropdown-menu button:hover {
+  background: #f1f5f9;
+  color: #1a2e26;
+}
+
+/* ── BARRA LOGO ── */
 .logo-bar {
   background-color: #2d5a4c;
-  padding: 10px 40px; /* Reducido para compactar */
+  padding: 10px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,26 +146,114 @@
 }
 
 .nav-menus {
+  display: flex;
+  align-items: center;
+  gap: 24px;
   color: white;
   font-size: 0.9rem;
 }
 
+.nav-item {
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+
 .dropdown-container {
   position: relative;
-  cursor: pointer;
+}
+
+.arrow-small {
+  font-size: 0.65rem;
+  margin-left: 4px;
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 10px);
   right: 0;
-  background-color: white;
+  background: white;
   color: #333;
   list-style: none;
-  padding: 8px 0;
-  margin-top: 10px;
+  padding: 6px 0;
+  margin: 0;
   border-radius: 4px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   min-width: 220px;
   z-index: 1000;
+}
+
+.dropdown-item {
+  padding: 9px 16px;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f1f5f9;
+}
+
+/* ── PANEL DE NAVEGACIÓN (drawer) ── */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 500;
+  display: flex;
+}
+
+.nav-drawer {
+  width: 240px;
+  background: white;
+  height: 100%;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+}
+
+.nav-drawer-close {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #475569;
+  cursor: pointer;
+  padding: 6px 14px;
+  margin-bottom: 8px;
+}
+
+.nav-drawer-close:hover {
+  color: #1a2e26;
+}
+
+.nav-drawer-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-drawer-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 0.9rem;
+  color: #333;
+  text-decoration: none;
+  border-top: 1px solid #f1f5f9;
+  transition: background 0.12s;
+}
+
+.nav-drawer-links a:hover {
+  background: #f1f5f9;
+  color: #1a2e26;
+}
+
+.nav-check-box {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #94a3b8;
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: inline-block;
 }

@@ -1,0 +1,283 @@
+.dashboard-page {
+  padding: 20px 40px;
+  background: #f1f5f9;
+  min-height: 100%;
+}
+
+/* Dos columnas: contenido principal + sidebar */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── FILA REGISTRARSE EN UN CURSO ── */
+.register-course-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.reg-label {
+  font-size: 0.88rem;
+  color: #333;
+  white-space: nowrap;
+}
+
+.course-code-input {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  outline: none;
+  color: #333;
+}
+
+.course-code-input:focus {
+  border-color: #2d5a4c;
+}
+
+.btn-personalize {
+  background: #1a2e26;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.btn-personalize:hover {
+  background: #2d5a4c;
+}
+
+/* ── WIDGETS ── */
+.widget-box {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.widget-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  padding: 9px 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1a2e26;
+}
+
+/* ── CAROUSEL ── */
+.carousel-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+}
+
+.carousel-btn {
+  background: #1a2e26;
+  color: white;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-btn:disabled {
+  background: #c8d0d8;
+  cursor: default;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 14px;
+  flex: 1;
+}
+
+/* ── TARJETAS DE CURSO ── */
+.course-card {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  text-align: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.course-card:hover {
+  background: #f1f5f9;
+}
+
+.course-thumb {
+  width: 100%;
+  padding-top: 62%;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+}
+
+.course-card-type {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 5px;
+}
+
+.course-card-name {
+  font-size: 0.82rem;
+  color: #333;
+  margin: 2px 0 0;
+  font-weight: 500;
+}
+
+/* ── GRID DE CURSOS ── */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 14px;
+}
+
+.empty-msg {
+  color: #64748b;
+  font-size: 0.88rem;
+  padding: 8px 0;
+}
+
+/* ── SIDEBAR WIDGETS ── */
+.sidebar-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-pill {
+  background: #f1f5f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.icon-pill:hover {
+  background: #e2e8f0;
+}
+
+/* Timeline */
+.timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px 4px;
+}
+
+.timeline-list li {
+  padding: 5px 0;
+  font-size: 0.85rem;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.timeline-footer {
+  padding: 8px 14px 10px;
+  font-size: 0.83rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timeline-select {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 0.82rem;
+}
+
+/* Calendar */
+.calendar-placeholder {
+  height: 140px;
+  background: #f1f5f9;
+  margin: 12px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Online users */
+.online-users-body {
+  padding: 12px 14px;
+}
+
+.online-count {
+  font-size: 0.85rem;
+  color: #475569;
+  margin: 0 0 8px;
+}
+
+.online-user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.user-dot {
+  width: 12px;
+  height: 12px;
+  background: #94a3b8;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .dashboard-page {
+    padding: 16px 20px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .courses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .register-course-row {
+    flex-wrap: wrap;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

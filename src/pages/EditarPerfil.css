@@ -1,0 +1,182 @@
+.editar-perfil-page {
+  padding: 20px 40px;
+  background: #f1f5f9;
+  min-height: 100%;
+}
+
+.page-loading {
+  padding: 40px;
+  color: #475569;
+}
+
+.ep-form-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+  max-width: 480px;
+}
+
+.ep-form-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 16px;
+}
+
+/* Secciones */
+.ep-section {
+  margin-bottom: 20px;
+}
+
+.ep-section-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Campos */
+.ep-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ep-field label {
+  font-size: 0.82rem;
+  color: #475569;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.ep-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.ep-field input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  color: #333;
+  outline: none;
+}
+
+.ep-field input:focus {
+  border-color: #2d5a4c;
+}
+
+.ep-info {
+  font-size: 0.85rem;
+  color: #64748b;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+.ep-img-btn {
+  background: #f1f5f9;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  color: #475569;
+  cursor: pointer;
+}
+
+.ep-img-btn:hover {
+  background: #e2e8f0;
+}
+
+/* Error */
+.ep-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+/* Acciones */
+.ep-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.btn-guardar {
+  background: #1a2e26;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  background: #2d5a4c;
+}
+
+.btn-guardar:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background: #e2e8f0;
+}
+
+.ep-required-note {
+  font-size: 0.8rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+@media (max-width: 768px) {
+  .editar-perfil-page {
+    padding: 16px;
+  }
+
+  .ep-form-card {
+    max-width: 100%;
+  }
+
+  .ep-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .ep-field label {
+    width: auto;
+  }
+
+  .ep-input-row {
+    width: 100%;
+  }
+}

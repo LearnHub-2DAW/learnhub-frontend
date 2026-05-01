@@ -1,0 +1,174 @@
+.agregar-entrega-page {
+  padding: 20px 40px;
+  background: #f1f5f9;
+  min-height: 100%;
+}
+
+.page-loading {
+  padding: 40px;
+  color: #475569;
+}
+
+.page-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.page-card-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 4px;
+}
+
+.page-breadcrumb {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.page-breadcrumb a {
+  color: #2d5a4c;
+  text-decoration: none;
+}
+
+.page-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+/* Cuerpo */
+.entrega-body {
+  padding: 20px;
+}
+
+.tarea-titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a2e26;
+  margin: 0 0 12px;
+}
+
+.tarea-descripcion {
+  min-height: 70px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  color: #475569;
+  font-size: 0.88rem;
+  background: #fafafa;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+}
+
+/* Drop zone */
+.dropzone {
+  border: 2px dashed #94a3b8;
+  border-radius: 6px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8f9fa;
+  transition: all 0.15s;
+  margin-bottom: 14px;
+}
+
+.dropzone:hover,
+.dropzone.dragging {
+  border-color: #2d5a4c;
+  background: #f0faf6;
+}
+
+.dropzone-arrow {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 8px;
+  color: #475569;
+}
+
+.dropzone p {
+  color: #475569;
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+/* Lista de archivos */
+.archivos-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+}
+
+.archivo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.btn-remove-file {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0 4px;
+}
+
+.btn-remove-file:hover {
+  color: #ef4444;
+}
+
+/* Acciones */
+.entrega-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-guardar {
+  background: #1a2e26;
+  color: white;
+  border: none;
+  padding: 9px 22px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.btn-guardar:hover {
+  background: #2d5a4c;
+}
+
+.btn-cancelar {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #ddd;
+  padding: 9px 22px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .agregar-entrega-page {
+    padding: 16px;
+  }
+}
