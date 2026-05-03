@@ -1,59 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getMe, updatePerfil } from '../api/usuario.api';
 import PerfilHeader from '../components/PerfilHeader';
 import './EditarPerfil.css';
 
 const EditarPerfil = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [serverError, setServerError] = useState(null);
   const [form, setForm] = useState({
-    nombre: '', apellidos: '', correo_electronico: '', ciudad: '', pais: '',
+    nombre: user?.nombre || '',
+    apellidos: user?.apellidos || '',
+    correo_electronico: user?.correo_electronico || '',
+    ciudad: '',
+    pais: '',
   });
-
-  useEffect(() => {
-    getMe()
-      .then(res => {
-        const u = res.data;
-        setForm({
-          nombre: u.nombre || '',
-          apellidos: u.apellidos || '',
-          correo_electronico: u.correo_electronico || '',
-          ciudad: u.ciudad || '',
-          pais: u.pais || '',
-        });
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.nombre || !form.apellidos || !form.correo_electronico) {
-      setServerError('Los campos marcados con (*) son obligatorios');
-      return;
-    }
-    try {
-      setSaving(true);
-      setServerError(null);
-      await updatePerfil(form);
-      navigate('/perfil');
-    } catch (err) {
-      setServerError(err.response?.data?.message || 'Error al guardar los cambios');
-    } finally {
-      setSaving(false);
-    }
+    // Endpoint no disponible aún en el backend
+    alert('La edición de perfil estará disponible próximamente.');
   };
-
-  if (loading) return <div className="page-loading">Cargando...</div>;
 
   return (
     <div className="editar-perfil-page">
@@ -118,11 +88,9 @@ const EditarPerfil = () => {
             </div>
           </div>
 
-          {serverError && <p className="ep-error">{serverError}</p>}
-
           <div className="ep-actions">
-            <button type="submit" className="btn-guardar" disabled={saving}>
-              {saving ? 'Guardando...' : 'ACTUALIZAR INFORMACIÓN PERSONAL'}
+            <button type="submit" className="btn-guardar">
+              ACTUALIZAR INFORMACIÓN PERSONAL
             </button>
             <button type="button" className="btn-cancelar" onClick={() => navigate('/perfil')}>
               CANCELAR

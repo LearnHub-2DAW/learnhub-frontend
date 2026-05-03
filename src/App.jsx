@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 
 import Login from './pages/Login';
@@ -18,6 +19,7 @@ import CambiarContrasena from './pages/CambiarContrasena';
 import PreferenciasCalendario from './pages/PreferenciasCalendario';
 import PreferenciasNotificacion from './pages/PreferenciasNotificacion';
 import Calendario from './pages/Calendario';
+import NotFound from './pages/NotFound';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -31,14 +33,13 @@ const P = ({ children }) => <PrivateRoute>{children}</PrivateRoute>;
 function App() {
   return (
     <AuthProvider>
+      <ToastProvider>
       <BrowserRouter>
         <Routes>
-          {/* ── Auth (sin Layout) ── */}
+            {/* ── Todas las páginas con Header + Footer ── */}
+          <Route element={<Layout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          {/* ── Páginas principales (con Header + Footer) ── */}
-          <Route element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
 
             {/* Dashboard */}
@@ -67,8 +68,12 @@ function App() {
             <Route path="/perfil/preferencias/calendario" element={<P><PreferenciasCalendario /></P>} />
             <Route path="/perfil/preferencias/notificaciones" element={<P><PreferenciasNotificacion /></P>} />
           </Route>
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   );
 }

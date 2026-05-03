@@ -3,11 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../schemas/auth.schema";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import "./Register.css";
 
 const Register = () => {
   const { register: signup } = useAuth();
   const navigate = useNavigate();
+  const [serverError, setServerError] = useState(null);
 
   const {
     register,
@@ -19,17 +21,13 @@ const Register = () => {
   });
 
   const onSubmit = async (data) => {
+    setServerError(null);
     try {
       const { confirmar_correo, ...userData } = data;
-      // Validación manual extra por si acaso
-      if (data.correo_electronico !== confirmar_correo) {
-         return alert("Los correos no coinciden");
-      }
       await signup(userData);
-      alert("Cuenta creada con éxito.");
       navigate("/login");
     } catch (err) {
-      alert(err.response?.data?.message || "Error al registrar");
+      setServerError(err.response?.data?.message || "Error al registrar");
     }
   };
 
@@ -106,6 +104,8 @@ const Register = () => {
               </div>
             </div>
           </div>
+
+          {serverError && <div className="register-server-error">{serverError}</div>}
 
           <div className="form-buttons">
             <button type="submit" className="btn-primary">CREAR CUENTA</button>

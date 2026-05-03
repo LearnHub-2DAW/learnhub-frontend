@@ -1,51 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMe, updatePreferenciasCalendario } from '../api/usuario.api';
 import PerfilHeader from '../components/PerfilHeader';
 import './PreferenciasCalendario.css';
 
 const PreferenciasCalendario = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [serverError, setServerError] = useState(null);
   const [form, setForm] = useState({
     formato_hora: '', primer_dia_semana: '', n_max_eventos: '',
   });
-
-  useEffect(() => {
-    getMe()
-      .then(res => {
-        const u = res.data;
-        setForm({
-          formato_hora: u.formato_hora ?? '',
-          primer_dia_semana: u.primer_dia_semana ?? '',
-          n_max_eventos: u.n_max_eventos ?? '',
-        });
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      setSaving(true);
-      setServerError(null);
-      await updatePreferenciasCalendario(form);
-      navigate('/perfil/preferencias');
-    } catch (err) {
-      setServerError(err.response?.data?.message || 'Error al guardar');
-    } finally {
-      setSaving(false);
-    }
+    // Endpoint no disponible aún en el backend
+    alert('Las preferencias de calendario estarán disponibles próximamente.');
   };
-
-  if (loading) return <div className="page-loading">Cargando...</div>;
 
   return (
     <div className="pref-cal-page">
@@ -87,12 +59,8 @@ const PreferenciasCalendario = () => {
             />
           </div>
 
-          {serverError && <p className="pref-error">{serverError}</p>}
-
           <div className="pref-actions">
-            <button type="submit" className="btn-guardar" disabled={saving}>
-              {saving ? 'Guardando...' : 'GUARDAR CAMBIOS'}
-            </button>
+            <button type="submit" className="btn-guardar">GUARDAR CAMBIOS</button>
             <button
               type="button"
               className="btn-cancelar"

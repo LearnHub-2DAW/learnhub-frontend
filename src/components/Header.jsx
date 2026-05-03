@@ -46,7 +46,9 @@ const Header = () => {
                 <div className="user-avatar-container">
                   <div className="user-avatar-circle">{user.nombre?.[0]?.toUpperCase()}</div>
                   <div className="user-dropdown-menu">
+                    <Link to="/perfil">Mi perfil</Link>
                     <Link to="/dashboard">Área Personal</Link>
+                    <Link to="/calificaciones">Calificaciones</Link>
                     <button onClick={handleLogout}>Cerrar sesión</button>
                   </div>
                 </div>
@@ -67,8 +69,9 @@ const Header = () => {
               Guia de Estudiante de ciclos <span className="arrow-small">▼</span>
               {isGuiaOpen && (
                 <ul className="dropdown-menu">
-                  <li className="dropdown-item" onClick={() => navigate('/dashboard')}>Área Personal</li>
-                  <li className="dropdown-item" onClick={() => navigate('/dashboard')}>Mis Cursos</li>
+                  <li className="dropdown-item" onClick={() => { navigate('/dashboard'); setIsGuiaOpen(false); }}>Área Personal</li>
+                  <li className="dropdown-item" onClick={() => { navigate('/calificaciones'); setIsGuiaOpen(false); }}>Mis Cursos</li>
+                  <li className="dropdown-item" onClick={() => { navigate('/calendario'); setIsGuiaOpen(false); }}>Calendario</li>
                 </ul>
               )}
             </div>
@@ -99,10 +102,10 @@ const Header = () => {
               <Link to="/dashboard" onClick={() => setNavOpen(false)}>
                 <span className="nav-check-box" /> Área Personal
               </Link>
-              <Link to="/dashboard" onClick={() => setNavOpen(false)}>
+              <Link to="/calendario" onClick={() => setNavOpen(false)}>
                 <span className="nav-check-box" /> Calendario
               </Link>
-              <Link to="/dashboard" onClick={() => setNavOpen(false)}>
+              <Link to="/calificaciones" onClick={() => setNavOpen(false)}>
                 <span className="nav-check-box" /> Todos Mis Cursos
               </Link>
             </nav>

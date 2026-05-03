@@ -193,6 +193,36 @@
   background: #f1f5f9;
 }
 
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .logo-bar {
+    padding: 8px 16px;
+    min-height: 64px;
+  }
+
+  .main-logo {
+    height: 48px;
+  }
+
+  .nav-menus {
+    display: none;
+  }
+
+  .user-name {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-bar {
+    padding: 0 12px;
+  }
+
+  .icon-btn + .icon-btn {
+    display: none;
+  }
+}
+
 /* ── PANEL DE NAVEGACIÓN (drawer) ── */
 .nav-overlay {
   position: fixed;

@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getRecursoById, getModuloById, getCursoById } from '../api/cursos.api';
+import { useToast } from '../context/ToastContext';
 import './AgregarEntrega.css';
 
 const AgregarEntrega = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [recurso, setRecurso] = useState(null);
   const [curso, setCurso] = useState(null);
   const [modulo, setModulo] = useState(null);
@@ -46,8 +48,7 @@ const AgregarEntrega = () => {
   };
 
   const handleGuardar = async () => {
-    // TODO: POST /api/entregas con archivos cuando el backend lo soporte
-    alert('Entrega guardada (funcionalidad pendiente de backend)');
+    toast('Entrega guardada (funcionalidad pendiente)', 'info');
     navigate(`/recurso/${id}`);
   };
 

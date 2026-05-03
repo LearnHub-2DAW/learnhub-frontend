@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCursos } from '../api/cursos.api';
+import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo } from '../api/cursos.api';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import './Dashboard.css';
 
 const VISIBLE_CAROUSEL = 3;
@@ -15,10 +17,23 @@ const CursoCard = ({ curso, onClick }) => (
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const toast = useToast();
+  const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
+
   const [cursos, setCursos] = useState([]);
   const [codigoCurso, setCodigoCurso] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const [cursoModal, setCursoModal] = useState(false);
+  const [nombreCurso, setNombreCurso] = useState('');
+  const [savingCurso, setSavingCurso] = useState(false);
+  const [cursoError, setCursoError] = useState('');
+
+  const [timeline, setTimeline] = useState([]);
+  const [loadingTimeline, setLoadingTimeline] = useState(false);
+  const [timelineCount, setTimelineCount] = useState(5);
 
   useEffect(() => {
     getCursos()
@@ -26,6 +41,56 @@ const Dashboard = () => {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (cursos.length === 0) return;
+    setLoadingTimeline(true);
+    Promise.all(
+      cursos.map(c =>
+        getModulosByCurso(c.id)
+          .then(r => r.data.map(m => ({ ...m, cursoNombre: c.nombre, cursoId: c.id })))
+          .catch(() => [])
+      )
+    )
+      .then(moduloGroups => {
+        const allModulos = moduloGroups.flat();
+        if (allModulos.length === 0) return [];
+        return Promise.all(
+          allModulos.map(m =>
+            getRecursosByModulo(m.id)
+              .then(r => r.data.map(rec => ({ ...rec, cursoNombre: m.cursoNombre, cursoId: m.cursoId })))
+              .catch(() => [])
+          )
+        );
+      })
+      .then(recursoGroups => {
+        const now = new Date();
+        const tareas = recursoGroups
+          .flat()
+          .filter(r => r.es_entregable === 1 && r.fecha_entrega && new Date(r.fecha_entrega) >= now)
+          .sort((a, b) => new Date(a.fecha_entrega) - new Date(b.fecha_entrega));
+        setTimeline(tareas);
+      })
+      .catch(console.error)
+      .finally(() => setLoadingTimeline(false));
+  }, [cursos]);
+
+  const submitCurso = async () => {
+    if (!nombreCurso.trim()) return setCursoError('El nombre es obligatorio');
+    setSavingCurso(true);
+    setCursoError('');
+    try {
+      const res = await createCurso({ nombre: nombreCurso });
+      setCursos(prev => [...prev, res.data]);
+      setCursoModal(false);
+      setNombreCurso('');
+      toast('Curso creado correctamente');
+    } catch (err) {
+      setCursoError(err.response?.data?.message || 'Error al crear');
+    } finally {
+      setSavingCurso(false);
+    }
+  };
 
   const canPrev = carouselIndex > 0;
   const canNext = carouselIndex + VISIBLE_CAROUSEL < cursos.length;
@@ -38,7 +103,6 @@ const Dashboard = () => {
         {/* ── COLUMNA PRINCIPAL ── */}
         <div className="dashboard-main">
 
-          {/* Fila: registrarse en un curso */}
           <div className="register-course-row">
             <span className="reg-label">Registrarse en un curso</span>
             <input
@@ -51,17 +115,10 @@ const Dashboard = () => {
             <button className="btn-personalize">PERSONALIZAR ESTA PÁGINA</button>
           </div>
 
-          {/* Widget: Cursos Accedidos Recientemente */}
           <div className="widget-box">
             <div className="widget-header">Cursos Accedidos Recientemente</div>
             <div className="carousel-container">
-              <button
-                className="carousel-btn"
-                onClick={() => setCarouselIndex(i => i - 1)}
-                disabled={!canPrev}
-              >
-                ‹
-              </button>
+              <button className="carousel-btn" onClick={() => setCarouselIndex(i => i - 1)} disabled={!canPrev}>‹</button>
               <div className="carousel-track">
                 {loading ? (
                   <p className="empty-msg">Cargando cursos...</p>
@@ -73,19 +130,19 @@ const Dashboard = () => {
                   ))
                 )}
               </div>
-              <button
-                className="carousel-btn"
-                onClick={() => setCarouselIndex(i => i + 1)}
-                disabled={!canNext}
-              >
-                ›
-              </button>
+              <button className="carousel-btn" onClick={() => setCarouselIndex(i => i + 1)} disabled={!canNext}>›</button>
             </div>
           </div>
 
-          {/* Widget: Vista General De Cursos */}
           <div className="widget-box">
-            <div className="widget-header">Vista General De Cursos</div>
+            <div className="widget-header dash-header-row">
+              <span>Vista General De Cursos</span>
+              {isStaff && (
+                <button className="btn-dash-create" onClick={() => { setNombreCurso(''); setCursoError(''); setCursoModal(true); }}>
+                  ＋ Nuevo curso
+                </button>
+              )}
+            </div>
             <div className="courses-grid">
               {loading ? (
                 <p className="empty-msg">Cargando...</p>
@@ -100,41 +157,49 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* ── COLUMNA DERECHA (sidebar) ── */}
+        {/* ── SIDEBAR ── */}
         <div className="dashboard-sidebar">
 
-          {/* Widget: Línea de Tiempo */}
           <div className="widget-box">
-            <div className="widget-header sidebar-header-row">
-              <span>Línea de Tiempo</span>
-              <div className="sidebar-header-btns">
-                <button className="icon-pill">🕐 ▼</button>
-                <button className="icon-pill">≡ ▼</button>
-              </div>
-            </div>
+            <div className="widget-header">Línea de Tiempo</div>
             <ul className="timeline-list">
-              <li>Fecha</li>
-              <li>Titulo de la Tarea</li>
-              <li>Curso Perteneciente</li>
-              <li>Agregar Entrega</li>
+              {loadingTimeline ? (
+                <li className="timeline-empty">Cargando tareas...</li>
+              ) : timeline.length === 0 ? (
+                <li className="timeline-empty">No hay tareas próximas</li>
+              ) : (
+                timeline.slice(0, timelineCount).map(t => (
+                  <li key={t.id} className="timeline-item" onClick={() => navigate(`/recurso/${t.id}`)}>
+                    <span className="tl-fecha">
+                      {new Date(t.fecha_entrega).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </span>
+                    <span className="tl-titulo">{t.titulo}</span>
+                    <span className="tl-curso">{t.cursoNombre}</span>
+                  </li>
+                ))
+              )}
             </ul>
-            <div className="timeline-footer">
-              Mostrar&nbsp;
-              <select className="timeline-select">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-              </select>
-            </div>
+            {timeline.length > 0 && (
+              <div className="timeline-footer">
+                Mostrar&nbsp;
+                <select
+                  className="timeline-select"
+                  value={timelineCount}
+                  onChange={e => setTimelineCount(Number(e.target.value))}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                </select>
+              </div>
+            )}
           </div>
 
-          {/* Widget: Calendario */}
           <div className="widget-box">
             <div className="widget-header">Calendario</div>
             <div className="calendar-placeholder" />
           </div>
 
-          {/* Widget: Usuarios en Línea */}
           <div className="widget-box">
             <div className="widget-header">Usuarios en Línea</div>
             <div className="online-users-body">
@@ -147,6 +212,32 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {cursoModal && (
+        <div className="modal-overlay" onClick={() => setCursoModal(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <h3 className="modal-title">Nuevo curso</h3>
+            <div className="modal-field">
+              <label>Nombre del curso</label>
+              <input
+                type="text"
+                value={nombreCurso}
+                onChange={e => setNombreCurso(e.target.value)}
+                placeholder="Nombre del curso"
+                autoFocus
+                onKeyDown={e => e.key === 'Enter' && submitCurso()}
+              />
+            </div>
+            {cursoError && <p className="modal-error">{cursoError}</p>}
+            <div className="modal-actions">
+              <button className="btn-modal-cancel" onClick={() => setCursoModal(false)}>Cancelar</button>
+              <button className="btn-modal-ok" onClick={submitCurso} disabled={savingCurso}>
+                {savingCurso ? 'Creando...' : 'Crear'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

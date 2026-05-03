@@ -34,6 +34,13 @@ export const registerSchema = z.object({
     .string()
     .max(100, 'El país no puede superar los 100 caracteres')
     .optional(),
+
+  confirmar_correo: z
+    .string({ error: 'Por favor confirma el correo electrónico' })
+    .email('El correo electrónico no tiene un formato válido'),
+}).refine(data => data.correo_electronico === data.confirmar_correo, {
+  message: 'Los correos electrónicos no coinciden',
+  path: ['confirmar_correo'],
 });
 
 export const loginSchema = z.object({

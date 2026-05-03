@@ -127,6 +127,27 @@
   transform: translateY(-1px);
 }
 
+.server-error-custom {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.error-mini {
+  color: #fca5a5;
+  font-size: 0.8rem;
+}
+
+.btn-acc-custom:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
 @media (max-width: 768px) {
   .form-row-custom {
     flex-direction: column;

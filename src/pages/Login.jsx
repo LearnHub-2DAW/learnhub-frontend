@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../schemas/auth.schema";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./Login.css";
 
@@ -10,6 +10,7 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [serverError, setServerError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -22,12 +23,15 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       setServerError(null);
+      setLoading(true);
       await login(data.nombre_usuario, data.contrasena);
       navigate("/dashboard");
     } catch (err) {
       setServerError(
         err.response?.data?.message || "Error al conectar con el servidor",
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,9 +75,13 @@ const Login = () => {
             </div>
           </div>
 
+          {serverError && (
+            <div className="server-error-custom">{serverError}</div>
+          )}
+
           <div className="action-row-custom">
-            <button type="submit" className="btn-acc-custom">
-              ACCEDER
+            <button type="submit" className="btn-acc-custom" disabled={loading}>
+              {loading ? "ACCEDIENDO..." : "ACCEDER"}
             </button>
           </div>
 
