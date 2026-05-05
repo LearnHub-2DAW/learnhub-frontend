@@ -77,7 +77,9 @@ const Header = () => {
           <div className="nav-menus">
             {/* Guía de Estudiante */}
             <div className="nav-item dropdown-container" onClick={() => { setIsGuiaOpen(o => !o); setIsLangOpen(false); }}>
-              Guia de Estudiante de ciclos <span className="arrow-small">▼</span>
+              <div className="nav-trigger">
+                Guia de Estudiante de ciclos <span className="arrow-small">▼</span>
+              </div>
               {isGuiaOpen && (
                 <ul className="dropdown-menu">
                   <li className="dropdown-item" onClick={() => { navigate('/dashboard'); setIsGuiaOpen(false); }}>Área Personal</li>
@@ -89,7 +91,9 @@ const Header = () => {
 
             {/* Idioma */}
             <div className="nav-item dropdown-container" onClick={() => { setIsLangOpen(o => !o); setIsGuiaOpen(false); }}>
-              Idioma <span className="arrow-small">▼</span>
+              <div className="nav-trigger">
+                Idioma <span className="arrow-small">▼</span>
+              </div>
               {isLangOpen && (
                 <ul className="dropdown-menu">
                   {languages.map(lang => (

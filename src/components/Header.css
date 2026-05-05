@@ -193,6 +193,23 @@
   background: #f1f5f9;
 }
 
+/* Afecta botones con texto */
+.nav-trigger {
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+}
+
+/* El efecto al pasar el ratón */
+.nav-trigger:hover {
+  background-color: rgba(0, 0, 0, 0.3); /* Fondo ligeramente oscurecido */
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .logo-bar {
