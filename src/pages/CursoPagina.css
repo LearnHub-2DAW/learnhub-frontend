@@ -468,6 +468,30 @@
   white-space: nowrap;
 }
 
+/* Resalta el módulo que el usuario tiene seleccionado */
+.course-card.active-card {
+  border: 2px solid #0056b3; /* Color azul de ejemplo, cámbialo por el color principal de tu tema */
+  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+}
+
+/* Posiciona los botones de editar/eliminar en la esquina superior derecha de la imagen de la tarjeta */
+.course-card {
+  position: relative;
+  cursor: pointer;
+}
+
+.card-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+} 
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .curso-page {

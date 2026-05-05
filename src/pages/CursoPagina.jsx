@@ -260,32 +260,40 @@ const CursoPagina = () => {
               </div>
             </div>
 
-            <div className="subcarpetas-section">
-              <div className="subcarpetas-header">Subcarpetas</div>
-              <div className="subcarpetas-list">
+            <div className="widget-box">
+              <div className="widget-header dash-header-row">
+                <span>Subcarpetas</span>
+                {isStaff && (
+                  <button className="btn-dash-create" onClick={openCrearModulo}>
+                    ＋ Nuevo módulo
+                  </button>
+                )}
+              </div>
+              <div className="courses-grid">
                 {modulos.length === 0 ? (
-                  <p className="empty-section">No hay módulos en este curso</p>
+                  <p className="empty-msg">No hay módulos en este curso</p>
                 ) : (
                   modulos.map(mod => (
                     <div
                       key={mod.id}
-                      className={`subcarpeta-item ${moduloActivo?.id === mod.id ? 'active' : ''}`}
+                      className={`course-card ${moduloActivo?.id === mod.id ? 'active-card' : ''}`}
                       onClick={() => setModuloActivo(mod)}
                     >
-                      <span>📁 {mod.nombre}</span>
+                      <div className="course-thumb" />
+                      <span className="course-card-type">Módulo</span>
+                      <p className="course-card-name">{mod.nombre}</p>
+
+                      {/* Botones de acción posicionados sobre la tarjeta */}
                       {isStaff && (
-                        <span className="subcarpeta-actions">
+                        <div className="card-actions">
                           <button className="icon-action" title="Editar" onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
                           {isAdmin && (
                             <button className="icon-action" title="Eliminar" onClick={(e) => handleDeleteModulo(e, mod)}>🗑️</button>
                           )}
-                        </span>
+                        </div>
                       )}
                     </div>
                   ))
-                )}
-                {isStaff && (
-                  <button className="btn-add-item" onClick={openCrearModulo}>＋ Nuevo módulo</button>
                 )}
               </div>
             </div>
