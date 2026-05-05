@@ -10,7 +10,7 @@ import {
   updateRecurso, 
   deleteRecurso
 } from '../api/cursos.api';
-import './CursoPagina.css'; // Reutilizamos los mismos estilos
+import './ModuloPagina.css';
 
 const EMPTY_RECURSO = { titulo: '', contenido: '', es_entregable: false, fecha_entrega: '', archivo: null };
 
@@ -39,7 +39,6 @@ const ModuloPagina = () => {
   useEffect(() => {
     setLoading(true);
     
-    // 1. Cargamos la información del Curso y del Módulo juntos
     Promise.all([
       getCursoById(id),
       getModulosByCurso(id)
@@ -52,17 +51,16 @@ const ModuloPagina = () => {
       .catch(console.error)
       .finally(() => setLoading(false));
 
-    // 2. Cargamos los Recursos de forma INDEPENDIENTE
     getRecursosByModulo(idModulo)
       .then(res => setRecursos(res.data))
       .catch(err => {
         console.error("No se encontraron recursos:", err);
-        setRecursos([]); // Si el servidor da error porque está vacío, mostramos la lista vacía
+        setRecursos([]);
       });
 
   }, [id, idModulo]);
 
-  // ── Lógica de Recursos CRUD ─────────────────────────────────────────
+  // ── Lógica de Recursos CRUD ──
   const openCrearRecurso = () => {
     setRecursoForm(EMPTY_RECURSO);
     setModalError('');

@@ -29,8 +29,8 @@ const CursoPagina = () => {
   const [cursoError, setCursoError] = useState('');
   const [modulos, setModulos] = useState([]);
   // const [moduloActivo, setModuloActivo] = useState(null);
-  const [recursos, setRecursos] = useState([]);
-  const [loadingRecursos, setLoadingRecursos] = useState(false);
+  // const [recursos, setRecursos] = useState([]);
+  // const [loadingRecursos, setLoadingRecursos] = useState(false);
   const [loading, setLoading] = useState(true);
   const [gearOpen, setGearOpen] = useState(false);
   const gearRef = useRef(null);
@@ -161,66 +161,66 @@ const CursoPagina = () => {
   };
 
   // ── Recurso CRUD ─────────────────────────────────────────
-  const openCrearRecurso = () => {
-    setRecursoForm(EMPTY_RECURSO);
-    setModalError('');
-    setRecursoModal({ open: true, modo: 'crear', id: null });
-  };
+  // const openCrearRecurso = () => {
+  //   setRecursoForm(EMPTY_RECURSO);
+  //   setModalError('');
+  //   setRecursoModal({ open: true, modo: 'crear', id: null });
+  // };
 
-  const openEditarRecurso = (e, r) => {
-    e.stopPropagation();
-    setRecursoForm({
-      titulo: r.titulo,
-      contenido: r.contenido || '',
-      es_entregable: r.es_entregable === 1,
-      fecha_entrega: r.fecha_entrega ? r.fecha_entrega.split('T')[0] : '',
-      archivo: null,
-    });
-    setModalError('');
-    setRecursoModal({ open: true, modo: 'editar', id: r.id });
-  };
+  // const openEditarRecurso = (e, r) => {
+  //   e.stopPropagation();
+  //   setRecursoForm({
+  //     titulo: r.titulo,
+  //     contenido: r.contenido || '',
+  //     es_entregable: r.es_entregable === 1,
+  //     fecha_entrega: r.fecha_entrega ? r.fecha_entrega.split('T')[0] : '',
+  //     archivo: null,
+  //   });
+  //   setModalError('');
+  //   setRecursoModal({ open: true, modo: 'editar', id: r.id });
+  // };
 
-  const submitRecurso = async () => {
-    if (!recursoForm.titulo.trim()) return setModalError('El título es obligatorio');
-    setSaving(true);
-    setModalError('');
-    try {
-      const fd = new FormData();
-      if (recursoModal.modo === 'crear') fd.append('id_modulo', String(moduloActivo.id));
-      fd.append('titulo', recursoForm.titulo);
-      fd.append('contenido', recursoForm.contenido);
-      fd.append('es_entregable', recursoForm.es_entregable ? 'true' : 'false');
-      if (recursoForm.es_entregable && recursoForm.fecha_entrega) {
-        fd.append('fecha_entrega', recursoForm.fecha_entrega);
-      }
-      if (recursoForm.archivo) fd.append('archivo', recursoForm.archivo);
+  // const submitRecurso = async () => {
+  //   if (!recursoForm.titulo.trim()) return setModalError('El título es obligatorio');
+  //   setSaving(true);
+  //   setModalError('');
+  //   try {
+  //     const fd = new FormData();
+  //     if (recursoModal.modo === 'crear') fd.append('id_modulo', String(moduloActivo.id));
+  //     fd.append('titulo', recursoForm.titulo);
+  //     fd.append('contenido', recursoForm.contenido);
+  //     fd.append('es_entregable', recursoForm.es_entregable ? 'true' : 'false');
+  //     if (recursoForm.es_entregable && recursoForm.fecha_entrega) {
+  //       fd.append('fecha_entrega', recursoForm.fecha_entrega);
+  //     }
+  //     if (recursoForm.archivo) fd.append('archivo', recursoForm.archivo);
 
-      if (recursoModal.modo === 'crear') {
-        const res = await createRecurso(fd);
-        setRecursos(prev => [...prev, res.data]);
-      } else {
-        const res = await updateRecurso(recursoModal.id, fd);
-        setRecursos(prev => prev.map(r => r.id === recursoModal.id ? res.data : r));
-      }
-      setRecursoModal({ open: false, modo: 'crear', id: null });
-    } catch (err) {
-      setModalError(err.response?.data?.message || 'Error al guardar');
-    } finally {
-      setSaving(false);
-    }
-  };
+  //     if (recursoModal.modo === 'crear') {
+  //       const res = await createRecurso(fd);
+  //       setRecursos(prev => [...prev, res.data]);
+  //     } else {
+  //       const res = await updateRecurso(recursoModal.id, fd);
+  //       setRecursos(prev => prev.map(r => r.id === recursoModal.id ? res.data : r));
+  //     }
+  //     setRecursoModal({ open: false, modo: 'crear', id: null });
+  //   } catch (err) {
+  //     setModalError(err.response?.data?.message || 'Error al guardar');
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
-  const handleDeleteRecurso = async (e, r) => {
-    e.stopPropagation();
-    if (!window.confirm(`¿Eliminar el recurso "${r.titulo}"?`)) return;
-    try {
-      await deleteRecurso(r.id);
-      toast('Recurso eliminado');
-      setRecursos(prev => prev.filter(rec => rec.id !== r.id));
-    } catch (err) {
-      toast(err.response?.data?.message || 'Error al eliminar', 'error');
-    }
-  };
+  // const handleDeleteRecurso = async (e, r) => {
+  //   e.stopPropagation();
+  //   if (!window.confirm(`¿Eliminar el recurso "${r.titulo}"?`)) return;
+  //   try {
+  //     await deleteRecurso(r.id);
+  //     toast('Recurso eliminado');
+  //     setRecursos(prev => prev.filter(rec => rec.id !== r.id));
+  //   } catch (err) {
+  //     toast(err.response?.data?.message || 'Error al eliminar', 'error');
+  //   }
+  // };
 
   if (loading) return <div className="curso-loading">Cargando curso...</div>;
 
@@ -262,7 +262,7 @@ const CursoPagina = () => {
 
             <div className="widget-box">
               <div className="widget-header dash-header-row">
-                <span>Subcarpetas</span>
+                <span>Módulos</span>
                 {isStaff && (
                   <button className="btn-dash-create" onClick={openCrearModulo}>
                     ＋ Nuevo módulo
