@@ -20,6 +20,7 @@ import PreferenciasCalendario from './pages/PreferenciasCalendario';
 import PreferenciasNotificacion from './pages/PreferenciasNotificacion';
 import Calendario from './pages/Calendario';
 import NotFound from './pages/NotFound';
+import ModuloPagina from './pages/ModuloPagina';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -55,6 +56,9 @@ function App() {
             <Route path="/curso/:id" element={<P><CursoPagina /></P>} />
             <Route path="/curso/:id/calificaciones" element={<P><Calificaciones /></P>} />
             <Route path="/curso/:id/participantes" element={<P><Participantes /></P>} />
+
+            {/* Modulos */}
+            <Route path="/curso/:id/modulo/:idModulo" element={<P><ModuloPagina /></P>} />
 
             {/* Recursos / Tareas */}
             <Route path="/recurso/:id" element={<P><DetalleTarea /></P>} />

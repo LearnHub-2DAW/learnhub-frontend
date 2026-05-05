@@ -28,7 +28,7 @@ const CursoPagina = () => {
   const [cursoSaving, setCursoSaving] = useState(false);
   const [cursoError, setCursoError] = useState('');
   const [modulos, setModulos] = useState([]);
-  const [moduloActivo, setModuloActivo] = useState(null);
+  // const [moduloActivo, setModuloActivo] = useState(null);
   const [recursos, setRecursos] = useState([]);
   const [loadingRecursos, setLoadingRecursos] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -47,20 +47,20 @@ const CursoPagina = () => {
       .then(([cursoRes, modulosRes]) => {
         setCurso(cursoRes.data);
         setModulos(modulosRes.data);
-        if (modulosRes.data.length > 0) setModuloActivo(modulosRes.data[0]);
+        // if (modulosRes.data.length > 0) setModuloActivo(modulosRes.data[0]);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
 
-  useEffect(() => {
-    if (!moduloActivo) return;
-    setLoadingRecursos(true);
-    getRecursosByModulo(moduloActivo.id)
-      .then(res => setRecursos(res.data))
-      .catch(console.error)
-      .finally(() => setLoadingRecursos(false));
-  }, [moduloActivo?.id]);
+  // useEffect(() => {
+  //   if (!moduloActivo) return;
+  //   setLoadingRecursos(true);
+  //   getRecursosByModulo(moduloActivo.id)
+  //     .then(res => setRecursos(res.data))
+  //     .catch(console.error)
+  //     .finally(() => setLoadingRecursos(false));
+  // }, [moduloActivo?.id]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -276,8 +276,8 @@ const CursoPagina = () => {
                   modulos.map(mod => (
                     <div
                       key={mod.id}
-                      className={`course-card ${moduloActivo?.id === mod.id ? 'active-card' : ''}`}
-                      onClick={() => setModuloActivo(mod)}
+                      className={`course-card`}
+                      onClick={() => navigate(`/curso/${id}/modulo/${mod.id}`)}
                     >
                       <div className="course-thumb" />
                       <span className="course-card-type">Módulo</span>
@@ -298,7 +298,7 @@ const CursoPagina = () => {
               </div>
             </div>
 
-            <div className="contenido-section">
+            {/* <div className="contenido-section">
               {moduloActivo ? (
                 <div className="contenido-body">
                   <div className="contenido-header-row">
@@ -342,7 +342,7 @@ const CursoPagina = () => {
               ) : (
                 <p className="contenido-placeholder-txt">Selecciona un módulo</p>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 
