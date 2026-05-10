@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso } from '../api/cursos.api';
+import { getFileUrl } from '../api/axios';
 import './DetalleTarea.css';
 
 const EMPTY_FORM = { titulo: '', contenido: '', es_entregable: false, fecha_entrega: '', archivo: null };
@@ -144,7 +145,7 @@ const DetalleTarea = () => {
           {recurso?.ruta_archivo && (
             <div className="tarea-archivo">
               <a
-                href={`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/uploads/${recurso.ruta_archivo}`}
+                href={getFileUrl(recurso.ruta_archivo)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-descargar"

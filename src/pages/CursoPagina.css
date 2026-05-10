@@ -154,6 +154,37 @@
   border-left: 3px solid transparent;
 }
 
+.subcarpeta-nombre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.subcarpeta-img {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.subcarpeta-folder {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.modal-img-preview {
+  display: none;
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+}
+
 .subcarpeta-item:hover {
   background: #f1f5f9;
   color: #1a2e26;
