@@ -151,6 +151,54 @@
   font-weight: 500;
 }
 
+/* ── THUMBNAIL EN TARJETA ── */
+.course-thumb-img {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  display: block;
+}
+
+/* ── GRUPOS DE CURSOS ── */
+.curso-grupo {
+  border-bottom: 1px solid #eee;
+}
+
+.curso-grupo:last-child {
+  border-bottom: none;
+}
+
+.curso-grupo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background 0.12s;
+}
+
+.curso-grupo-header:hover {
+  background: #f1f5f9;
+}
+
+.curso-grupo-nombre {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1a2e26;
+}
+
+.curso-grupo-count {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  background: #e2e8f0;
+  border-radius: 10px;
+  padding: 2px 8px;
+}
+
 /* ── GRID DE CURSOS ── */
 .courses-grid {
   display: grid;
@@ -408,6 +456,102 @@
 .btn-modal-ok:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ── MINI CALENDARIO ── */
+.mini-cal {
+  padding: 10px 12px 14px;
+}
+
+.mini-cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.mini-cal-nav span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1a2e26;
+}
+
+.mini-cal-nav button {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  width: 22px;
+  height: 22px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  padding: 0;
+}
+
+.mini-cal-nav button:hover {
+  background: #f1f5f9;
+}
+
+.mini-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.mini-cal-head {
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #94a3b8;
+  padding: 2px 0 5px;
+}
+
+.mini-cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.72rem;
+  color: #334155;
+  padding: 3px 0 2px;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1.5;
+  min-height: 26px;
+}
+
+.mini-cal-cell:hover:not(.mini-cal-empty) {
+  background: #f1f5f9;
+}
+
+.mini-cal-empty {
+  cursor: default;
+}
+
+.mini-cal-today {
+  background: #1a2e26;
+  color: white;
+  font-weight: 700;
+}
+
+.mini-cal-today:hover {
+  background: #2d5a4c !important;
+}
+
+.mini-cal-dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: #2d5a4c;
+  border-radius: 50%;
+  margin-top: 1px;
+}
+
+.mini-cal-today .mini-cal-dot {
+  background: #a7f3d0;
 }
 
 /* ── RESPONSIVE ── */

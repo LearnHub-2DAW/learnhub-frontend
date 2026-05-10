@@ -10,7 +10,7 @@ import {
 } from '../api/cursos.api';
 import './CursoPagina.css';
 
-const EMPTY_MODULO = { nombre: '' };
+const EMPTY_MODULO = { nombre: '', url_imagen: '' };
 const EMPTY_RECURSO = { titulo: '', contenido: '', es_entregable: false, fecha_entrega: '', archivo: null };
 
 const CursoPagina = () => {
@@ -114,7 +114,7 @@ const CursoPagina = () => {
 
   const openEditarModulo = (e, mod) => {
     e.stopPropagation();
-    setModuloForm({ nombre: mod.nombre });
+    setModuloForm({ nombre: mod.nombre, url_imagen: mod.url_imagen || '' });
     setModalError('');
     setModuloModal({ open: true, modo: 'editar', id: mod.id });
   };
@@ -124,12 +124,15 @@ const CursoPagina = () => {
     setSaving(true);
     setModalError('');
     try {
+      const payload = { nombre: moduloForm.nombre };
+      if (moduloForm.url_imagen.trim()) payload.url_imagen = moduloForm.url_imagen.trim();
+
       if (moduloModal.modo === 'crear') {
-        const res = await createModulo({ id_curso: Number(id), nombre: moduloForm.nombre });
+        const res = await createModulo({ id_curso: Number(id), ...payload });
         setModulos(prev => [...prev, res.data]);
         setModuloActivo(res.data);
       } else {
-        const res = await updateModulo(moduloModal.id, { nombre: moduloForm.nombre });
+        const res = await updateModulo(moduloModal.id, payload);
         setModulos(prev => prev.map(m => m.id === moduloModal.id ? res.data : m));
         if (moduloActivo?.id === moduloModal.id) setModuloActivo(res.data);
       }
@@ -272,7 +275,13 @@ const CursoPagina = () => {
                       className={`subcarpeta-item ${moduloActivo?.id === mod.id ? 'active' : ''}`}
                       onClick={() => setModuloActivo(mod)}
                     >
-                      <span>📁 {mod.nombre}</span>
+                      <span className="subcarpeta-nombre">
+                        {mod.url_imagen
+                          ? <img src={mod.url_imagen} alt="" className="subcarpeta-img" onError={e => { e.target.style.display = 'none'; }} />
+                          : <span className="subcarpeta-folder">📁</span>
+                        }
+                        {mod.nombre}
+                      </span>
                       {isStaff && (
                         <span className="subcarpeta-actions">
                           <button className="icon-action" title="Editar" onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
@@ -389,6 +398,24 @@ const CursoPagina = () => {
                 autoFocus
                 onKeyDown={e => e.key === 'Enter' && submitModulo()}
               />
+            </div>
+            <div className="modal-field">
+              <label>URL de imagen (opcional)</label>
+              <input
+                type="text"
+                value={moduloForm.url_imagen}
+                onChange={e => setModuloForm(f => ({ ...f, url_imagen: e.target.value }))}
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+              {moduloForm.url_imagen && (
+                <img
+                  src={moduloForm.url_imagen}
+                  alt="Vista previa"
+                  className="modal-img-preview"
+                  onError={e => { e.target.style.display = 'none'; }}
+                  onLoad={e => { e.target.style.display = 'block'; }}
+                />
+              )}
             </div>
             {modalError && <p className="modal-error">{modalError}</p>}
             <div className="modal-actions">
