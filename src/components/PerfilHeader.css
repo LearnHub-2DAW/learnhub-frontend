@@ -1,7 +1,6 @@
-/* Tarjeta de cabecera de perfil — compartida entre todas las páginas de usuario */
 .perfil-header-card {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 16px 20px;
   display: flex;
@@ -20,7 +19,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #94a3b8;
+  background: var(--text-faint);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,21 +32,20 @@
 .ph-name {
   font-size: 1.2rem;
   font-weight: 500;
-  color: #1a2e26;
+  color: var(--text-heading);
 }
 
-/* Gear button */
 .ph-gear-wrapper {
   position: relative;
 }
 
 .ph-gear-btn {
-  background: #f1f5f9;
-  border: 1px solid #ddd;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 6px 12px;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-base);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -55,7 +53,7 @@
 }
 
 .ph-gear-btn:hover {
-  background: #e2e8f0;
+  background: var(--bg-hover-mid);
 }
 
 .ph-gear-arrow {
@@ -66,10 +64,10 @@
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow);
   list-style: none;
   padding: 4px 0;
   margin: 0;
@@ -80,11 +78,11 @@
 .ph-gear-dropdown li {
   padding: 9px 16px;
   font-size: 0.88rem;
-  color: #333;
+  color: var(--text-base);
   cursor: pointer;
 }
 
 .ph-gear-dropdown li:hover {
-  background: #f1f5f9;
-  color: #1a2e26;
+  background: var(--bg-hover);
+  color: var(--text-heading);
 }

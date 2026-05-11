@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LangContext';
 import './PerfilHeader.css';
 
 const PerfilHeader = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { tr } = useLang();
   const [gearOpen, setGearOpen] = useState(false);
   const gearRef = useRef(null);
 
@@ -31,7 +33,7 @@ const PerfilHeader = () => {
       <div className="ph-user-info">
         <div className="ph-avatar">{initial}</div>
         <span className="ph-name">
-          {user ? `${user.nombre} ${user.apellidos}` : 'Nombre de Usuario'}
+          {user ? `${user.nombre} ${user.apellidos}` : '—'}
         </span>
       </div>
 
@@ -41,14 +43,10 @@ const PerfilHeader = () => {
         </button>
         {gearOpen && (
           <ul className="ph-gear-dropdown">
-            <li onClick={() => goTo('/perfil/editar')}>Editar perfil</li>
-            <li onClick={() => goTo('/perfil/cambiar-contrasena')}>Cambiar contraseña</li>
-            <li onClick={() => goTo('/perfil/preferencias/calendario')}>
-              Editar preferencias de calendario
-            </li>
-            <li onClick={() => goTo('/perfil/preferencias/notificaciones')}>
-              Editar preferencias de notificación
-            </li>
+            <li onClick={() => goTo('/perfil/editar')}>{tr('pref_editProfile')}</li>
+            <li onClick={() => goTo('/perfil/cambiar-contrasena')}>{tr('pref_changePassword')}</li>
+            <li onClick={() => goTo('/perfil/preferencias/calendario')}>{tr('pref_calendarPref')}</li>
+            <li onClick={() => goTo('/perfil/preferencias/notificaciones')}>{tr('pref_notifPref')}</li>
           </ul>
         )}
       </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useLang } from '../context/LangContext';
 import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso } from '../api/cursos.api';
 import { getFileUrl } from '../api/axios';
 import './DetalleTarea.css';
@@ -16,6 +17,7 @@ const DetalleTarea = () => {
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
   const isAdmin = user?.roles?.includes('admin');
   const toast = useToast();
+  const { tr } = useLang();
 
   const [recurso, setRecurso] = useState(null);
   const [modulo, setModulo] = useState(null);
@@ -98,10 +100,10 @@ const DetalleTarea = () => {
   const tiempoRestante = () => {
     if (!recurso?.fecha_entrega) return '—';
     const diff = new Date(recurso.fecha_entrega) - new Date();
-    if (diff < 0) return 'Plazo vencido';
+    if (diff < 0) return tr('dt_deadlinePassed');
     const dias = Math.floor(diff / 86400000);
     const horas = Math.floor((diff % 86400000) / 3600000);
-    return `${dias} días ${horas} horas`;
+    return `${dias} ${tr('dt_days')} ${horas} ${tr('dt_hours')}`;
   };
 
   if (loading) return <div className="page-loading">Cargando tarea...</div>;
@@ -114,9 +116,9 @@ const DetalleTarea = () => {
         <div className="page-card-header">
           <div className="page-header-row">
             <div>
-              <h1 className="page-title">{curso?.nombre || 'Título Del Curso'}</h1>
+              <h1 className="page-title">{curso?.nombre || tr('dt_courseTitle')}</h1>
               <p className="page-breadcrumb">
-                <Link to="/dashboard">Inicio</Link>
+                <Link to="/dashboard">{tr('home')}</Link>
                 <span> / </span>
                 {curso && <Link to={`/curso/${curso.id}`}>{curso.nombre}</Link>}
                 {modulo && <><span> / </span><span>{modulo.nombre}</span></>}
@@ -125,9 +127,9 @@ const DetalleTarea = () => {
             </div>
             {isStaff && recurso && (
               <div className="page-admin-actions">
-                <button className="btn-edit-recurso" onClick={openEditar}>✏️ Editar</button>
+                <button className="btn-edit-recurso" onClick={openEditar}>{tr('dt_editResource')}</button>
                 {isAdmin && (
-                  <button className="btn-delete-recurso" onClick={handleEliminar}>🗑️ Eliminar</button>
+                  <button className="btn-delete-recurso" onClick={handleEliminar}>{tr('dt_deleteResource')}</button>
                 )}
               </div>
             )}
@@ -150,39 +152,38 @@ const DetalleTarea = () => {
                 rel="noopener noreferrer"
                 className="btn-descargar"
               >
-                📎 Descargar archivo
+                📎 {tr('dt_downloadFile')}
               </a>
             </div>
           )}
 
-          {/* Estado de la entrega */}
           {recurso?.es_entregable === 1 && (
             <>
-              <h3 className="estado-titulo">Estado de la entrega</h3>
+              <h3 className="estado-titulo">{tr('dt_submissionStatus')}</h3>
               <table className="estado-table">
                 <tbody>
                   <tr>
-                    <td className="estado-label">Estado de la entrega</td>
-                    <td className="estado-value">Sin entrega</td>
+                    <td className="estado-label">{tr('dt_submissionStatus')}</td>
+                    <td className="estado-value">{tr('dt_noSubmission')}</td>
                   </tr>
                   <tr>
-                    <td className="estado-label">Estado de la calificación</td>
-                    <td className="estado-value">Sin calificar</td>
+                    <td className="estado-label">{tr('dt_gradeStatus')}</td>
+                    <td className="estado-value">{tr('dt_notGraded')}</td>
                   </tr>
                   <tr>
-                    <td className="estado-label">Fecha de entrega</td>
+                    <td className="estado-label">{tr('dt_dueDate')}</td>
                     <td className="estado-value">{formatFecha(recurso?.fecha_entrega)}</td>
                   </tr>
                   <tr>
-                    <td className="estado-label">Tiempo restante</td>
+                    <td className="estado-label">{tr('dt_timeRemaining')}</td>
                     <td className="estado-value">{tiempoRestante()}</td>
                   </tr>
                   <tr>
-                    <td className="estado-label">Última modificación</td>
+                    <td className="estado-label">{tr('dt_lastModified')}</td>
                     <td className="estado-value">—</td>
                   </tr>
                   <tr>
-                    <td className="estado-label">Comentario de la entrega</td>
+                    <td className="estado-label">{tr('dt_submissionComment')}</td>
                     <td className="estado-value">—</td>
                   </tr>
                 </tbody>
@@ -193,7 +194,7 @@ const DetalleTarea = () => {
                   className="btn-agregar-entrega"
                   onClick={() => navigate(`/recurso/${id}/entrega`)}
                 >
-                  AGREGAR ENTREGA
+                  {tr('dt_addSubmission')}
                 </button>
               </div>
             </>
@@ -205,10 +206,10 @@ const DetalleTarea = () => {
       {editModal && (
         <div className="modal-overlay" onClick={() => setEditModal(false)}>
           <div className="modal-box modal-box-lg" onClick={e => e.stopPropagation()}>
-            <h3 className="modal-title">Editar recurso</h3>
+            <h3 className="modal-title">{tr('cp_editResource')}</h3>
 
             <div className="modal-field">
-              <label>Título</label>
+              <label>{tr('cp_resourceTitle')}</label>
               <input
                 type="text"
                 value={editForm.titulo}
@@ -218,7 +219,7 @@ const DetalleTarea = () => {
             </div>
 
             <div className="modal-field">
-              <label>Contenido / Descripción</label>
+              <label>{tr('cp_resourceContent')}</label>
               <textarea
                 value={editForm.contenido}
                 onChange={e => setEditForm(f => ({ ...f, contenido: e.target.value }))}
@@ -233,13 +234,13 @@ const DetalleTarea = () => {
                   checked={editForm.es_entregable}
                   onChange={e => setEditForm(f => ({ ...f, es_entregable: e.target.checked }))}
                 />
-                Es una tarea entregable
+                {tr('cp_deliverable')}
               </label>
             </div>
 
             {editForm.es_entregable && (
               <div className="modal-field">
-                <label>Fecha de entrega</label>
+                <label>{tr('cp_dueDate')}</label>
                 <input
                   type="date"
                   value={editForm.fecha_entrega}
@@ -249,7 +250,7 @@ const DetalleTarea = () => {
             )}
 
             <div className="modal-field">
-              <label>Reemplazar archivo adjunto (opcional)</label>
+              <label>{tr('cp_replaceFile')}</label>
               <input
                 type="file"
                 onChange={e => setEditForm(f => ({ ...f, archivo: e.target.files[0] || null }))}
@@ -258,9 +259,9 @@ const DetalleTarea = () => {
 
             {modalError && <p className="modal-error">{modalError}</p>}
             <div className="modal-actions">
-              <button className="btn-modal-cancel" onClick={() => setEditModal(false)}>Cancelar</button>
+              <button className="btn-modal-cancel" onClick={() => setEditModal(false)}>{tr('cancel')}</button>
               <button className="btn-modal-ok" onClick={submitEditar} disabled={saving}>
-                {saving ? 'Guardando...' : 'Guardar'}
+                {saving ? tr('saving') : tr('save')}
               </button>
             </div>
           </div>

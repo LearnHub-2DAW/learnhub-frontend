@@ -1,17 +1,12 @@
 .editar-perfil-page {
   padding: 20px 40px;
-  background: #f1f5f9;
+  background: var(--bg-page);
   min-height: 100%;
 }
 
-.page-loading {
-  padding: 40px;
-  color: #475569;
-}
-
 .ep-form-card {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 20px;
   max-width: 480px;
@@ -20,11 +15,10 @@
 .ep-form-title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1a2e26;
+  color: var(--text-heading);
   margin: 0 0 16px;
 }
 
-/* Secciones */
 .ep-section {
   margin-bottom: 20px;
 }
@@ -32,13 +26,12 @@
 .ep-section-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
   margin: 0 0 10px;
   padding-bottom: 4px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Campos */
 .ep-field {
   display: flex;
   align-items: center;
@@ -48,7 +41,7 @@
 
 .ep-field label {
   font-size: 0.82rem;
-  color: #475569;
+  color: var(--text-secondary);
   width: 140px;
   flex-shrink: 0;
 }
@@ -67,46 +60,45 @@
 .ep-field input {
   flex: 1;
   padding: 6px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 3px;
   font-size: 0.85rem;
-  color: #333;
+  color: var(--text-base);
+  background: var(--bg-input);
   outline: none;
 }
 
 .ep-field input:focus {
-  border-color: #2d5a4c;
+  border-color: var(--brand-hover);
 }
 
 .ep-info {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-muted);
   cursor: help;
   flex-shrink: 0;
 }
 
 .ep-img-btn {
-  background: #f1f5f9;
-  border: 1px solid #ddd;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
   border-radius: 3px;
   padding: 5px 12px;
   font-size: 0.82rem;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
 .ep-img-btn:hover {
-  background: #e2e8f0;
+  background: var(--bg-hover-mid);
 }
 
-/* Error */
 .ep-error {
   color: #ef4444;
   font-size: 0.85rem;
   margin-bottom: 10px;
 }
 
-/* Acciones */
 .ep-actions {
   display: flex;
   gap: 8px;
@@ -114,7 +106,7 @@
 }
 
 .btn-guardar {
-  background: #1a2e26;
+  background: var(--brand);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -126,18 +118,18 @@
 }
 
 .btn-guardar:hover:not(:disabled) {
-  background: #2d5a4c;
+  background: var(--brand-hover);
 }
 
 .btn-guardar:disabled {
-  background: #94a3b8;
+  background: var(--text-faint);
   cursor: not-allowed;
 }
 
 .btn-cancelar {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #ddd;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 0.8rem;
@@ -146,37 +138,21 @@
 }
 
 .btn-cancelar:hover {
-  background: #e2e8f0;
+  background: var(--bg-hover-mid);
 }
 
 .ep-required-note {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
 @media (max-width: 768px) {
-  .editar-perfil-page {
-    padding: 16px;
-  }
-
-  .ep-form-card {
-    max-width: 100%;
-  }
-
-  .ep-field {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .ep-field label {
-    width: auto;
-  }
-
-  .ep-input-row {
-    width: 100%;
-  }
+  .editar-perfil-page { padding: 16px; }
+  .ep-form-card { max-width: 100%; }
+  .ep-field { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .ep-field label { width: auto; }
+  .ep-input-row { width: 100%; }
 }

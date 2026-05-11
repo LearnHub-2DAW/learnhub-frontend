@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLang } from '../context/LangContext';
 import PerfilHeader from '../components/PerfilHeader';
 import './PreferenciasCalendario.css';
 
 const PreferenciasCalendario = () => {
   const navigate = useNavigate();
+  const { tr } = useLang();
   const [form, setForm] = useState({
     formato_hora: '', primer_dia_semana: '', n_max_eventos: '',
   });
@@ -15,7 +17,6 @@ const PreferenciasCalendario = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Endpoint no disponible aún en el backend
     alert('Las preferencias de calendario estarán disponibles próximamente.');
   };
 
@@ -24,11 +25,11 @@ const PreferenciasCalendario = () => {
       <PerfilHeader />
 
       <div className="pref-cal-card">
-        <h3 className="pref-cal-title">Preferencias del calendario</h3>
+        <h3 className="pref-cal-title">{tr('pcal_title')}</h3>
 
         <form onSubmit={handleSubmit}>
           <div className="pref-field">
-            <label>Formato de hora</label>
+            <label>{tr('pcal_timeFormat')}</label>
             <input
               name="formato_hora"
               value={form.formato_hora}
@@ -38,17 +39,16 @@ const PreferenciasCalendario = () => {
           </div>
 
           <div className="pref-field">
-            <label>Primer día de la semana</label>
+            <label>{tr('pcal_firstDay')}</label>
             <input
               name="primer_dia_semana"
               value={form.primer_dia_semana}
               onChange={handleChange}
-              placeholder="Lunes / Domingo"
             />
           </div>
 
           <div className="pref-field">
-            <label>Nº máximo de eventos próximos</label>
+            <label>{tr('pcal_maxEvents')}</label>
             <input
               type="number"
               name="n_max_eventos"
@@ -60,13 +60,13 @@ const PreferenciasCalendario = () => {
           </div>
 
           <div className="pref-actions">
-            <button type="submit" className="btn-guardar">GUARDAR CAMBIOS</button>
+            <button type="submit" className="btn-guardar">{tr('ae_saveChanges')}</button>
             <button
               type="button"
               className="btn-cancelar"
               onClick={() => navigate('/perfil/preferencias')}
             >
-              CANCELAR
+              {tr('cancel')}
             </button>
           </div>
         </form>

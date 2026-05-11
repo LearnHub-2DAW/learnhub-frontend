@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useLang } from '../context/LangContext';
 import {
   getCursoById, getModulosByCurso, getRecursosByModulo,
   createModulo, updateModulo, deleteModulo,
@@ -21,6 +22,7 @@ const CursoPagina = () => {
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
   const isAdmin = user?.roles?.includes('admin');
   const toast = useToast();
+  const { tr } = useLang();
 
   const [curso, setCurso] = useState(null);
   const [cursoModal, setCursoModal] = useState(false);
@@ -86,7 +88,7 @@ const CursoPagina = () => {
       const res = await updateCurso(id, { nombre: cursoNombre });
       setCurso(res.data);
       setCursoModal(false);
-      toast('Curso actualizado correctamente');
+      toast(tr('cp_courseUpdated'));
     } catch (err) {
       setCursoError(err.response?.data?.message || 'Error al guardar');
     } finally {
@@ -149,7 +151,7 @@ const CursoPagina = () => {
     if (!window.confirm(`¿Eliminar el módulo "${mod.nombre}"?`)) return;
     try {
       await deleteModulo(mod.id);
-      toast('Módulo eliminado');
+      toast(tr('cp_moduleDeleted'));
       setModulos(prev => {
         const filtered = prev.filter(m => m.id !== mod.id);
         if (moduloActivo?.id === mod.id) {
@@ -218,14 +220,14 @@ const CursoPagina = () => {
     if (!window.confirm(`¿Eliminar el recurso "${r.titulo}"?`)) return;
     try {
       await deleteRecurso(r.id);
-      toast('Recurso eliminado');
+      toast(tr('cp_resourceDeleted'));
       setRecursos(prev => prev.filter(rec => rec.id !== r.id));
     } catch (err) {
       toast(err.response?.data?.message || 'Error al eliminar', 'error');
     }
   };
 
-  if (loading) return <div className="curso-loading">Cargando curso...</div>;
+  if (loading) return <div className="curso-loading">{tr('cp_loadingCourse')}</div>;
 
   return (
     <div className="curso-page">
@@ -238,7 +240,7 @@ const CursoPagina = () => {
               <div className="curso-title-block">
                 <h1 className="curso-title">{curso?.nombre || 'Título Del Curso'}</h1>
                 <p className="curso-breadcrumb">
-                  <Link to="/dashboard">Inicio</Link>
+                  <Link to="/dashboard">{tr('home')}</Link>
                   <span> / </span>
                   <span>{curso?.nombre || 'Curso'}</span>
                 </p>
@@ -251,23 +253,23 @@ const CursoPagina = () => {
                 {gearOpen && (
                   <ul className="gear-dropdown">
                     <li onClick={() => { navigate(`/curso/${id}/calificaciones`); setGearOpen(false); }}>
-                      Calificaciones
+                      {tr('h_grades')}
                     </li>
                     <li onClick={() => { navigate(`/curso/${id}/participantes`); setGearOpen(false); }}>
-                      Participantes
+                      {tr('cp_participants')}
                     </li>
-                    {isStaff && <li onClick={openEditarCurso}>Editar ajustes</li>}
-                    {isAdmin && <li className="gear-item-danger" onClick={handleEliminarCurso}>Eliminar curso</li>}
+                    {isStaff && <li onClick={openEditarCurso}>{tr('cp_editSettings')}</li>}
+                    {isAdmin && <li className="gear-item-danger" onClick={handleEliminarCurso}>{tr('cp_deleteCourse')}</li>}
                   </ul>
                 )}
               </div>
             </div>
 
             <div className="subcarpetas-section">
-              <div className="subcarpetas-header">Subcarpetas</div>
+              <div className="subcarpetas-header">{tr('cp_subfolders')}</div>
               <div className="subcarpetas-list">
                 {modulos.length === 0 ? (
-                  <p className="empty-section">No hay módulos en este curso</p>
+                  <p className="empty-section">{tr('cp_noModulesInCourse')}</p>
                 ) : (
                   modulos.map(mod => (
                     <div
@@ -284,9 +286,9 @@ const CursoPagina = () => {
                       </span>
                       {isStaff && (
                         <span className="subcarpeta-actions">
-                          <button className="icon-action" title="Editar" onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
+                          <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
                           {isAdmin && (
-                            <button className="icon-action" title="Eliminar" onClick={(e) => handleDeleteModulo(e, mod)}>🗑️</button>
+                            <button className="icon-action" title={tr('delete')} onClick={(e) => handleDeleteModulo(e, mod)}>🗑️</button>
                           )}
                         </span>
                       )}
@@ -294,7 +296,7 @@ const CursoPagina = () => {
                   ))
                 )}
                 {isStaff && (
-                  <button className="btn-add-item" onClick={openCrearModulo}>＋ Nuevo módulo</button>
+                  <button className="btn-add-item" onClick={openCrearModulo}>{tr('cp_newModule')}</button>
                 )}
               </div>
             </div>
@@ -305,13 +307,13 @@ const CursoPagina = () => {
                   <div className="contenido-header-row">
                     <h3 className="contenido-modulo-title">{moduloActivo.nombre}</h3>
                     {isStaff && (
-                      <button className="btn-add-recurso" onClick={openCrearRecurso}>＋ Nuevo recurso</button>
+                      <button className="btn-add-recurso" onClick={openCrearRecurso}>{tr('cp_newResource')}</button>
                     )}
                   </div>
                   {loadingRecursos ? (
-                    <p className="contenido-placeholder-txt">Cargando recursos...</p>
+                    <p className="contenido-placeholder-txt">{tr('cp_loadingResources')}</p>
                   ) : recursos.length === 0 ? (
-                    <p className="contenido-placeholder-txt">No hay recursos en este módulo</p>
+                    <p className="contenido-placeholder-txt">{tr('cp_noResources')}</p>
                   ) : (
                     <ul className="recursos-list">
                       {recursos.map(r => (
@@ -324,14 +326,14 @@ const CursoPagina = () => {
                           <span className="recurso-titulo">{r.titulo}</span>
                           {r.es_entregable === 1 && r.fecha_entrega && (
                             <span className="recurso-fecha">
-                              Entrega: {new Date(r.fecha_entrega).toLocaleDateString('es-ES')}
+                              {tr('cp_dueDate')}: {new Date(r.fecha_entrega).toLocaleDateString()}
                             </span>
                           )}
                           {isStaff && (
                             <span className="recurso-actions">
-                              <button className="icon-action" title="Editar" onClick={(e) => openEditarRecurso(e, r)}>✏️</button>
+                              <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarRecurso(e, r)}>✏️</button>
                               {isAdmin && (
-                                <button className="icon-action" title="Eliminar" onClick={(e) => handleDeleteRecurso(e, r)}>🗑️</button>
+                                <button className="icon-action" title={tr('delete')} onClick={(e) => handleDeleteRecurso(e, r)}>🗑️</button>
                               )}
                             </span>
                           )}
@@ -341,7 +343,7 @@ const CursoPagina = () => {
                   )}
                 </div>
               ) : (
-                <p className="contenido-placeholder-txt">Selecciona un módulo</p>
+                <p className="contenido-placeholder-txt">{tr('cp_selectModule')}</p>
               )}
             </div>
           </div>
@@ -349,7 +351,7 @@ const CursoPagina = () => {
 
         <div className="curso-sidebar">
           <div className="widget-box">
-            <div className="widget-header">Calendario</div>
+            <div className="widget-header">{tr('cal_title')}</div>
             <div className="calendar-placeholder" />
           </div>
         </div>
@@ -359,9 +361,9 @@ const CursoPagina = () => {
       {cursoModal && (
         <div className="modal-overlay" onClick={() => setCursoModal(false)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h3 className="modal-title">Editar curso</h3>
+            <h3 className="modal-title">{tr('cp_editCourse')}</h3>
             <div className="modal-field">
-              <label>Nombre del curso</label>
+              <label>{tr('cp_courseNameLabel')}</label>
               <input
                 type="text"
                 value={cursoNombre}
@@ -372,9 +374,9 @@ const CursoPagina = () => {
             </div>
             {cursoError && <p className="modal-error">{cursoError}</p>}
             <div className="modal-actions">
-              <button className="btn-modal-cancel" onClick={() => setCursoModal(false)}>Cancelar</button>
+              <button className="btn-modal-cancel" onClick={() => setCursoModal(false)}>{tr('cancel')}</button>
               <button className="btn-modal-ok" onClick={submitEditarCurso} disabled={cursoSaving}>
-                {cursoSaving ? 'Guardando...' : 'Guardar'}
+                {cursoSaving ? tr('saving') : tr('save')}
               </button>
             </div>
           </div>
@@ -386,21 +388,21 @@ const CursoPagina = () => {
         <div className="modal-overlay" onClick={() => setModuloModal(m => ({ ...m, open: false }))}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
             <h3 className="modal-title">
-              {moduloModal.modo === 'crear' ? 'Nuevo módulo' : 'Editar módulo'}
+              {moduloModal.modo === 'crear' ? tr('cp_newModuleTitle') : tr('cp_editModule')}
             </h3>
             <div className="modal-field">
-              <label>Nombre</label>
+              <label>{tr('cp_moduleNameLabel')}</label>
               <input
                 type="text"
                 value={moduloForm.nombre}
                 onChange={e => setModuloForm(f => ({ ...f, nombre: e.target.value }))}
-                placeholder="Nombre del módulo"
+                placeholder={tr('cp_moduleName')}
                 autoFocus
                 onKeyDown={e => e.key === 'Enter' && submitModulo()}
               />
             </div>
             <div className="modal-field">
-              <label>URL de imagen (opcional)</label>
+              <label>{tr('cp_moduleImage')}</label>
               <input
                 type="text"
                 value={moduloForm.url_imagen}
@@ -410,7 +412,7 @@ const CursoPagina = () => {
               {moduloForm.url_imagen && (
                 <img
                   src={moduloForm.url_imagen}
-                  alt="Vista previa"
+                  alt={tr('cp_imagePreview')}
                   className="modal-img-preview"
                   onError={e => { e.target.style.display = 'none'; }}
                   onLoad={e => { e.target.style.display = 'block'; }}
@@ -420,10 +422,10 @@ const CursoPagina = () => {
             {modalError && <p className="modal-error">{modalError}</p>}
             <div className="modal-actions">
               <button className="btn-modal-cancel" onClick={() => setModuloModal(m => ({ ...m, open: false }))}>
-                Cancelar
+                {tr('cancel')}
               </button>
               <button className="btn-modal-ok" onClick={submitModulo} disabled={saving}>
-                {saving ? 'Guardando...' : 'Guardar'}
+                {saving ? tr('saving') : tr('save')}
               </button>
             </div>
           </div>
@@ -435,26 +437,25 @@ const CursoPagina = () => {
         <div className="modal-overlay" onClick={() => setRecursoModal(m => ({ ...m, open: false }))}>
           <div className="modal-box modal-box-lg" onClick={e => e.stopPropagation()}>
             <h3 className="modal-title">
-              {recursoModal.modo === 'crear' ? 'Nuevo recurso' : 'Editar recurso'}
+              {recursoModal.modo === 'crear' ? tr('cp_newResourceTitle') : tr('cp_editResource')}
             </h3>
 
             <div className="modal-field">
-              <label>Título</label>
+              <label>{tr('cp_resourceTitle')}</label>
               <input
                 type="text"
                 value={recursoForm.titulo}
                 onChange={e => setRecursoForm(f => ({ ...f, titulo: e.target.value }))}
-                placeholder="Título del recurso"
+                placeholder={tr('cp_resourceTitle')}
                 autoFocus
               />
             </div>
 
             <div className="modal-field">
-              <label>Contenido / Descripción</label>
+              <label>{tr('cp_resourceContent')}</label>
               <textarea
                 value={recursoForm.contenido}
                 onChange={e => setRecursoForm(f => ({ ...f, contenido: e.target.value }))}
-                placeholder="Descripción opcional"
                 rows={3}
               />
             </div>
@@ -466,13 +467,13 @@ const CursoPagina = () => {
                   checked={recursoForm.es_entregable}
                   onChange={e => setRecursoForm(f => ({ ...f, es_entregable: e.target.checked }))}
                 />
-                Es una tarea entregable
+                {tr('cp_deliverable')}
               </label>
             </div>
 
             {recursoForm.es_entregable && (
               <div className="modal-field">
-                <label>Fecha de entrega</label>
+                <label>{tr('cp_dueDate')}</label>
                 <input
                   type="date"
                   value={recursoForm.fecha_entrega}
@@ -482,7 +483,7 @@ const CursoPagina = () => {
             )}
 
             <div className="modal-field">
-              <label>Archivo adjunto (opcional)</label>
+              <label>{tr('cp_attachFile')}</label>
               <input
                 type="file"
                 onChange={e => setRecursoForm(f => ({ ...f, archivo: e.target.files[0] || null }))}
@@ -492,10 +493,10 @@ const CursoPagina = () => {
             {modalError && <p className="modal-error">{modalError}</p>}
             <div className="modal-actions">
               <button className="btn-modal-cancel" onClick={() => setRecursoModal(m => ({ ...m, open: false }))}>
-                Cancelar
+                {tr('cancel')}
               </button>
               <button className="btn-modal-ok" onClick={submitRecurso} disabled={saving}>
-                {saving ? 'Guardando...' : 'Guardar'}
+                {saving ? tr('saving') : tr('save')}
               </button>
             </div>
           </div>
