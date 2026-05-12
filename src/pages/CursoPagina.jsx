@@ -8,7 +8,9 @@ import {
   createModulo, updateModulo, deleteModulo,
   createRecurso, updateRecurso, deleteRecurso,
   updateCurso, deleteCurso,
+  enrollModulo, unenrollModulo,
 } from '../api/cursos.api';
+import { getMisModulos } from '../api/usuario.api';
 import './CursoPagina.css';
 
 const EMPTY_MODULO = { nombre: '', url_imagen: '' };
@@ -37,6 +39,9 @@ const CursoPagina = () => {
   const [gearOpen, setGearOpen] = useState(false);
   const gearRef = useRef(null);
 
+  const [enrolledIds, setEnrolledIds] = useState(new Set());
+  const [enrollingId, setEnrollingId] = useState(null);
+
   const [moduloModal, setModuloModal] = useState({ open: false, modo: 'crear', id: null });
   const [moduloForm, setModuloForm] = useState(EMPTY_MODULO);
   const [recursoModal, setRecursoModal] = useState({ open: false, modo: 'crear', id: null });
@@ -45,11 +50,17 @@ const CursoPagina = () => {
   const [modalError, setModalError] = useState('');
 
   useEffect(() => {
-    Promise.all([getCursoById(id), getModulosByCurso(id)])
-      .then(([cursoRes, modulosRes]) => {
+    const promises = [getCursoById(id), getModulosByCurso(id)];
+    if (!isStaff) promises.push(getMisModulos().catch(() => ({ data: [] })));
+
+    Promise.all(promises)
+      .then(([cursoRes, modulosRes, modulosUsuarioRes]) => {
         setCurso(cursoRes.data);
         setModulos(modulosRes.data);
         if (modulosRes.data.length > 0) setModuloActivo(modulosRes.data[0]);
+        if (modulosUsuarioRes) {
+          setEnrolledIds(new Set((modulosUsuarioRes.data || []).map(m => m.id)));
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -104,6 +115,27 @@ const CursoPagina = () => {
       navigate('/dashboard');
     } catch (err) {
       toast(err.response?.data?.message || 'Error al eliminar el curso', 'error');
+    }
+  };
+
+  // ── Matriculación ────────────────────────────────────────
+  const handleEnroll = async (e, mod) => {
+    e.stopPropagation();
+    setEnrollingId(mod.id);
+    try {
+      if (enrolledIds.has(mod.id)) {
+        await unenrollModulo(mod.id);
+        setEnrolledIds(prev => { const s = new Set(prev); s.delete(mod.id); return s; });
+        toast(tr('cp_unenroll') + ': ' + mod.nombre);
+      } else {
+        await enrollModulo(mod.id);
+        setEnrolledIds(prev => new Set([...prev, mod.id]));
+        toast(tr('cp_enrolled') + ': ' + mod.nombre);
+      }
+    } catch (err) {
+      toast(err.response?.data?.message || err.response?.data?.error || 'Error', 'error');
+    } finally {
+      setEnrollingId(null);
     }
   };
 
@@ -284,13 +316,25 @@ const CursoPagina = () => {
                         }
                         {mod.nombre}
                       </span>
-                      {isStaff && (
+                      {isStaff ? (
                         <span className="subcarpeta-actions">
                           <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
                           {isAdmin && (
                             <button className="icon-action" title={tr('delete')} onClick={(e) => handleDeleteModulo(e, mod)}>🗑️</button>
                           )}
                         </span>
+                      ) : (
+                        <button
+                          className={`btn-enroll-modulo ${enrolledIds.has(mod.id) ? 'enrolled' : ''}`}
+                          onClick={(e) => handleEnroll(e, mod)}
+                          disabled={enrollingId === mod.id}
+                        >
+                          {enrollingId === mod.id
+                            ? tr('cp_enrolling')
+                            : enrolledIds.has(mod.id)
+                              ? tr('cp_unenroll')
+                              : tr('cp_enroll')}
+                        </button>
                       )}
                     </div>
                   ))

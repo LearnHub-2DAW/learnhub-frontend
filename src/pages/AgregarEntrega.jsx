@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getRecursoById, getModuloById, getCursoById } from '../api/cursos.api';
+import { getRecursoById, getModuloById, getCursoById, submitEntrega } from '../api/cursos.api';
 import { useToast } from '../context/ToastContext';
 import { useLang } from '../context/LangContext';
 import './AgregarEntrega.css';
@@ -15,7 +15,9 @@ const AgregarEntrega = () => {
   const [modulo, setModulo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [archivos, setArchivos] = useState([]);
+  const [contenido, setContenido] = useState('');
   const [dragging, setDragging] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -48,8 +50,21 @@ const AgregarEntrega = () => {
   };
 
   const handleGuardar = async () => {
-    toast('Entrega guardada (funcionalidad pendiente)', 'info');
-    navigate(`/recurso/${id}`);
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      if (contenido.trim()) fd.append('contenido_enviado', contenido.trim());
+      archivos.forEach(f => fd.append('archivos', f));
+
+      await submitEntrega(id, fd);
+      toast(tr('ae_submitOk'));
+      navigate(`/recurso/${id}`);
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Error al enviar';
+      toast(msg, 'error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) return <div className="page-loading">{tr('loading')}</div>;
@@ -74,6 +89,18 @@ const AgregarEntrega = () => {
           <h2 className="tarea-titulo">{recurso?.titulo || tr('dt_courseTitle')}</h2>
           <div className="tarea-descripcion">
             {recurso?.contenido || tr('ae_taskDesc')}
+          </div>
+
+          <div className="modal-field" style={{ marginTop: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}>
+              {tr('ae_textContent')}
+            </label>
+            <textarea
+              value={contenido}
+              onChange={e => setContenido(e.target.value)}
+              rows={4}
+              style={{ width: '100%', boxSizing: 'border-box', padding: '8px', borderRadius: '4px', border: '1px solid var(--border-sep)', background: 'var(--bg-card)', color: 'var(--text-main)', resize: 'vertical' }}
+            />
           </div>
 
           <div
@@ -106,7 +133,9 @@ const AgregarEntrega = () => {
           )}
 
           <div className="entrega-actions">
-            <button className="btn-guardar" onClick={handleGuardar}>{tr('ae_saveChanges')}</button>
+            <button className="btn-guardar" onClick={handleGuardar} disabled={submitting}>
+              {submitting ? tr('ae_submitting') : tr('ae_saveChanges')}
+            </button>
             <button className="btn-cancelar" onClick={() => navigate(`/recurso/${id}`)}>{tr('cancel')}</button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo } from '../api/cursos.api';
+import { getMisModulos } from '../api/usuario.api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useLang } from '../context/LangContext';
@@ -112,10 +113,23 @@ const Dashboard = () => {
   const [timelineCount, setTimelineCount] = useState(5);
 
   useEffect(() => {
-    getCursos()
-      .then(res => setCursos(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    if (isStaff) {
+      getCursos()
+        .then(res => setCursos(res.data))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    } else {
+      Promise.all([getCursos(), getMisModulos().catch(() => ({ data: [] }))])
+        .then(([cursosRes, misModulosRes]) => {
+          const idsCursosMatriculados = new Set(
+            (misModulosRes.data || []).map(m => m.id_curso)
+          );
+          const cursosAlumno = cursosRes.data.filter(c => idsCursosMatriculados.has(c.id));
+          setCursos(cursosAlumno);
+        })
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
   }, []);
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useLang } from '../context/LangContext';
-import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso } from '../api/cursos.api';
+import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso, getMyEntrega, getEntregas } from '../api/cursos.api';
 import { getFileUrl } from '../api/axios';
 import './DetalleTarea.css';
 
@@ -24,6 +24,11 @@ const DetalleTarea = () => {
   const [curso, setCurso] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [miEntrega, setMiEntrega] = useState(null);
+  const [todasEntregas, setTodasEntregas] = useState([]);
+  const [mostrarEntregas, setMostrarEntregas] = useState(false);
+  const [loadingEntregas, setLoadingEntregas] = useState(false);
+
   const [editModal, setEditModal] = useState(false);
   const [editForm, setEditForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
@@ -39,10 +44,27 @@ const DetalleTarea = () => {
         setModulo(m);
         const curRes = await getCursoById(m.id_curso);
         setCurso(curRes.data);
+
+        if (r.es_entregable === 1 && !isStaff) {
+          getMyEntrega(r.id).then(e => setMiEntrega(e.data)).catch(() => setMiEntrega(null));
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
+
+  const cargarTodasEntregas = async () => {
+    setLoadingEntregas(true);
+    try {
+      const res = await getEntregas(id);
+      setTodasEntregas(res.data);
+      setMostrarEntregas(true);
+    } catch (err) {
+      toast(err.response?.data?.message || 'Error al cargar entregas', 'error');
+    } finally {
+      setLoadingEntregas(false);
+    }
+  };
 
   const openEditar = () => {
     setEditForm({
@@ -112,7 +134,6 @@ const DetalleTarea = () => {
     <div className="detalle-tarea-page">
       <div className="page-card">
 
-        {/* Cabecera curso */}
         <div className="page-card-header">
           <div className="page-header-row">
             <div>
@@ -137,13 +158,11 @@ const DetalleTarea = () => {
         </div>
 
         <div className="tarea-body">
-          {/* Nombre y descripción */}
           <h2 className="tarea-titulo">{recurso?.titulo || 'Nombre de la Tarea'}</h2>
           <div className="tarea-descripcion">
             {recurso?.contenido || 'Descripción del recurso'}
           </div>
 
-          {/* Archivo adjunto del recurso */}
           {recurso?.ruta_archivo && (
             <div className="tarea-archivo">
               <a
@@ -157,14 +176,16 @@ const DetalleTarea = () => {
             </div>
           )}
 
-          {recurso?.es_entregable === 1 && (
+          {recurso?.es_entregable === 1 && !isStaff && (
             <>
               <h3 className="estado-titulo">{tr('dt_submissionStatus')}</h3>
               <table className="estado-table">
                 <tbody>
                   <tr>
                     <td className="estado-label">{tr('dt_submissionStatus')}</td>
-                    <td className="estado-value">{tr('dt_noSubmission')}</td>
+                    <td className="estado-value">
+                      {miEntrega ? tr('dt_submitted') : tr('dt_noSubmission')}
+                    </td>
                   </tr>
                   <tr>
                     <td className="estado-label">{tr('dt_gradeStatus')}</td>
@@ -178,14 +199,34 @@ const DetalleTarea = () => {
                     <td className="estado-label">{tr('dt_timeRemaining')}</td>
                     <td className="estado-value">{tiempoRestante()}</td>
                   </tr>
-                  <tr>
-                    <td className="estado-label">{tr('dt_lastModified')}</td>
-                    <td className="estado-value">—</td>
-                  </tr>
-                  <tr>
-                    <td className="estado-label">{tr('dt_submissionComment')}</td>
-                    <td className="estado-value">—</td>
-                  </tr>
+                  {miEntrega && (
+                    <>
+                      <tr>
+                        <td className="estado-label">{tr('dt_lastModified')}</td>
+                        <td className="estado-value">{formatFecha(miEntrega.fecha_entrega)}</td>
+                      </tr>
+                      {miEntrega.contenido_enviado && (
+                        <tr>
+                          <td className="estado-label">{tr('dt_submissionComment')}</td>
+                          <td className="estado-value">{miEntrega.contenido_enviado}</td>
+                        </tr>
+                      )}
+                      {Array.isArray(miEntrega.ruta_archivo) && miEntrega.ruta_archivo.length > 0 && (
+                        <tr>
+                          <td className="estado-label">{tr('dt_submissionFiles')}</td>
+                          <td className="estado-value">
+                            {miEntrega.ruta_archivo.map((ruta, i) => (
+                              <div key={i}>
+                                <a href={getFileUrl(ruta)} target="_blank" rel="noopener noreferrer">
+                                  📎 {ruta.split('/').pop()}
+                                </a>
+                              </div>
+                            ))}
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  )}
                 </tbody>
               </table>
 
@@ -194,15 +235,58 @@ const DetalleTarea = () => {
                   className="btn-agregar-entrega"
                   onClick={() => navigate(`/recurso/${id}/entrega`)}
                 >
-                  {tr('dt_addSubmission')}
+                  {miEntrega ? tr('dt_editSubmission') : tr('dt_addSubmission')}
                 </button>
               </div>
             </>
           )}
+
+          {recurso?.es_entregable === 1 && isStaff && (
+            <div className="staff-entregas-section">
+              <div className="staff-entregas-header">
+                <h3 className="estado-titulo">{tr('dt_submissions')}</h3>
+                <button
+                  className="btn-ver-entregas"
+                  onClick={mostrarEntregas ? () => setMostrarEntregas(false) : cargarTodasEntregas}
+                  disabled={loadingEntregas}
+                >
+                  {loadingEntregas ? tr('loading') : mostrarEntregas ? '▲ Ocultar' : tr('dt_viewSubmissions')}
+                </button>
+              </div>
+
+              {mostrarEntregas && (
+                <div className="entregas-lista">
+                  {todasEntregas.length === 0 ? (
+                    <p className="no-data">{tr('dt_noSubmissions')}</p>
+                  ) : (
+                    todasEntregas.map((e, i) => (
+                      <div key={i} className="entrega-card">
+                        <div className="entrega-card-header">
+                          <strong>{e.nombre ? `${e.nombre} ${e.apellidos || ''}`.trim() : e.nombre_usuario}</strong>
+                          <span className="entrega-fecha">{formatFecha(e.fecha_entrega)}</span>
+                        </div>
+                        {e.contenido_enviado && (
+                          <p className="entrega-contenido">{e.contenido_enviado}</p>
+                        )}
+                        {Array.isArray(e.ruta_archivo) && e.ruta_archivo.length > 0 && (
+                          <div className="entrega-archivos">
+                            {e.ruta_archivo.map((ruta, j) => (
+                              <a key={j} href={getFileUrl(ruta)} target="_blank" rel="noopener noreferrer" className="entrega-archivo-link">
+                                📎 {ruta.split('/').pop()}
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Modal: Editar recurso */}
       {editModal && (
         <div className="modal-overlay" onClick={() => setEditModal(false)}>
           <div className="modal-box modal-box-lg" onClick={e => e.stopPropagation()}>
