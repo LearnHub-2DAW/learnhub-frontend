@@ -14,7 +14,13 @@ export const deleteCurso = (id) => api.delete(`/cursos/${id}`);
 export const createModulo = (data) => api.post('/modulos', data);
 export const updateModulo = (id, data) => api.put(`/modulos/${id}`, data);
 export const deleteModulo = (id) => api.delete(`/modulos/${id}`);
+export const enrollModulo = (id) => api.post(`/modulos/${id}/enroll`, {});
+export const unenrollModulo = (id) => api.delete(`/modulos/${id}/enroll`);
+export const getEnrolledUsers = (id) => api.get(`/modulos/${id}/usuarios`);
 
 export const createRecurso = (formData) => api.post('/recursos', formData);
 export const updateRecurso = (id, formData) => api.put(`/recursos/${id}`, formData);
 export const deleteRecurso = (id) => api.delete(`/recursos/${id}`);
+export const submitEntrega = (id, formData) => api.post(`/recursos/${id}/entregar`, formData);
+export const getMyEntrega = (id) => api.get(`/recursos/${id}/entrega`);
+export const getEntregas = (id) => api.get(`/recursos/${id}/entregas`);

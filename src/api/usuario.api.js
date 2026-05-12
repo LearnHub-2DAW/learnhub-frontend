@@ -11,3 +11,6 @@ export const updatePreferenciasCalendario = (datos) =>
 
 export const updatePreferenciasNotificaciones = (datos) =>
   api.put('/usuarios/me/preferencias-notificaciones', datos);
+
+export const getMisModulos = () => api.get('/usuarios/me/modulos');
+export const getMisEntregas = () => api.get('/usuarios/me/entregas');

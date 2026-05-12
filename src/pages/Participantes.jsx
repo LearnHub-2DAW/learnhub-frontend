@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getCursoById } from '../api/cursos.api';
+import { getCursoById, getModulosByCurso, getEnrolledUsers } from '../api/cursos.api';
 import { useLang } from '../context/LangContext';
 import './Participantes.css';
 
@@ -13,25 +13,55 @@ const Participantes = () => {
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState('');
   const [letraActiva, setLetraActiva] = useState(null);
-  const [participantes] = useState([]);
+  const [participantes, setParticipantes] = useState([]);
 
   useEffect(() => {
-    getCursoById(id)
-      .then(res => setCurso(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const cargar = async () => {
+      try {
+        const [cursoRes, modulosRes] = await Promise.all([
+          getCursoById(id),
+          getModulosByCurso(id),
+        ]);
+        setCurso(cursoRes.data);
+
+        const usuariosPorModulo = await Promise.all(
+          modulosRes.data.map(m =>
+            getEnrolledUsers(m.id)
+              .then(r => (r.data || []).map(u => ({ ...u, _modulo: m.nombre })))
+              .catch(() => [])
+          )
+        );
+
+        const vistos = new Set();
+        const agregados = [];
+        for (const lista of usuariosPorModulo) {
+          for (const u of lista) {
+            if (!vistos.has(u.id)) {
+              vistos.add(u.id);
+              agregados.push(u);
+            }
+          }
+        }
+        setParticipantes(agregados);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    cargar();
   }, [id]);
 
   const participantesFiltrados = participantes.filter(p => {
-    const nombre = `${p.nombre} ${p.apellidos}`.toLowerCase();
+    const nombre = `${p.nombre || ''} ${p.apellidos || ''} ${p.nombre_usuario || ''}`.toLowerCase();
     const coincideFiltro = nombre.includes(filtro.toLowerCase());
     const coincideLetra = letraActiva
-      ? p.nombre?.toUpperCase().startsWith(letraActiva)
+      ? (p.nombre || p.nombre_usuario || '').toUpperCase().startsWith(letraActiva)
       : true;
     return coincideFiltro && coincideLetra;
   });
 
-  if (loading) return <div className="page-loading">{tr('loading')}</div>;
+  if (loading) return <div className="page-loading">{tr('pt_loadingParticipants')}</div>;
 
   return (
     <div className="participantes-page">
@@ -81,7 +111,7 @@ const Participantes = () => {
               <tr>
                 <th>{tr('pt_colName')}</th>
                 <th>{tr('pt_colRoles')}</th>
-                <th>{tr('pt_colGroups')}</th>
+                <th>{tr('pt_module')}</th>
                 <th>{tr('pt_colLastAccess')}</th>
               </tr>
             </thead>
@@ -93,12 +123,12 @@ const Participantes = () => {
                   </td>
                 </tr>
               ) : (
-                participantesFiltrados.map((p, i) => (
-                  <tr key={i}>
-                    <td>{p.nombre} {p.apellidos}</td>
-                    <td>{p.rol}</td>
-                    <td>{p.grupo || '—'}</td>
-                    <td>{p.ultimo_acceso || tr('pt_never')}</td>
+                participantesFiltrados.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.nombre ? `${p.nombre} ${p.apellidos || ''}`.trim() : p.nombre_usuario}</td>
+                    <td>{Array.isArray(p.roles) ? p.roles.join(', ') : (p.rol || p.roles || '—')}</td>
+                    <td>{p._modulo || '—'}</td>
+                    <td>{tr('pt_never')}</td>
                   </tr>
                 ))
               )}
