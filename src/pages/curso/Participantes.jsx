@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getCursoById, getModulosByCurso, getEnrolledUsers } from '../api/cursos.api';
-import { useLang } from '../context/LangContext';
+import { getCursoById, getModulosByCurso, getEnrolledUsers } from '../../api/cursos.api';
+import { useLang } from '../../context/LangContext';
 import './Participantes.css';
 
 const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');

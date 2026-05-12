@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLang } from '../context/LangContext';
-import PerfilHeader from '../components/PerfilHeader';
+import { useLang } from '../../context/LangContext';
+import PerfilHeader from '../../components/PerfilHeader';
 import './PreferenciasNotificacion.css';
 
 const PreferenciasNotificacion = () => {

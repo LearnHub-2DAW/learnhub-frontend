@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
-import { useLang } from '../context/LangContext';
-import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso, getMyEntrega, getEntregas } from '../api/cursos.api';
-import { getFileUrl } from '../api/axios';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
+import { useLang } from '../../context/LangContext';
+import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso, getMyEntrega, getEntregas } from '../../api/cursos.api';
+import { getFileUrl } from '../../api/axios';
 import './DetalleTarea.css';
 
 const EMPTY_FORM = { titulo: '', contenido: '', es_entregable: false, fecha_entrega: '', archivo: null };

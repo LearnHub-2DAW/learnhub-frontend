@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useLang } from '../context/LangContext';
-import PerfilHeader from '../components/PerfilHeader';
+import { useAuth } from '../../context/AuthContext';
+import { useLang } from '../../context/LangContext';
+import PerfilHeader from '../../components/PerfilHeader';
 import './EditarPerfil.css';
 
 const EditarPerfil = () => {

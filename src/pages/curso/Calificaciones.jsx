@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { getCursoById } from '../api/cursos.api';
-import { useLang } from '../context/LangContext';
+import { useAuth } from '../../context/AuthContext';
+import { getCursoById } from '../../api/cursos.api';
+import { useLang } from '../../context/LangContext';
 import './Calificaciones.css';
 
 const Calificaciones = () => {

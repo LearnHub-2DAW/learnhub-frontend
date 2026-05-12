@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../schemas/auth.schema";
-import { useAuth } from "../context/AuthContext";
+import { registerSchema } from "../../schemas/auth.schema";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useLang } from "../context/LangContext";
+import { useLang } from "../../context/LangContext";
 import "./Register.css";
 
 const Register = () => {
