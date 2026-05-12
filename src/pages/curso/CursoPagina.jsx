@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
-import { useLang } from '../context/LangContext';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
+import { useLang } from '../../context/LangContext';
 import {
   getCursoById, getModulosByCurso, getRecursosByModulo,
   createModulo, updateModulo, deleteModulo,
   createRecurso, updateRecurso, deleteRecurso,
   updateCurso, deleteCurso,
   enrollModulo, unenrollModulo,
-} from '../api/cursos.api';
-import { getMisModulos } from '../api/usuario.api';
+} from '../../api/cursos.api';
+import { getMisModulos } from '../../api/usuario.api';
 import './CursoPagina.css';
 
 const EMPTY_MODULO = { nombre: '', url_imagen: '' };

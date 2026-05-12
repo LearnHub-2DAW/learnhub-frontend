@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { getCursos } from '../api/cursos.api';
-import { useLang } from '../context/LangContext';
-import PerfilHeader from '../components/PerfilHeader';
+import { useAuth } from '../../context/AuthContext';
+import { getCursos } from '../../api/cursos.api';
+import { useLang } from '../../context/LangContext';
+import PerfilHeader from '../../components/PerfilHeader';
 import './CalificacionesCursos.css';
 
 const CalificacionesCursos = () => {

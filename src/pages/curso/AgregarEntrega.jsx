@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getRecursoById, getModuloById, getCursoById, submitEntrega } from '../api/cursos.api';
-import { useToast } from '../context/ToastContext';
-import { useLang } from '../context/LangContext';
+import { getRecursoById, getModuloById, getCursoById, submitEntrega } from '../../api/cursos.api';
+import { useToast } from '../../context/ToastContext';
+import { useLang } from '../../context/LangContext';
 import './AgregarEntrega.css';
 
 const AgregarEntrega = () => {

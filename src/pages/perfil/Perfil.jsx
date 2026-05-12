@@ -1,6 +1,6 @@
-import { useAuth } from '../context/AuthContext';
-import { useLang } from '../context/LangContext';
-import PerfilHeader from '../components/PerfilHeader';
+import { useAuth } from '../../context/AuthContext';
+import { useLang } from '../../context/LangContext';
+import PerfilHeader from '../../components/PerfilHeader';
 import './Perfil.css';
 
 const Perfil = () => {
