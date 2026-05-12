@@ -21,6 +21,8 @@ import CambiarContrasena from './pages/perfil/CambiarContrasena';
 import PreferenciasCalendario from './pages/perfil/PreferenciasCalendario';
 import PreferenciasNotificacion from './pages/perfil/PreferenciasNotificacion';
 import Calendario from './pages/Calendario';
+import MisEntregas from './pages/MisEntregas';
+import AdminUsuarios from './pages/admin/AdminUsuarios';
 import NotFound from './pages/NotFound';
 
 const PrivateRoute = ({ children }) => {
@@ -58,6 +60,8 @@ function App() {
                   <Route path="/perfil/preferencias" element={<P><Preferencias /></P>} />
                   <Route path="/perfil/preferencias/calendario" element={<P><PreferenciasCalendario /></P>} />
                   <Route path="/perfil/preferencias/notificaciones" element={<P><PreferenciasNotificacion /></P>} />
+                  <Route path="/mis-entregas" element={<P><MisEntregas /></P>} />
+                  <Route path="/admin/usuarios" element={<P><AdminUsuarios /></P>} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>

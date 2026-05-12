@@ -1,0 +1,120 @@
+.mis-entregas-page {
+  padding: 20px 40px;
+  background: var(--bg-page);
+  min-height: 100%;
+}
+
+.page-loading {
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.page-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.page-card-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin: 0 0 4px;
+}
+
+.page-breadcrumb {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.page-breadcrumb a {
+  color: var(--brand-hover);
+  text-decoration: none;
+}
+
+.page-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.mis-entregas-body {
+  padding: 16px 20px;
+}
+
+.no-data-msg {
+  text-align: center;
+  color: var(--text-faint);
+  padding: 40px 14px;
+  font-size: 0.9rem;
+}
+
+.entregas-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.entregas-table th {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+
+.entregas-table td {
+  padding: 10px 14px;
+  color: var(--text-base);
+  border: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+
+.entrega-row {
+  cursor: pointer;
+}
+
+.entrega-row:hover td {
+  background: var(--bg-widget);
+}
+
+.fecha-cell {
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.contenido-cell {
+  color: var(--text-secondary);
+  max-width: 300px;
+}
+
+.btn-ver-recurso {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-ver-recurso:hover {
+  background: var(--brand-hover);
+}
+
+@media (max-width: 768px) {
+  .mis-entregas-page { padding: 16px; }
+  .entregas-table { font-size: 0.8rem; }
+  .entregas-table th,
+  .entregas-table td { padding: 8px 10px; }
+  .contenido-cell { max-width: 160px; }
+}

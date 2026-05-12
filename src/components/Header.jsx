@@ -60,6 +60,10 @@ const Header = () => {
                     <Link to="/perfil">{tr('h_myProfile')}</Link>
                     <Link to="/dashboard">{tr('h_personalArea')}</Link>
                     <Link to="/calificaciones">{tr('h_grades')}</Link>
+                    <Link to="/mis-entregas">{tr('me_title')}</Link>
+                    {user?.roles?.includes('admin') && (
+                      <Link to="/admin/usuarios">{tr('nav_adminPanel')}</Link>
+                    )}
                     <button onClick={handleLogout}>{tr('h_logout')}</button>
                   </div>
                 </div>
@@ -137,6 +141,14 @@ const Header = () => {
               <Link to="/calificaciones" onClick={() => setNavOpen(false)}>
                 <span className="nav-check-box" /> {tr('nav_allCourses')}
               </Link>
+              <Link to="/mis-entregas" onClick={() => setNavOpen(false)}>
+                <span className="nav-check-box" /> {tr('me_title')}
+              </Link>
+              {user?.roles?.includes('admin') && (
+                <Link to="/admin/usuarios" onClick={() => setNavOpen(false)}>
+                  <span className="nav-check-box" /> {tr('nav_adminPanel')}
+                </Link>
+              )}
             </nav>
           </div>
         </div>

@@ -1,0 +1,196 @@
+.admin-page {
+  padding: 20px 40px;
+  background: var(--bg-page);
+  min-height: 100%;
+}
+
+.page-loading {
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.page-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.page-card-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin: 0 0 4px;
+}
+
+.page-breadcrumb {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.page-breadcrumb a {
+  color: var(--brand-hover);
+  text-decoration: none;
+}
+
+.page-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.admin-body {
+  padding: 16px 20px;
+}
+
+.admin-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.admin-filter-input {
+  flex: 1;
+  max-width: 400px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-input);
+  border-radius: 4px;
+  font-size: 0.88rem;
+  color: var(--text-base);
+  background: var(--bg-input);
+  outline: none;
+}
+
+.admin-filter-input:focus {
+  border-color: var(--brand-hover);
+}
+
+.admin-count {
+  font-size: 0.82rem;
+  color: var(--text-faint);
+}
+
+.no-data-msg {
+  text-align: center;
+  color: var(--text-faint);
+  padding: 40px 14px;
+  font-size: 0.9rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.admin-table th {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 10px 14px;
+  color: var(--text-base);
+  border: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:hover td {
+  background: var(--bg-widget);
+}
+
+.td-username {
+  font-weight: 500;
+  color: var(--text-heading);
+}
+
+.td-email {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.rol-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--bg-hover-mid);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.rol-change-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rol-select {
+  padding: 4px 8px;
+  border: 1px solid var(--border-input);
+  border-radius: 4px;
+  font-size: 0.82rem;
+  background: var(--bg-input);
+  color: var(--text-base);
+  cursor: pointer;
+}
+
+.btn-save-rol {
+  padding: 4px 10px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-save-rol:hover:not(:disabled) {
+  background: var(--brand-hover);
+}
+
+.btn-save-rol:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-delete-user {
+  padding: 4px 10px;
+  background: transparent;
+  color: #c0392b;
+  border: 1px solid #c0392b;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-delete-user:hover:not(:disabled) {
+  background: #c0392b;
+  color: #fff;
+}
+
+.btn-delete-user:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (max-width: 900px) {
+  .admin-page { padding: 16px; }
+  .admin-table { font-size: 0.8rem; }
+  .admin-table th,
+  .admin-table td { padding: 8px 10px; }
+  .td-email { display: none; }
+}

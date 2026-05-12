@@ -14,3 +14,7 @@ export const updatePreferenciasNotificaciones = (datos) =>
 
 export const getMisModulos = () => api.get('/usuarios/me/modulos');
 export const getMisEntregas = () => api.get('/usuarios/me/entregas');
+
+export const getUsuarios = () => api.get('/usuarios');
+export const deleteUsuarioAdmin = (id) => api.delete(`/usuarios/${id}`);
+export const changeRolUsuario = (id, rol) => api.put(`/usuarios/${id}/rol`, { rol });
