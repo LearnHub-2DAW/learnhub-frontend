@@ -1,12 +1,12 @@
 .cambiar-pass-page {
   padding: 20px 40px;
-  background: #f1f5f9;
+  background: var(--bg-page);
   min-height: 100%;
 }
 
 .cp-form-card {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 20px;
   max-width: 480px;
@@ -15,7 +15,7 @@
 .cp-form-title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1a2e26;
+  color: var(--text-heading);
   margin: 0 0 16px;
 }
 
@@ -28,7 +28,7 @@
 
 .cp-field label {
   font-size: 0.82rem;
-  color: #475569;
+  color: var(--text-secondary);
   width: 180px;
   flex-shrink: 0;
 }
@@ -47,20 +47,21 @@
 .cp-field input {
   flex: 1;
   padding: 6px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 3px;
   font-size: 0.85rem;
-  color: #333;
+  color: var(--text-base);
+  background: var(--bg-input);
   outline: none;
 }
 
 .cp-field input:focus {
-  border-color: #2d5a4c;
+  border-color: var(--brand-hover);
 }
 
 .cp-info {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-muted);
   cursor: help;
   flex-shrink: 0;
 }
@@ -79,7 +80,7 @@
 }
 
 .btn-guardar {
-  background: #1a2e26;
+  background: var(--brand);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -90,18 +91,18 @@
 }
 
 .btn-guardar:hover:not(:disabled) {
-  background: #2d5a4c;
+  background: var(--brand-hover);
 }
 
 .btn-guardar:disabled {
-  background: #94a3b8;
+  background: var(--text-faint);
   cursor: not-allowed;
 }
 
 .btn-cancelar {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #ddd;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 0.8rem;
@@ -110,37 +111,21 @@
 }
 
 .btn-cancelar:hover {
-  background: #e2e8f0;
+  background: var(--bg-hover-mid);
 }
 
 .cp-required-note {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
 @media (max-width: 768px) {
-  .cambiar-pass-page {
-    padding: 16px;
-  }
-
-  .cp-form-card {
-    max-width: 100%;
-  }
-
-  .cp-field {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .cp-field label {
-    width: auto;
-  }
-
-  .cp-input-row {
-    width: 100%;
-  }
+  .cambiar-pass-page { padding: 16px; }
+  .cp-form-card { max-width: 100%; }
+  .cp-field { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .cp-field label { width: auto; }
+  .cp-input-row { width: 100%; }
 }

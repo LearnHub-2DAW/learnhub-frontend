@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getCursoById } from '../api/cursos.api';
+import { useLang } from '../context/LangContext';
 import './Calificaciones.css';
 
 const Calificaciones = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const { tr } = useLang();
   const [curso, setCurso] = useState(null);
   const [loading, setLoading] = useState(true);
-  // Cuando el backend tenga el endpoint se rellenará este array
   const [calificaciones] = useState([]);
 
   useEffect(() => {
@@ -19,45 +20,43 @@ const Calificaciones = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="page-loading">Cargando...</div>;
+  if (loading) return <div className="page-loading">{tr('loading')}</div>;
 
   return (
     <div className="calificaciones-page">
       <div className="page-card">
 
-        {/* Cabecera del curso */}
         <div className="page-card-header">
-          <h1 className="page-title">{curso?.nombre || 'Título Del Curso'}</h1>
+          <h1 className="page-title">{curso?.nombre || tr('dt_courseTitle')}</h1>
           <p className="page-breadcrumb">
-            <Link to="/dashboard">Inicio</Link>
+            <Link to="/dashboard">{tr('home')}</Link>
             <span> / </span>
             <Link to={`/curso/${id}`}>{curso?.nombre || 'Curso'}</Link>
             <span> / </span>
-            <span>Calificaciones</span>
+            <span>{tr('h_grades')}</span>
           </p>
         </div>
 
-        {/* Tabla de calificaciones */}
         <div className="grades-body">
           <div className="grades-username">
-            {user ? `${user.nombre} ${user.apellidos}` : 'Nombre de Usuario'}
+            {user ? `${user.nombre} ${user.apellidos}` : '—'}
           </div>
 
           <table className="grades-table">
             <thead>
               <tr>
-                <th>Ítem de Calificación</th>
-                <th>Ponderación Calculada</th>
-                <th>Calificación</th>
-                <th>Porcentaje</th>
-                <th>Aportación al Curso</th>
+                <th>{tr('gr_gradingItem')}</th>
+                <th>{tr('gr_calcWeight')}</th>
+                <th>{tr('gr_grade')}</th>
+                <th>{tr('gr_percentage')}</th>
+                <th>{tr('gr_courseContrib')}</th>
               </tr>
             </thead>
             <tbody>
               {calificaciones.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="no-data">
-                    No hay calificaciones disponibles
+                    {tr('gr_noGrades')}
                   </td>
                 </tr>
               ) : (

@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLang } from '../context/LangContext';
 import PerfilHeader from '../components/PerfilHeader';
 import './PreferenciasNotificacion.css';
 
 const PreferenciasNotificacion = () => {
   const navigate = useNavigate();
+  const { tr } = useLang();
   const [notificaciones, setNotificaciones] = useState(false);
   const [canalTareas, setCanalTareas] = useState({ email: false, web: false });
   const [canalEncuestas, setCanalEncuestas] = useState({ email: false, web: false });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Endpoint no disponible aún en el backend
     alert('Las preferencias de notificación estarán disponibles próximamente.');
   };
 
@@ -20,11 +21,11 @@ const PreferenciasNotificacion = () => {
       <PerfilHeader />
 
       <div className="pref-notif-card">
-        <h3 className="pref-notif-title">Preferencias del notificación</h3>
+        <h3 className="pref-notif-title">{tr('pn_title')}</h3>
 
         <form onSubmit={handleSubmit}>
           <div className="notif-field">
-            <label>Desactivar las notificaciones</label>
+            <label>{tr('pn_disableAll')}</label>
             <input
               type="checkbox"
               checked={notificaciones}
@@ -34,7 +35,7 @@ const PreferenciasNotificacion = () => {
           </div>
 
           <div className="notif-field">
-            <label>Notificaciones de tareas</label>
+            <label>{tr('pn_taskNotif')}</label>
             <div className="canal-btns">
               <button
                 type="button"
@@ -54,7 +55,7 @@ const PreferenciasNotificacion = () => {
           </div>
 
           <div className="notif-field">
-            <label>Notificaciones de encuestas</label>
+            <label>{tr('pn_surveyNotif')}</label>
             <div className="canal-btns">
               <button
                 type="button"
@@ -74,13 +75,13 @@ const PreferenciasNotificacion = () => {
           </div>
 
           <div className="pref-actions">
-            <button type="submit" className="btn-guardar">GUARDAR CAMBIOS</button>
+            <button type="submit" className="btn-guardar">{tr('ae_saveChanges')}</button>
             <button
               type="button"
               className="btn-cancelar"
               onClick={() => navigate('/perfil/preferencias')}
             >
-              CANCELAR
+              {tr('cancel')}
             </button>
           </div>
         </form>

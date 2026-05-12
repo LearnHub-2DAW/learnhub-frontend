@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { LangProvider } from './context/LangContext';
 import Layout from './components/Layout';
 
 import Login from './pages/Login';
@@ -32,49 +34,38 @@ const P = ({ children }) => <PrivateRoute>{children}</PrivateRoute>;
 
 function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-      <BrowserRouter>
-        <Routes>
-            {/* ── Todas las páginas con Header + Footer ── */}
-          <Route element={<Layout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-            <Route index element={<Navigate to="/dashboard" replace />} />
-
-            {/* Dashboard */}
-            <Route path="/dashboard" element={<P><Dashboard /></P>} />
-
-            {/* Calendario */}
-            <Route path="/calendario" element={<P><Calendario /></P>} />
-
-            {/* Calificaciones globales */}
-            <Route path="/calificaciones" element={<P><CalificacionesCursos /></P>} />
-
-            {/* Cursos */}
-            <Route path="/curso/:id" element={<P><CursoPagina /></P>} />
-            <Route path="/curso/:id/calificaciones" element={<P><Calificaciones /></P>} />
-            <Route path="/curso/:id/participantes" element={<P><Participantes /></P>} />
-
-            {/* Recursos / Tareas */}
-            <Route path="/recurso/:id" element={<P><DetalleTarea /></P>} />
-            <Route path="/recurso/:id/entrega" element={<P><AgregarEntrega /></P>} />
-
-            {/* Perfil */}
-            <Route path="/perfil" element={<P><Perfil /></P>} />
-            <Route path="/perfil/editar" element={<P><EditarPerfil /></P>} />
-            <Route path="/perfil/cambiar-contrasena" element={<P><CambiarContrasena /></P>} />
-            <Route path="/perfil/preferencias" element={<P><Preferencias /></P>} />
-            <Route path="/perfil/preferencias/calendario" element={<P><PreferenciasCalendario /></P>} />
-            <Route path="/perfil/preferencias/notificaciones" element={<P><PreferenciasNotificacion /></P>} />
-          </Route>
-
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-      </ToastProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <LangProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route element={<Layout />}>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route index element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/dashboard" element={<P><Dashboard /></P>} />
+                  <Route path="/calendario" element={<P><Calendario /></P>} />
+                  <Route path="/calificaciones" element={<P><CalificacionesCursos /></P>} />
+                  <Route path="/curso/:id" element={<P><CursoPagina /></P>} />
+                  <Route path="/curso/:id/calificaciones" element={<P><Calificaciones /></P>} />
+                  <Route path="/curso/:id/participantes" element={<P><Participantes /></P>} />
+                  <Route path="/recurso/:id" element={<P><DetalleTarea /></P>} />
+                  <Route path="/recurso/:id/entrega" element={<P><AgregarEntrega /></P>} />
+                  <Route path="/perfil" element={<P><Perfil /></P>} />
+                  <Route path="/perfil/editar" element={<P><EditarPerfil /></P>} />
+                  <Route path="/perfil/cambiar-contrasena" element={<P><CambiarContrasena /></P>} />
+                  <Route path="/perfil/preferencias" element={<P><Preferencias /></P>} />
+                  <Route path="/perfil/preferencias/calendario" element={<P><PreferenciasCalendario /></P>} />
+                  <Route path="/perfil/preferencias/notificaciones" element={<P><PreferenciasNotificacion /></P>} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ToastProvider>
+        </AuthProvider>
+      </LangProvider>
+    </ThemeProvider>
   );
 }
 

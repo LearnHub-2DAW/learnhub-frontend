@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f1f5f9;
+  background: var(--bg-page);
 }
 
 .notfound-card {
@@ -14,7 +14,7 @@
 .notfound-code {
   font-size: 7rem;
   font-weight: 700;
-  color: #1a2e26;
+  color: var(--text-heading);
   margin: 0 0 8px;
   line-height: 1;
 }
@@ -22,18 +22,18 @@
 .notfound-title {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-base);
   margin: 0 0 10px;
 }
 
 .notfound-msg {
   font-size: 1rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0 0 32px;
 }
 
 .btn-notfound {
-  background: #1a2e26;
+  background: var(--brand);
   color: white;
   border: none;
   padding: 12px 28px;
@@ -46,5 +46,5 @@
 }
 
 .btn-notfound:hover {
-  background: #2d5a4c;
+  background: var(--brand-hover);
 }

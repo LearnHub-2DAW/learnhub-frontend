@@ -1,28 +1,81 @@
 /* Importar */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* src/App.css */
+/* ── VARIABLES DE TEMA ── */
+:root {
+  --bg-page: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-widget: #f8f9fa;
+  --bg-hover: #f1f5f9;
+  --bg-hover-mid: #e2e8f0;
+  --bg-input: #ffffff;
+
+  --text-heading: #1a2e26;
+  --text-base: #333333;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+
+  --border: #dddddd;
+  --border-light: #e2e8f0;
+  --border-subtle: #eeeeee;
+  --border-sep: #f1f5f9;
+  --border-input: #cbd5e1;
+
+  --brand: #1a2e26;
+  --brand-hover: #2d5a4c;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.12);
+  --shadow-modal: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+:root.dark {
+  --bg-page: #0f172a;
+  --bg-card: #1e293b;
+  --bg-widget: #162032;
+  --bg-hover: #263548;
+  --bg-hover-mid: #334155;
+  --bg-input: #1e293b;
+
+  --text-heading: #e2e8f0;
+  --text-base: #cbd5e1;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-faint: #475569;
+
+  --border: #334155;
+  --border-light: #2d3e52;
+  --border-subtle: #263548;
+  --border-sep: #1e293b;
+  --border-input: #334155;
+
+  --brand: #2d5a4c;
+  --brand-hover: #3d7a6c;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-modal: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+/* ── BASE ── */
 body, html {
   margin: 0;
   padding: 0;
-  /* Quitamos el overflow hidden para permitir el scroll vertical */
-  overflow-x: hidden; 
-  background-color: #f1f5f9;
-  /* Fuente */
+  overflow-x: hidden;
+  background-color: var(--bg-page);
   font-family: "Inter", sans-serif;
+  color: var(--text-base);
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
-  /* min-height asegura que ocupe toda la pantalla, pero que pueda crecer */
   min-height: 100vh;
   width: 100%;
-  /* Eliminamos min-width: 100vw que a veces causa scroll lateral */
 }
 
 .main-content {
-  flex: 1; /* Esto empuja el footer hacia abajo */
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

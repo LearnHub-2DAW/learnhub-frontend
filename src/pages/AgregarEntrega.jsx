@@ -2,12 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getRecursoById, getModuloById, getCursoById } from '../api/cursos.api';
 import { useToast } from '../context/ToastContext';
+import { useLang } from '../context/LangContext';
 import './AgregarEntrega.css';
 
 const AgregarEntrega = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+  const { tr } = useLang();
   const [recurso, setRecurso] = useState(null);
   const [curso, setCurso] = useState(null);
   const [modulo, setModulo] = useState(null);
@@ -34,13 +36,11 @@ const AgregarEntrega = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
-    const files = Array.from(e.dataTransfer.files);
-    setArchivos(prev => [...prev, ...files]);
+    setArchivos(prev => [...prev, ...Array.from(e.dataTransfer.files)]);
   };
 
   const handleFileInput = (e) => {
-    const files = Array.from(e.target.files);
-    setArchivos(prev => [...prev, ...files]);
+    setArchivos(prev => [...prev, ...Array.from(e.target.files)]);
   };
 
   const removeFile = (idx) => {
@@ -52,33 +52,30 @@ const AgregarEntrega = () => {
     navigate(`/recurso/${id}`);
   };
 
-  if (loading) return <div className="page-loading">Cargando...</div>;
+  if (loading) return <div className="page-loading">{tr('loading')}</div>;
 
   return (
     <div className="agregar-entrega-page">
       <div className="page-card">
 
-        {/* Cabecera curso */}
         <div className="page-card-header">
-          <h1 className="page-title">{curso?.nombre || 'Título Del Curso'}</h1>
+          <h1 className="page-title">{curso?.nombre || tr('dt_courseTitle')}</h1>
           <p className="page-breadcrumb">
-            <Link to="/dashboard">Inicio</Link>
+            <Link to="/dashboard">{tr('home')}</Link>
             <span> / </span>
             {curso && <Link to={`/curso/${curso.id}`}>{curso.nombre}</Link>}
             {modulo && <><span> / </span><span>{modulo.nombre}</span></>}
             {recurso && <><span> / </span><Link to={`/recurso/${id}`}>{recurso.titulo}</Link></>}
-            <span> / </span><span>Agregar Entrega</span>
+            <span> / </span><span>{tr('ae_title')}</span>
           </p>
         </div>
 
         <div className="entrega-body">
-          {/* Nombre y descripción */}
-          <h2 className="tarea-titulo">{recurso?.titulo || 'Nombre de la Tarea'}</h2>
+          <h2 className="tarea-titulo">{recurso?.titulo || tr('dt_courseTitle')}</h2>
           <div className="tarea-descripcion">
-            {recurso?.contenido || 'Ficheros o descripción de la Tarea'}
+            {recurso?.contenido || tr('ae_taskDesc')}
           </div>
 
-          {/* Zona de carga de archivos */}
           <div
             className={`dropzone ${dragging ? 'dragging' : ''}`}
             onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -87,7 +84,7 @@ const AgregarEntrega = () => {
             onClick={() => inputRef.current?.click()}
           >
             <span className="dropzone-arrow">⬇</span>
-            <p>Puedes arrastrar y soltar archivos aquí para añadirlos</p>
+            <p>{tr('ae_dropzone')}</p>
             <input
               type="file"
               multiple
@@ -108,10 +105,9 @@ const AgregarEntrega = () => {
             </ul>
           )}
 
-          {/* Acciones */}
           <div className="entrega-actions">
-            <button className="btn-guardar" onClick={handleGuardar}>GUARDAR CAMBIOS</button>
-            <button className="btn-cancelar" onClick={() => navigate(`/recurso/${id}`)}>CANCELAR</button>
+            <button className="btn-guardar" onClick={handleGuardar}>{tr('ae_saveChanges')}</button>
+            <button className="btn-cancelar" onClick={() => navigate(`/recurso/${id}`)}>{tr('cancel')}</button>
           </div>
         </div>
       </div>

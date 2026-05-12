@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getCursoById } from '../api/cursos.api';
+import { useLang } from '../context/LangContext';
 import './Participantes.css';
 
 const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 const Participantes = () => {
   const { id } = useParams();
+  const { tr } = useLang();
   const [curso, setCurso] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState('');
   const [letraActiva, setLetraActiva] = useState(null);
-  // Cuando el backend tenga el endpoint se rellenará este array
   const [participantes] = useState([]);
 
   useEffect(() => {
@@ -30,41 +31,38 @@ const Participantes = () => {
     return coincideFiltro && coincideLetra;
   });
 
-  if (loading) return <div className="page-loading">Cargando...</div>;
+  if (loading) return <div className="page-loading">{tr('loading')}</div>;
 
   return (
     <div className="participantes-page">
       <div className="page-card">
 
-        {/* Cabecera del curso */}
         <div className="page-card-header">
-          <h1 className="page-title">{curso?.nombre || 'Título Del Curso'}</h1>
+          <h1 className="page-title">{curso?.nombre || tr('dt_courseTitle')}</h1>
           <p className="page-breadcrumb">
-            <Link to="/dashboard">Inicio</Link>
+            <Link to="/dashboard">{tr('home')}</Link>
             <span> / </span>
             <Link to={`/curso/${id}`}>{curso?.nombre || 'Curso'}</Link>
             <span> / </span>
-            <span>Participantes</span>
+            <span>{tr('cp_participants')}</span>
           </p>
         </div>
 
         <div className="participantes-body">
-          <h2 className="section-title">Participantes</h2>
+          <h2 className="section-title">{tr('cp_participants')}</h2>
 
-          {/* Campo de filtrado */}
           <div className="filter-box">
             <input
               type="text"
-              placeholder="Condiciones de Filtrado"
+              placeholder={tr('pt_filterPlaceholder')}
               value={filtro}
               onChange={e => setFiltro(e.target.value)}
               className="filter-input"
             />
           </div>
 
-          {/* Filtrado por letras */}
           <div className="letra-filter-row">
-            <span className="letra-label">Filtrado por Letras</span>
+            <span className="letra-label">{tr('pt_filterByLetters')}</span>
             <div className="letra-buttons">
               {LETRAS.map(l => (
                 <button
@@ -78,21 +76,20 @@ const Participantes = () => {
             </div>
           </div>
 
-          {/* Tabla de participantes */}
           <table className="participantes-table">
             <thead>
               <tr>
-                <th>Nombre / Apellidos</th>
-                <th>Roles</th>
-                <th>Grupos</th>
-                <th>Último Acceso</th>
+                <th>{tr('pt_colName')}</th>
+                <th>{tr('pt_colRoles')}</th>
+                <th>{tr('pt_colGroups')}</th>
+                <th>{tr('pt_colLastAccess')}</th>
               </tr>
             </thead>
             <tbody>
               {participantesFiltrados.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="no-data">
-                    No hay participantes disponibles
+                    {tr('pt_noParticipants')}
                   </td>
                 </tr>
               ) : (
@@ -101,7 +98,7 @@ const Participantes = () => {
                     <td>{p.nombre} {p.apellidos}</td>
                     <td>{p.rol}</td>
                     <td>{p.grupo || '—'}</td>
-                    <td>{p.ultimo_acceso || 'Nunca'}</td>
+                    <td>{p.ultimo_acceso || tr('pt_never')}</td>
                   </tr>
                 ))
               )}

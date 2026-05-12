@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo } from '../api/cursos.api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useLang } from '../context/LangContext';
 import './Dashboard.css';
 
 const VISIBLE_CAROUSEL = 3;
-
-const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-const DIAS_MINI = ['L','M','X','J','V','S','D'];
 
 const buildCells = (year, month) => {
   const firstDay = new Date(year, month, 1).getDay();
@@ -22,9 +20,13 @@ const buildCells = (year, month) => {
 
 const MiniCalendario = ({ tareas }) => {
   const today = new Date();
+  const { tr } = useLang();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const cells = buildCells(year, month);
+
+  const MESES = tr('cal_months');
+  const DIAS_MINI = tr('cal_daysMini');
 
   const diasConTarea = new Set(
     tareas
@@ -52,7 +54,7 @@ const MiniCalendario = ({ tareas }) => {
         <button onClick={nextMonth}>›</button>
       </div>
       <div className="mini-cal-grid">
-        {DIAS_MINI.map(d => <span key={d} className="mini-cal-head">{d}</span>)}
+        {DIAS_MINI.map((d, i) => <span key={i} className="mini-cal-head">{d}</span>)}
         {cells.map((day, i) => {
           const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
           const hasTarea = day && diasConTarea.has(day);
@@ -91,6 +93,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const toast = useToast();
+  const { tr } = useLang();
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
 
   const [cursos, setCursos] = useState([]);
@@ -129,7 +132,6 @@ const Dashboard = () => {
       .then(moduloGroups => {
         const allModulos = moduloGroups.flat();
         setModulos(allModulos);
-
         return Promise.all(
           allModulos.map(m =>
             getRecursosByModulo(m.id)
@@ -151,7 +153,7 @@ const Dashboard = () => {
   }, [cursos]);
 
   const submitCurso = async () => {
-    if (!nombreCurso.trim()) return setCursoError('El nombre es obligatorio');
+    if (!nombreCurso.trim()) return setCursoError(tr('d_nameRequired'));
     setSavingCurso(true);
     setCursoError('');
     try {
@@ -161,7 +163,7 @@ const Dashboard = () => {
       setNombreCurso('');
       toast('Curso creado correctamente');
     } catch (err) {
-      setCursoError(err.response?.data?.message || 'Error al crear');
+      setCursoError(err.response?.data?.message || tr('d_errorCreate'));
     } finally {
       setSavingCurso(false);
     }
@@ -171,6 +173,8 @@ const Dashboard = () => {
   const canNext = carouselIndex + VISIBLE_CAROUSEL < modulos.length;
   const visibleModulos = modulos.slice(carouselIndex, carouselIndex + VISIBLE_CAROUSEL);
 
+  const moduloLabel = (count) => `${count} ${count !== 1 ? tr('d_modules') : tr('d_module')}`;
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-grid">
@@ -178,27 +182,26 @@ const Dashboard = () => {
         <div className="dashboard-main">
 
           <div className="register-course-row">
-            <span className="reg-label">Registrarse en un curso</span>
+            <span className="reg-label">{tr('d_enroll')}</span>
             <input
               type="text"
-              placeholder="Código del Curso"
+              placeholder={tr('d_courseCode')}
               value={codigoCurso}
               onChange={e => setCodigoCurso(e.target.value)}
               className="course-code-input"
             />
-            <button className="btn-personalize">PERSONALIZAR ESTA PÁGINA</button>
+            <button className="btn-personalize">{tr('d_customize')}</button>
           </div>
 
-          {/* Módulos recientes */}
           <div className="widget-box">
-            <div className="widget-header">Módulos Recientes</div>
+            <div className="widget-header">{tr('d_recentModules')}</div>
             <div className="carousel-container">
               <button className="carousel-btn" onClick={() => setCarouselIndex(i => i - 1)} disabled={!canPrev}>‹</button>
               <div className="carousel-track">
                 {loadingModulos ? (
-                  <p className="empty-msg">Cargando módulos...</p>
+                  <p className="empty-msg">{tr('d_loadingModules')}</p>
                 ) : modulos.length === 0 ? (
-                  <p className="empty-msg">No hay módulos disponibles</p>
+                  <p className="empty-msg">{tr('d_noModules')}</p>
                 ) : (
                   visibleModulos.map(m => (
                     <ModuloCard key={m.id} modulo={m} onClick={() => navigate(`/curso/${m.cursoId}`)} />
@@ -209,21 +212,20 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Vista general de módulos agrupados por curso */}
           <div className="widget-box">
             <div className="widget-header dash-header-row">
-              <span>Vista General De Módulos</span>
+              <span>{tr('d_overview')}</span>
               {isStaff && (
                 <button className="btn-dash-create" onClick={() => { setNombreCurso(''); setCursoError(''); setCursoModal(true); }}>
-                  ＋ Nuevo curso
+                  {tr('d_newCourse')}
                 </button>
               )}
             </div>
 
             {loading || loadingModulos ? (
-              <p className="empty-msg" style={{ padding: '14px' }}>Cargando...</p>
+              <p className="empty-msg" style={{ padding: '14px' }}>{tr('d_loadingCourses')}</p>
             ) : cursos.length === 0 ? (
-              <p className="empty-msg" style={{ padding: '14px' }}>No hay cursos</p>
+              <p className="empty-msg" style={{ padding: '14px' }}>{tr('d_noCourses')}</p>
             ) : (
               cursos.map(curso => {
                 const modulosCurso = modulos.filter(m => m.cursoId === curso.id);
@@ -231,7 +233,7 @@ const Dashboard = () => {
                   <div key={curso.id} className="curso-grupo">
                     <div className="curso-grupo-header" onClick={() => navigate(`/curso/${curso.id}`)}>
                       <span className="curso-grupo-nombre">{curso.nombre}</span>
-                      <span className="curso-grupo-count">{modulosCurso.length} módulo{modulosCurso.length !== 1 ? 's' : ''}</span>
+                      <span className="curso-grupo-count">{moduloLabel(modulosCurso.length)}</span>
                     </div>
                     {modulosCurso.length > 0 ? (
                       <div className="courses-grid">
@@ -240,7 +242,7 @@ const Dashboard = () => {
                         ))}
                       </div>
                     ) : (
-                      <p className="empty-msg" style={{ padding: '10px 14px' }}>Sin módulos</p>
+                      <p className="empty-msg" style={{ padding: '10px 14px' }}>{tr('d_noModulesCourse')}</p>
                     )}
                   </div>
                 );
@@ -249,16 +251,15 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Sidebar */}
         <div className="dashboard-sidebar">
 
           <div className="widget-box">
-            <div className="widget-header">Línea de Tiempo</div>
+            <div className="widget-header">{tr('d_timeline')}</div>
             <ul className="timeline-list">
               {loadingModulos ? (
-                <li className="timeline-empty">Cargando tareas...</li>
+                <li className="timeline-empty">{tr('d_loadingTasks')}</li>
               ) : timeline.length === 0 ? (
-                <li className="timeline-empty">No hay tareas próximas</li>
+                <li className="timeline-empty">{tr('d_noUpcomingTasks')}</li>
               ) : (
                 timeline.slice(0, timelineCount).map(t => (
                   <li key={t.id} className="timeline-item" onClick={() => navigate(`/recurso/${t.id}`)}>
@@ -273,7 +274,7 @@ const Dashboard = () => {
             </ul>
             {timeline.length > 0 && (
               <div className="timeline-footer">
-                Mostrar&nbsp;
+                {tr('d_show')}&nbsp;
                 <select
                   className="timeline-select"
                   value={timelineCount}
@@ -288,17 +289,17 @@ const Dashboard = () => {
           </div>
 
           <div className="widget-box">
-            <div className="widget-header">Calendario</div>
+            <div className="widget-header">{tr('cal_title')}</div>
             <MiniCalendario tareas={timeline} />
           </div>
 
           <div className="widget-box">
-            <div className="widget-header">Usuarios en Línea</div>
+            <div className="widget-header">{tr('d_onlineUsers')}</div>
             <div className="online-users-body">
-              <p className="online-count">N usuarios online</p>
+              <p className="online-count">{tr('d_nUsersOnline')}</p>
               <div className="online-user-row">
                 <span className="user-dot" />
-                <span>Usuario</span>
+                <span>{tr('d_user')}</span>
               </div>
             </div>
           </div>
@@ -308,23 +309,23 @@ const Dashboard = () => {
       {cursoModal && (
         <div className="modal-overlay" onClick={() => setCursoModal(false)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h3 className="modal-title">Nuevo curso</h3>
+            <h3 className="modal-title">{tr('d_newCourseTitle')}</h3>
             <div className="modal-field">
-              <label>Nombre del curso</label>
+              <label>{tr('d_newCourseName')}</label>
               <input
                 type="text"
                 value={nombreCurso}
                 onChange={e => setNombreCurso(e.target.value)}
-                placeholder="Nombre del curso"
+                placeholder={tr('d_newCourseName')}
                 autoFocus
                 onKeyDown={e => e.key === 'Enter' && submitCurso()}
               />
             </div>
             {cursoError && <p className="modal-error">{cursoError}</p>}
             <div className="modal-actions">
-              <button className="btn-modal-cancel" onClick={() => setCursoModal(false)}>Cancelar</button>
+              <button className="btn-modal-cancel" onClick={() => setCursoModal(false)}>{tr('cancel')}</button>
               <button className="btn-modal-ok" onClick={submitCurso} disabled={savingCurso}>
-                {savingCurso ? 'Creando...' : 'Crear'}
+                {savingCurso ? tr('creating') : tr('create')}
               </button>
             </div>
           </div>

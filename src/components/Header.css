@@ -8,7 +8,7 @@
   z-index: 100;
 }
 
-/* ── BARRA SUPERIOR ── */
+/* ── BARRA SUPERIOR (siempre verde oscuro, no cambia en dark mode) ── */
 .top-bar {
   background-color: #1a2e26;
   height: 42px;
@@ -19,7 +19,6 @@
   color: white;
 }
 
-/* Icono de rejilla (9 puntos) */
 .grid-menu-btn {
   display: grid;
   grid-template-columns: repeat(3, 5px);
@@ -44,7 +43,6 @@
   display: block;
 }
 
-/* Lado derecho de la barra superior */
 .top-right {
   display: flex;
   align-items: center;
@@ -71,7 +69,23 @@
   font-size: 0.88rem;
 }
 
-/* Avatar circular */
+/* Dark mode toggle */
+.dark-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 3px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.dark-toggle-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Avatar */
 .user-avatar-container {
   position: relative;
   cursor: pointer;
@@ -101,10 +115,10 @@
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow);
   min-width: 160px;
   z-index: 200;
   overflow: hidden;
@@ -114,7 +128,7 @@
 .user-dropdown-menu button {
   padding: 9px 16px;
   font-size: 0.88rem;
-  color: #333;
+  color: var(--text-base);
   text-decoration: none;
   background: none;
   border: none;
@@ -125,11 +139,11 @@
 
 .user-dropdown-menu a:hover,
 .user-dropdown-menu button:hover {
-  background: #f1f5f9;
-  color: #1a2e26;
+  background: var(--bg-hover);
+  color: var(--text-heading);
 }
 
-/* ── BARRA LOGO ── */
+/* ── BARRA LOGO (siempre verde, no cambia) ── */
 .logo-bar {
   background-color: #2d5a4c;
   padding: 10px 40px;
@@ -172,42 +186,46 @@
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  background: white;
-  color: #333;
+  background: var(--bg-card);
+  color: var(--text-base);
   list-style: none;
   padding: 6px 0;
   margin: 0;
   border-radius: 4px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow);
   min-width: 220px;
   z-index: 1000;
+  border: 1px solid var(--border);
 }
 
 .dropdown-item {
   padding: 9px 16px;
   font-size: 0.88rem;
   cursor: pointer;
+  color: var(--text-base);
 }
 
 .dropdown-item:hover {
-  background: #f1f5f9;
+  background: var(--bg-hover);
 }
 
-/* Afecta botones con texto */
+.dropdown-item-active {
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
 .nav-trigger {
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 6px;
   transition: background-color 0.3s ease;
-  
-  display: flex; 
-  align-items: center; 
-  gap: 6px; 
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* El efecto al pasar el ratón */
 .nav-trigger:hover {
-  background-color: rgba(0, 0, 0, 0.3); /* Fondo ligeramente oscurecido */
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 /* ── RESPONSIVE ── */
@@ -240,7 +258,7 @@
   }
 }
 
-/* ── PANEL DE NAVEGACIÓN (drawer) ── */
+/* ── DRAWER ── */
 .nav-overlay {
   position: fixed;
   inset: 0;
@@ -251,7 +269,7 @@
 
 .nav-drawer {
   width: 240px;
-  background: white;
+  background: var(--bg-card);
   height: 100%;
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -264,14 +282,14 @@
   background: none;
   border: none;
   font-size: 1.3rem;
-  color: #475569;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 6px 14px;
   margin-bottom: 8px;
 }
 
 .nav-drawer-close:hover {
-  color: #1a2e26;
+  color: var(--text-heading);
 }
 
 .nav-drawer-links {
@@ -285,21 +303,21 @@
   gap: 10px;
   padding: 11px 16px;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-base);
   text-decoration: none;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--border-sep);
   transition: background 0.12s;
 }
 
 .nav-drawer-links a:hover {
-  background: #f1f5f9;
-  color: #1a2e26;
+  background: var(--bg-hover);
+  color: var(--text-heading);
 }
 
 .nav-check-box {
   width: 16px;
   height: 16px;
-  border: 1.5px solid #94a3b8;
+  border: 1.5px solid var(--text-faint);
   border-radius: 2px;
   flex-shrink: 0;
   display: inline-block;

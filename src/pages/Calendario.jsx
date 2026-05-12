@@ -1,13 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCursos, getModulosByCurso, getRecursosByModulo } from '../api/cursos.api';
+import { useLang } from '../context/LangContext';
 import './Calendario.css';
-
-const DIAS_SEMANA = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-const MESES = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
-];
 
 const buildCalendar = (year, month) => {
   const firstDay = new Date(year, month, 1).getDay();
@@ -22,10 +17,14 @@ const buildCalendar = (year, month) => {
 const Calendario = () => {
   const today = new Date();
   const navigate = useNavigate();
+  const { tr } = useLang();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [tareas, setTareas] = useState([]);
   const [selectedDay, setSelectedDay] = useState(null);
+
+  const MESES = tr('cal_months');
+  const DIAS_SEMANA = tr('cal_days');
 
   const cells = buildCalendar(year, month);
 
@@ -82,11 +81,11 @@ const Calendario = () => {
       <div className="cal-main-card">
 
         <div className="cal-card-header">
-          <h1 className="cal-title">Calendario</h1>
+          <h1 className="cal-title">{tr('cal_title')}</h1>
           <p className="cal-breadcrumb">
-            <Link to="/dashboard">Inicio</Link>
+            <Link to="/dashboard">{tr('home')}</Link>
             <span> / </span>
-            <span>Calendario</span>
+            <span>{tr('cal_title')}</span>
           </p>
         </div>
 
@@ -95,10 +94,10 @@ const Calendario = () => {
 
             <div className="cal-actions-bar">
               <div className="cal-left-btns">
-                <button className="cal-action-btn">Modificar Vista</button>
-                <button className="cal-action-btn">Mostrar por Cursos</button>
+                <button className="cal-action-btn">{tr('cal_modifyView')}</button>
+                <button className="cal-action-btn">{tr('cal_showByCourse')}</button>
               </div>
-              <button className="cal-action-btn cal-btn-nuevo">Nuevo Evento</button>
+              <button className="cal-action-btn cal-btn-nuevo">{tr('cal_newEvent')}</button>
             </div>
 
             <div className="cal-nav">
@@ -137,10 +136,10 @@ const Calendario = () => {
             {selectedDay && (
               <div className="cal-day-tareas">
                 <div className="cal-day-tareas-title">
-                  {selectedDay} de {MESES[month]}
+                  {selectedDay} {MESES[month]}
                 </div>
                 {tareasDelDia.length === 0 ? (
-                  <p className="cal-day-empty">Sin tareas para este día</p>
+                  <p className="cal-day-empty">{tr('cal_noTasksDay')}</p>
                 ) : (
                   <ul className="cal-tarea-list">
                     {tareasDelDia.map(t => (
