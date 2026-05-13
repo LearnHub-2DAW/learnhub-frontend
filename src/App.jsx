@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { LangProvider } from './context/LangContext';
+import { SocketProvider } from './context/SocketContext';
+import { ChatDrawerProvider } from './context/ChatDrawerContext';
 import Layout from './components/Layout';
 
 import Login from './pages/auth/Login';
@@ -22,6 +24,7 @@ import PreferenciasCalendario from './pages/perfil/PreferenciasCalendario';
 import PreferenciasNotificacion from './pages/perfil/PreferenciasNotificacion';
 import Calendario from './pages/Calendario';
 import MisEntregas from './pages/MisEntregas';
+import Chat from './pages/Chat';
 import AdminUsuarios from './pages/admin/AdminUsuarios';
 import NotFound from './pages/NotFound';
 
@@ -39,6 +42,8 @@ function App() {
     <ThemeProvider>
       <LangProvider>
         <AuthProvider>
+          <SocketProvider>
+          <ChatDrawerProvider>
           <ToastProvider>
             <BrowserRouter>
               <Routes>
@@ -61,12 +66,15 @@ function App() {
                   <Route path="/perfil/preferencias/calendario" element={<P><PreferenciasCalendario /></P>} />
                   <Route path="/perfil/preferencias/notificaciones" element={<P><PreferenciasNotificacion /></P>} />
                   <Route path="/mis-entregas" element={<P><MisEntregas /></P>} />
+                  <Route path="/chat/:id" element={<P><Chat /></P>} />
                   <Route path="/admin/usuarios" element={<P><AdminUsuarios /></P>} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
           </ToastProvider>
+          </ChatDrawerProvider>
+          </SocketProvider>
         </AuthProvider>
       </LangProvider>
     </ThemeProvider>

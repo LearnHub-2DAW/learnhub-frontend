@@ -292,14 +292,25 @@
 }
 
 /* Online users */
-.online-users-body {
-  padding: 12px 14px;
+.online-badge {
+  background: #2ecc71;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 7px;
+  margin-left: 8px;
 }
 
-.online-count {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin: 0 0 8px;
+.online-users-body {
+  padding: 8px 0;
+}
+
+.online-empty {
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  padding: 8px 14px;
+  margin: 0;
 }
 
 .online-user-row {
@@ -308,12 +319,23 @@
   gap: 8px;
   font-size: 0.85rem;
   color: var(--text-secondary);
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.online-user-row:hover {
+  background: var(--bg-hover);
+}
+
+.online-username {
+  color: var(--text-base);
 }
 
 .user-dot {
-  width: 12px;
-  height: 12px;
-  background: var(--text-faint);
+  width: 10px;
+  height: 10px;
+  background: #2ecc71;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;

@@ -5,6 +5,8 @@ import { getMisModulos } from '../api/usuario.api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useLang } from '../context/LangContext';
+import { useSocket } from '../context/SocketContext';
+import { useChatDrawer } from '../context/ChatDrawerContext';
 import './Dashboard.css';
 
 const VISIBLE_CAROUSEL = 3;
@@ -95,6 +97,8 @@ const Dashboard = () => {
   const { user } = useAuth();
   const toast = useToast();
   const { tr } = useLang();
+  const { usuariosOnline } = useSocket();
+  const { openChat } = useChatDrawer();
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
 
   const [cursos, setCursos] = useState([]);
@@ -308,13 +312,25 @@ const Dashboard = () => {
           </div>
 
           <div className="widget-box">
-            <div className="widget-header">{tr('d_onlineUsers')}</div>
+            <div className="widget-header">
+              {tr('d_onlineUsers')}
+              <span className="online-badge">{usuariosOnline.length}</span>
+            </div>
             <div className="online-users-body">
-              <p className="online-count">{tr('d_nUsersOnline')}</p>
-              <div className="online-user-row">
-                <span className="user-dot" />
-                <span>{tr('d_user')}</span>
-              </div>
+              {usuariosOnline.length === 0 ? (
+                <p className="online-empty">{tr('d_noUsersOnline')}</p>
+              ) : (
+                usuariosOnline.map(u => (
+                  <div
+                    key={u.id}
+                    className="online-user-row"
+                    onClick={() => openChat(u.id, u.nombre_usuario)}
+                  >
+                    <span className="user-dot" />
+                    <span className="online-username">{u.nombre_usuario}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

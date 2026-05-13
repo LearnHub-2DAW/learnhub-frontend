@@ -1,5 +1,6 @@
 import Header from './Header';
 import Footer from './Footer';
+import ChatDrawer from './ChatDrawer';
 import { Outlet } from 'react-router-dom';
 
 const Layout = () => {
@@ -7,9 +8,10 @@ const Layout = () => {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
       <main style={{ flex: '1' }}>
-        <Outlet /> 
+        <Outlet />
       </main>
       <Footer />
+      <ChatDrawer />
     </div>
   );
 };
