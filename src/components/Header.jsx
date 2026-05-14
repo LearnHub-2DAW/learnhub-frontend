@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLang } from '../context/LangContext';
 import { useChatDrawer } from '../context/ChatDrawerContext';
+import { getCursos, getModulosByCurso } from '../api/cursos.api';
+import { getMisModulos } from '../api/usuario.api';
 import './Header.css';
 
 const LANG_NAMES = {
@@ -21,7 +23,72 @@ const Header = () => {
   const { dark, toggleDark } = useTheme();
   const { lang, setLang, tr } = useLang();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toggle: toggleChat } = useChatDrawer();
+
+  const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
+  const cursoIdMatch = location.pathname.match(/^\/curso\/(\d+)/);
+  const currentCursoId = cursoIdMatch ? Number(cursoIdMatch[1]) : null;
+
+  const [navCursos, setNavCursos] = useState([]);
+  const [navModulos, setNavModulos] = useState({});
+  const [expandedCursos, setExpandedCursos] = useState(new Set());
+  const loadingIds = useRef(new Set());
+
+  const loadModulos = (cursoId) => {
+    if (navModulos[cursoId] || loadingIds.current.has(cursoId)) return;
+    loadingIds.current.add(cursoId);
+    getModulosByCurso(cursoId)
+      .then(res => setNavModulos(prev => ({ ...prev, [cursoId]: res.data })))
+      .catch(() => setNavModulos(prev => ({ ...prev, [cursoId]: [] })))
+      .finally(() => loadingIds.current.delete(cursoId));
+  };
+
+  // Load enrolled courses when user logs in
+  useEffect(() => {
+    if (!user) { setNavCursos([]); setNavModulos({}); setExpandedCursos(new Set()); return; }
+    const load = async () => {
+      try {
+        if (isStaff) {
+          const res = await getCursos();
+          setNavCursos(res.data);
+        } else {
+          const [cursosRes, misRes] = await Promise.all([
+            getCursos(),
+            getMisModulos().catch(() => ({ data: [] })),
+          ]);
+          const ids = new Set((misRes.data || []).map(m => m.id_curso));
+          setNavCursos(cursosRes.data.filter(c => ids.has(c.id)));
+        }
+      } catch {}
+    };
+    load();
+  }, [user?.id]);
+
+  // Auto-expand current course and load its modules
+  useEffect(() => {
+    if (!currentCursoId) return;
+    setExpandedCursos(prev => new Set([...prev, currentCursoId]));
+    loadModulos(currentCursoId);
+  }, [currentCursoId]);
+
+  // If only one course, always expand it
+  useEffect(() => {
+    if (navCursos.length === 1) {
+      const id = navCursos[0].id;
+      setExpandedCursos(new Set([id]));
+      loadModulos(id);
+    }
+  }, [navCursos]);
+
+  const toggleCurso = (cursoId) => {
+    setExpandedCursos(prev => {
+      const next = new Set(prev);
+      if (next.has(cursoId)) { next.delete(cursoId); }
+      else { next.add(cursoId); loadModulos(cursoId); }
+      return next;
+    });
+  };
 
   const handleLogout = () => {
     logout();
@@ -150,6 +217,61 @@ const Header = () => {
                 <Link to="/admin/usuarios" onClick={() => setNavOpen(false)}>
                   <span className="nav-check-box" /> {tr('nav_adminPanel')}
                 </Link>
+              )}
+
+              {navCursos.length > 0 && (
+                <div className="nav-cursos-section">
+                  <div className="nav-cursos-label">MIS CURSOS</div>
+                  {navCursos.map(curso => {
+                    const isExpanded = expandedCursos.has(curso.id);
+                    const isCurrent = currentCursoId === curso.id;
+                    const mods = navModulos[curso.id];
+                    const single = navCursos.length === 1;
+                    return (
+                      <div key={curso.id} className="nav-curso-group">
+                        <div
+                          className={`nav-curso-row ${isCurrent ? 'nav-curso-active' : ''}`}
+                          onClick={() => {
+                            if (single) {
+                              navigate(`/curso/${curso.id}`);
+                              setNavOpen(false);
+                            } else {
+                              toggleCurso(curso.id);
+                            }
+                          }}
+                        >
+                          <span className="nav-check-box" />
+                          <span className="nav-curso-nombre">{curso.nombre}</span>
+                          {!single && (
+                            <span className="nav-expand-icon">{isExpanded ? '▾' : '▸'}</span>
+                          )}
+                        </div>
+                        {isExpanded && (
+                          <div className="nav-modulos-list">
+                            {!mods ? (
+                              <span className="nav-modulo-placeholder">…</span>
+                            ) : mods.length === 0 ? (
+                              <span className="nav-modulo-placeholder">Sin módulos</span>
+                            ) : (
+                              mods.map(mod => (
+                                <div
+                                  key={mod.id}
+                                  className={`nav-modulo-row ${currentCursoId === curso.id ? 'nav-modulo-in-curso' : ''}`}
+                                  onClick={() => {
+                                    navigate(`/curso/${curso.id}`, { state: { activarModuloId: mod.id } });
+                                    setNavOpen(false);
+                                  }}
+                                >
+                                  {mod.nombre}
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </nav>
           </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useLang } from '../../context/LangContext';
@@ -19,6 +19,7 @@ const EMPTY_RECURSO = { titulo: '', contenido: '', es_entregable: false, fecha_e
 const CursoPagina = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { state: navState } = useLocation();
   const { user } = useAuth();
 
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
@@ -57,7 +58,12 @@ const CursoPagina = () => {
       .then(([cursoRes, modulosRes, modulosUsuarioRes]) => {
         setCurso(cursoRes.data);
         setModulos(modulosRes.data);
-        if (modulosRes.data.length > 0) setModuloActivo(modulosRes.data[0]);
+        if (modulosRes.data.length > 0) {
+          const target = navState?.activarModuloId
+            ? modulosRes.data.find(m => m.id === navState.activarModuloId)
+            : null;
+          setModuloActivo(target || modulosRes.data[0]);
+        }
         if (modulosUsuarioRes) {
           setEnrolledIds(new Set((modulosUsuarioRes.data || []).map(m => m.id)));
         }
