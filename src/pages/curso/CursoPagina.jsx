@@ -273,8 +273,17 @@ const CursoPagina = () => {
                 <h1 className="curso-title">{curso?.nombre || 'Título Del Curso'}</h1>
                 <p className="curso-breadcrumb">
                   <Link to="/dashboard">{tr('home')}</Link>
-                  <span> / </span>
-                  <span>{curso?.nombre || 'Curso'}</span>
+                  <span className="bc-sep"> / </span>
+                  {moduloActivo
+                    ? <span className="bc-link" onClick={() => setModuloActivo(null)}>{curso?.nombre || 'Curso'}</span>
+                    : <span>{curso?.nombre || 'Curso'}</span>
+                  }
+                  {moduloActivo && (
+                    <>
+                      <span className="bc-sep"> / </span>
+                      <span>{moduloActivo.nombre}</span>
+                    </>
+                  )}
                 </p>
               </div>
 

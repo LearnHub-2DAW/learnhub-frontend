@@ -17,6 +17,8 @@ export const getMisEntregas = () => api.get('/usuarios/me/entregas');
 
 export const getConversacion = (id) => api.get(`/mensajes/${id}`);
 
+export const buscarUsuarios = (q) => api.get('/usuarios/buscar', { params: q ? { q } : {} });
+
 export const getUsuarios = () => api.get('/usuarios');
 export const deleteUsuarioAdmin = (id) => api.delete(`/usuarios/${id}`);
 export const changeRolUsuario = (id, rol) => api.put(`/usuarios/${id}/rol`, { rol });

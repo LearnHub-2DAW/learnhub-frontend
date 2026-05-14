@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useChatDrawer } from '../context/ChatDrawerContext';
-import { getConversacion } from '../api/usuario.api';
+import { getConversacion, buscarUsuarios } from '../api/usuario.api';
 import './ChatDrawer.css';
 
 const RECENT_KEY = 'lh_recent_chats';
@@ -23,12 +23,29 @@ const ChatDrawer = () => {
   const { socket, usuariosOnline } = useSocket();
 
   const [search, setSearch] = useState('');
+  const [searchResults, setSearchResults] = useState(null); // null = not searching
+  const [searchLoading, setSearchLoading] = useState(false);
   const [recents, setRecents] = useState(getRecents);
   const [mensajes, setMensajes] = useState([]);
   const [texto, setTexto] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const searchTimer = useRef(null);
+
+  // Debounced search
+  useEffect(() => {
+    clearTimeout(searchTimer.current);
+    if (!search.trim()) { setSearchResults(null); return; }
+    setSearchLoading(true);
+    searchTimer.current = setTimeout(() => {
+      buscarUsuarios(search.trim())
+        .then(res => setSearchResults(res.data))
+        .catch(() => setSearchResults([]))
+        .finally(() => setSearchLoading(false));
+    }, 300);
+    return () => clearTimeout(searchTimer.current);
+  }, [search]);
 
   // Load conversation history when activeChat changes
   useEffect(() => {
@@ -86,13 +103,9 @@ const ChatDrawer = () => {
   const formatHora = (fecha) =>
     new Date(fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
-  const q = search.toLowerCase();
-  const filteredOnline = usuariosOnline.filter(u => u.nombre_usuario.toLowerCase().includes(q));
   const onlineIds = new Set(usuariosOnline.map(u => u.id));
-  const filteredRecents = recents.filter(r =>
-    r.nombre_usuario.toLowerCase().includes(q) && !onlineIds.has(r.id)
-  );
-  const noResults = filteredOnline.length === 0 && filteredRecents.length === 0;
+  const filteredRecents = recents.filter(r => !onlineIds.has(r.id));
+  const isSearching = search.trim().length > 0;
 
   if (!isOpen) return null;
 
@@ -119,39 +132,65 @@ const ChatDrawer = () => {
             </div>
 
             <div className="cd-list">
-              {filteredOnline.length > 0 && (
-                <div className="cd-section">
-                  <div className="cd-section-title">EN LÍNEA ({filteredOnline.length})</div>
-                  {filteredOnline.map(u => (
-                    <button key={u.id} className="cd-contact-row" onClick={() => openChat(u.id, u.nombre_usuario)}>
-                      <div className="cd-avatar-wrap">
-                        <span className="cd-avatar">{u.nombre_usuario[0]?.toUpperCase()}</span>
-                        <span className="cd-status-dot" />
-                      </div>
-                      <span className="cd-contact-name">{u.nombre_usuario}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+              {isSearching ? (
+                searchLoading ? (
+                  <p className="cd-empty">Buscando...</p>
+                ) : searchResults?.length === 0 ? (
+                  <p className="cd-empty">Sin resultados</p>
+                ) : (
+                  <div className="cd-section">
+                    <div className="cd-section-title">RESULTADOS</div>
+                    {searchResults?.map(u => (
+                      <button key={u.id} className="cd-contact-row" onClick={() => { openChat(u.id, u.nombre_usuario); setSearch(''); }}>
+                        <div className="cd-avatar-wrap">
+                          <span className="cd-avatar">{u.nombre_usuario[0]?.toUpperCase()}</span>
+                          {onlineIds.has(u.id) && <span className="cd-status-dot" />}
+                        </div>
+                        <div className="cd-contact-info">
+                          <span className="cd-contact-name">{u.nombre_usuario}</span>
+                          {(u.nombre || u.apellidos) && (
+                            <span className="cd-contact-sub">{u.nombre} {u.apellidos}</span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )
+              ) : (
+                <>
+                  {usuariosOnline.length > 0 && (
+                    <div className="cd-section">
+                      <div className="cd-section-title">EN LÍNEA ({usuariosOnline.length})</div>
+                      {usuariosOnline.map(u => (
+                        <button key={u.id} className="cd-contact-row" onClick={() => openChat(u.id, u.nombre_usuario)}>
+                          <div className="cd-avatar-wrap">
+                            <span className="cd-avatar">{u.nombre_usuario[0]?.toUpperCase()}</span>
+                            <span className="cd-status-dot" />
+                          </div>
+                          <span className="cd-contact-name">{u.nombre_usuario}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-              {filteredRecents.length > 0 && (
-                <div className="cd-section">
-                  <div className="cd-section-title">RECIENTES</div>
-                  {filteredRecents.map(r => (
-                    <button key={r.id} className="cd-contact-row" onClick={() => openChat(r.id, r.nombre_usuario)}>
-                      <div className="cd-avatar-wrap">
-                        <span className="cd-avatar">{r.nombre_usuario[0]?.toUpperCase()}</span>
-                      </div>
-                      <span className="cd-contact-name">{r.nombre_usuario}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+                  {filteredRecents.length > 0 && (
+                    <div className="cd-section">
+                      <div className="cd-section-title">RECIENTES</div>
+                      {filteredRecents.map(r => (
+                        <button key={r.id} className="cd-contact-row" onClick={() => openChat(r.id, r.nombre_usuario)}>
+                          <div className="cd-avatar-wrap">
+                            <span className="cd-avatar">{r.nombre_usuario[0]?.toUpperCase()}</span>
+                          </div>
+                          <span className="cd-contact-name">{r.nombre_usuario}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-              {noResults && (
-                <p className="cd-empty">
-                  {search ? 'Sin resultados' : 'Nadie en línea todavía'}
-                </p>
+                  {usuariosOnline.length === 0 && filteredRecents.length === 0 && (
+                    <p className="cd-empty">Nadie en línea todavía</p>
+                  )}
+                </>
               )}
             </div>
           </>
