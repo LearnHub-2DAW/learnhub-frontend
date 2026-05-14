@@ -49,13 +49,21 @@
   margin: 0;
 }
 
-.curso-breadcrumb a {
+.curso-breadcrumb a,
+.curso-breadcrumb .bc-link {
   color: var(--brand-hover);
   text-decoration: none;
+  cursor: pointer;
 }
 
-.curso-breadcrumb a:hover {
+.curso-breadcrumb a:hover,
+.curso-breadcrumb .bc-link:hover {
   text-decoration: underline;
+}
+
+.bc-sep {
+  color: var(--text-faint);
+  margin: 0 1px;
 }
 
 .gear-wrapper {
