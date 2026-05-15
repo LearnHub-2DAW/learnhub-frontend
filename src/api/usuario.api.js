@@ -16,6 +16,8 @@ export const getMisModulos = () => api.get('/usuarios/me/modulos');
 export const getMisEntregas = () => api.get('/usuarios/me/entregas');
 
 export const getConversacion = (id) => api.get(`/mensajes/${id}`);
+export const getNoLeidos = () => api.get('/mensajes/no-leidos');
+export const leerConversacion = (id) => api.put(`/mensajes/${id}/leer`);
 
 export const buscarUsuarios = (q) => api.get('/usuarios/buscar', { params: q ? { q } : {} });
 

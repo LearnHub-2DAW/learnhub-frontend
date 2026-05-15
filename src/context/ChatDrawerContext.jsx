@@ -7,7 +7,7 @@ export const ChatDrawerProvider = ({ children }) => {
   const [activeChat, setActiveChat] = useState(null); // { id, nombre_usuario }
 
   const toggle = () => setIsOpen(o => !o);
-  const close = () => setIsOpen(false);
+  const close = () => { setIsOpen(false); setActiveChat(null); };
 
   const openChat = (id, nombre_usuario) => {
     setActiveChat({ id: Number(id), nombre_usuario });

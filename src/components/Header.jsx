@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLang } from '../context/LangContext';
 import { useChatDrawer } from '../context/ChatDrawerContext';
+import { useSocket } from '../context/SocketContext';
 import { getCursos, getModulosByCurso } from '../api/cursos.api';
 import { getMisModulos } from '../api/usuario.api';
 import './Header.css';
@@ -25,6 +26,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toggle: toggleChat } = useChatDrawer();
+  const { noLeidos } = useSocket();
 
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
   const cursoIdMatch = location.pathname.match(/^\/curso\/(\d+)/);
@@ -117,13 +119,16 @@ const Header = () => {
                     <path d="M12 22C13.1046 22 14 21.1046 14 20H10C10 21.1046 10.8954 22 12 22ZM18 16V10C18 6.91 16.36 4.31 13.5 3.63V3C13.5 2.17 12.83 1.5 12 1.5C11.17 1.5 10.5 2.17 10.5 3V3.63C7.64 4.31 6 6.91 6 10V16L4 18V19H20V18L18 16Z" fill="#D3D3D3"/>
                   </svg>
                 </span>
-                <span className="icon-btn" title={tr('h_messages') || 'Mensajes'} onClick={toggleChat} style={{ cursor: 'pointer' }}>
+                <span className="icon-btn icon-btn-chat" title={tr('h_messages') || 'Mensajes'} onClick={toggleChat} style={{ cursor: 'pointer' }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#d3d3d3">
                     <path d="M4 4h16a2 2 0 012 2v9a2 2 0 01-2 2H9l-5 4v-4H4a2 2 0 01-2-2V6a2 2 0 012-2z"/>
                   </svg>
+                  {noLeidos.total > 0 && (
+                    <span className="chat-unread-badge">{noLeidos.total > 99 ? '99+' : noLeidos.total}</span>
+                  )}
                 </span>
-                <span className="user-name">{user.nombre} {user.apellidos}</span>
                 <div className="user-avatar-container">
+                  <span className="user-name">{user.nombre} {user.apellidos}</span>
                   <div className="user-avatar-circle">{user.nombre?.[0]?.toUpperCase()}</div>
                   <div className="user-dropdown-menu">
                     <Link to="/perfil">{tr('h_myProfile')}</Link>
