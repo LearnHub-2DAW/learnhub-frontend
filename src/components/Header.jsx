@@ -122,8 +122,8 @@ const Header = () => {
                     <path d="M4 4h16a2 2 0 012 2v9a2 2 0 01-2 2H9l-5 4v-4H4a2 2 0 01-2-2V6a2 2 0 012-2z"/>
                   </svg>
                 </span>
-                <span className="user-name">{user.nombre} {user.apellidos}</span>
                 <div className="user-avatar-container">
+                  <span className="user-name">{user.nombre} {user.apellidos}</span>
                   <div className="user-avatar-circle">{user.nombre?.[0]?.toUpperCase()}</div>
                   <div className="user-dropdown-menu">
                     <Link to="/perfil">{tr('h_myProfile')}</Link>
