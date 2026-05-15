@@ -135,8 +135,8 @@ const Header = () => {
                     <Link to="/dashboard">{tr('h_personalArea')}</Link>
                     <Link to="/calificaciones">{tr('h_grades')}</Link>
                     <Link to="/mis-entregas">{tr('me_title')}</Link>
-                    {user?.roles?.includes('admin') && (
-                      <Link to="/admin/usuarios">{tr('nav_adminPanel')}</Link>
+                    {isStaff && (
+                      <Link to="/admin">{tr('nav_adminPanel')}</Link>
                     )}
                     <button onClick={handleLogout}>{tr('h_logout')}</button>
                   </div>
@@ -163,6 +163,13 @@ const Header = () => {
           </div>
 
           <div className="nav-menus">
+            {/* Panel Admin / Profesor */}
+            {isStaff && (
+              <div className="nav-trigger nav-item" onClick={() => navigate('/admin')}>
+                {tr('nav_adminPanel')}
+              </div>
+            )}
+
             {/* Guía de Estudiante */}
             <div className="nav-item dropdown-container" onClick={() => { setIsGuiaOpen(o => !o); setIsLangOpen(false); }}>
               <div className="nav-trigger">
@@ -218,8 +225,8 @@ const Header = () => {
               <Link to="/mis-entregas" onClick={() => setNavOpen(false)}>
                 <span className="nav-check-box" /> {tr('me_title')}
               </Link>
-              {user?.roles?.includes('admin') && (
-                <Link to="/admin/usuarios" onClick={() => setNavOpen(false)}>
+              {isStaff && (
+                <Link to="/admin" onClick={() => setNavOpen(false)}>
                   <span className="nav-check-box" /> {tr('nav_adminPanel')}
                 </Link>
               )}

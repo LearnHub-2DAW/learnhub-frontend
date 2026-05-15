@@ -25,7 +25,7 @@ import PreferenciasNotificacion from './pages/perfil/PreferenciasNotificacion';
 import Calendario from './pages/Calendario';
 import MisEntregas from './pages/MisEntregas';
 import Chat from './pages/Chat';
-import AdminUsuarios from './pages/admin/AdminUsuarios';
+import AdminPanel from './pages/admin/AdminPanel';
 import NotFound from './pages/NotFound';
 
 const PrivateRoute = ({ children }) => {
@@ -67,7 +67,7 @@ function App() {
                   <Route path="/perfil/preferencias/notificaciones" element={<P><PreferenciasNotificacion /></P>} />
                   <Route path="/mis-entregas" element={<P><MisEntregas /></P>} />
                   <Route path="/chat/:id" element={<P><Chat /></P>} />
-                  <Route path="/admin/usuarios" element={<P><AdminUsuarios /></P>} />
+                  <Route path="/admin" element={<P><AdminPanel /></P>} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
