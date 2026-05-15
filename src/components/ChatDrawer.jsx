@@ -20,7 +20,7 @@ const saveRecent = ({ id, nombre_usuario }) => {
 const ChatDrawer = () => {
   const { isOpen, close, activeChat, openChat, closeChat } = useChatDrawer();
   const { user } = useAuth();
-  const { socket, usuariosOnline } = useSocket();
+  const { socket, usuariosOnline, noLeidos, marcarLeido, setReadingId } = useSocket();
 
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState(null); // null = not searching
@@ -47,6 +47,11 @@ const ChatDrawer = () => {
     return () => clearTimeout(searchTimer.current);
   }, [search]);
 
+  // Notify SocketContext which conversation is open so chat:no_leidos is filtered
+  useEffect(() => {
+    setReadingId(isOpen && activeChat ? activeChat.id : null);
+  }, [activeChat?.id, isOpen]);
+
   // Load conversation history when activeChat changes
   useEffect(() => {
     if (!activeChat) return;
@@ -58,6 +63,7 @@ const ChatDrawer = () => {
       .finally(() => setLoading(false));
     saveRecent({ id: activeChat.id, nombre_usuario: activeChat.nombre_usuario });
     setRecents(getRecents());
+    marcarLeido(activeChat.id);
   }, [activeChat?.id]);
 
   // Real-time socket messages
@@ -73,7 +79,10 @@ const ChatDrawer = () => {
       if (!activeChat) return;
       const mio = msg.id_emisor === user.id && msg.id_receptor === activeChat.id;
       const suyo = msg.id_emisor === activeChat.id && msg.id_receptor === user.id;
-      if (mio || suyo) setMensajes(prev => [...prev, msg]);
+      if (mio || suyo) {
+        setMensajes(prev => [...prev, msg]);
+        if (suyo) marcarLeido(activeChat.id);
+      }
     };
     socket.on('chat:mensaje', handler);
     return () => socket.off('chat:mensaje', handler);
@@ -106,6 +115,9 @@ const ChatDrawer = () => {
   const onlineIds = new Set(usuariosOnline.map(u => u.id));
   const filteredRecents = recents.filter(r => !onlineIds.has(r.id));
   const isSearching = search.trim().length > 0;
+
+  const unreadFor = (id) =>
+    noLeidos.conversaciones.find(c => c.id_emisor === id)?.total || 0;
 
   if (!isOpen) return null;
 
@@ -161,29 +173,37 @@ const ChatDrawer = () => {
                   {usuariosOnline.length > 0 && (
                     <div className="cd-section">
                       <div className="cd-section-title">EN LÍNEA ({usuariosOnline.length})</div>
-                      {usuariosOnline.map(u => (
-                        <button key={u.id} className="cd-contact-row" onClick={() => openChat(u.id, u.nombre_usuario)}>
-                          <div className="cd-avatar-wrap">
-                            <span className="cd-avatar">{u.nombre_usuario[0]?.toUpperCase()}</span>
-                            <span className="cd-status-dot" />
-                          </div>
-                          <span className="cd-contact-name">{u.nombre_usuario}</span>
-                        </button>
-                      ))}
+                      {usuariosOnline.map(u => {
+                        const unread = unreadFor(u.id);
+                        return (
+                          <button key={u.id} className="cd-contact-row" onClick={() => openChat(u.id, u.nombre_usuario)}>
+                            <div className="cd-avatar-wrap">
+                              <span className="cd-avatar">{u.nombre_usuario[0]?.toUpperCase()}</span>
+                              <span className="cd-status-dot" />
+                            </div>
+                            <span className="cd-contact-name">{u.nombre_usuario}</span>
+                            {unread > 0 && <span className="cd-unread-badge">{unread}</span>}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
 
                   {filteredRecents.length > 0 && (
                     <div className="cd-section">
                       <div className="cd-section-title">RECIENTES</div>
-                      {filteredRecents.map(r => (
-                        <button key={r.id} className="cd-contact-row" onClick={() => openChat(r.id, r.nombre_usuario)}>
-                          <div className="cd-avatar-wrap">
-                            <span className="cd-avatar">{r.nombre_usuario[0]?.toUpperCase()}</span>
-                          </div>
-                          <span className="cd-contact-name">{r.nombre_usuario}</span>
-                        </button>
-                      ))}
+                      {filteredRecents.map(r => {
+                        const unread = unreadFor(r.id);
+                        return (
+                          <button key={r.id} className="cd-contact-row" onClick={() => openChat(r.id, r.nombre_usuario)}>
+                            <div className="cd-avatar-wrap">
+                              <span className="cd-avatar">{r.nombre_usuario[0]?.toUpperCase()}</span>
+                            </div>
+                            <span className="cd-contact-name">{r.nombre_usuario}</span>
+                            {unread > 0 && <span className="cd-unread-badge">{unread}</span>}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
 
