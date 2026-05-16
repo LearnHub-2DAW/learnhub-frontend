@@ -1,23 +1,45 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLang } from '../../context/LangContext';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
+import { updatePerfil } from '../../api/usuario.api';
 import PerfilHeader from '../../components/PerfilHeader';
 import './PreferenciasCalendario.css';
+
+const DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 const PreferenciasCalendario = () => {
   const navigate = useNavigate();
   const { tr } = useLang();
+  const { user, updateUser } = useAuth();
+  const toast = useToast();
+
   const [form, setForm] = useState({
-    formato_hora: '', primer_dia_semana: '', n_max_eventos: '',
+    formato_hora: user?.formato_hora || '24h',
+    primer_dia_semana: user?.primer_dia_semana || 'Lunes',
+    n_max_eventos: user?.n_max_eventos || 5,
   });
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: name === 'n_max_eventos' ? Number(value) : value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Las preferencias de calendario estarán disponibles próximamente.');
+    setSaving(true);
+    try {
+      const res = await updatePerfil(form);
+      updateUser(res.data);
+      toast('Preferencias de calendario guardadas');
+      navigate('/perfil/preferencias');
+    } catch (err) {
+      toast(err.response?.data?.message || 'Error al guardar', 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -30,21 +52,17 @@ const PreferenciasCalendario = () => {
         <form onSubmit={handleSubmit}>
           <div className="pref-field">
             <label>{tr('pcal_timeFormat')}</label>
-            <input
-              name="formato_hora"
-              value={form.formato_hora}
-              onChange={handleChange}
-              placeholder="12h / 24h"
-            />
+            <select name="formato_hora" value={form.formato_hora} onChange={handleChange}>
+              <option value="24h">24h</option>
+              <option value="12h">12h</option>
+            </select>
           </div>
 
           <div className="pref-field">
             <label>{tr('pcal_firstDay')}</label>
-            <input
-              name="primer_dia_semana"
-              value={form.primer_dia_semana}
-              onChange={handleChange}
-            />
+            <select name="primer_dia_semana" value={form.primer_dia_semana} onChange={handleChange}>
+              {DIAS.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
           </div>
 
           <div className="pref-field">
@@ -60,7 +78,9 @@ const PreferenciasCalendario = () => {
           </div>
 
           <div className="pref-actions">
-            <button type="submit" className="btn-guardar">{tr('ae_saveChanges')}</button>
+            <button type="submit" className="btn-guardar" disabled={saving}>
+              {saving ? tr('saving') : tr('ae_saveChanges')}
+            </button>
             <button
               type="button"
               className="btn-cancelar"

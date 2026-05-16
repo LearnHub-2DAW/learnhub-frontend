@@ -1,19 +1,40 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLang } from '../../context/LangContext';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
+import { updatePerfil } from '../../api/usuario.api';
 import PerfilHeader from '../../components/PerfilHeader';
 import './PreferenciasNotificacion.css';
 
 const PreferenciasNotificacion = () => {
   const navigate = useNavigate();
   const { tr } = useLang();
-  const [notificaciones, setNotificaciones] = useState(false);
-  const [canalTareas, setCanalTareas] = useState({ email: false, web: false });
-  const [canalEncuestas, setCanalEncuestas] = useState({ email: false, web: false });
+  const { user, updateUser } = useAuth();
+  const toast = useToast();
 
-  const handleSubmit = (e) => {
+  const [form, setForm] = useState({
+    notificaciones: user?.notificaciones ?? true,
+    canal_tareas: user?.canal_tareas ?? true,
+    canal_encuestas: user?.canal_encuestas ?? true,
+  });
+  const [saving, setSaving] = useState(false);
+
+  const toggle = (key) => setForm(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Las preferencias de notificación estarán disponibles próximamente.');
+    setSaving(true);
+    try {
+      const res = await updatePerfil(form);
+      updateUser(res.data);
+      toast('Preferencias de notificación guardadas');
+      navigate('/perfil/preferencias');
+    } catch (err) {
+      toast(err.response?.data?.message || 'Error al guardar', 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -28,54 +49,38 @@ const PreferenciasNotificacion = () => {
             <label>{tr('pn_disableAll')}</label>
             <input
               type="checkbox"
-              checked={notificaciones}
-              onChange={() => setNotificaciones(v => !v)}
+              checked={!form.notificaciones}
+              onChange={() => toggle('notificaciones')}
               className="notif-checkbox"
             />
           </div>
 
           <div className="notif-field">
             <label>{tr('pn_taskNotif')}</label>
-            <div className="canal-btns">
-              <button
-                type="button"
-                className={`canal-btn ${canalTareas.email ? 'active' : ''}`}
-                onClick={() => setCanalTareas(v => ({ ...v, email: !v.email }))}
-              >
-                Email
-              </button>
-              <button
-                type="button"
-                className={`canal-btn ${canalTareas.web ? 'active' : ''}`}
-                onClick={() => setCanalTareas(v => ({ ...v, web: !v.web }))}
-              >
-                Web
-              </button>
-            </div>
+            <button
+              type="button"
+              className={`canal-btn ${form.canal_tareas ? 'active' : ''}`}
+              onClick={() => toggle('canal_tareas')}
+            >
+              {form.canal_tareas ? 'Activado' : 'Desactivado'}
+            </button>
           </div>
 
           <div className="notif-field">
             <label>{tr('pn_surveyNotif')}</label>
-            <div className="canal-btns">
-              <button
-                type="button"
-                className={`canal-btn ${canalEncuestas.email ? 'active' : ''}`}
-                onClick={() => setCanalEncuestas(v => ({ ...v, email: !v.email }))}
-              >
-                Email
-              </button>
-              <button
-                type="button"
-                className={`canal-btn ${canalEncuestas.web ? 'active' : ''}`}
-                onClick={() => setCanalEncuestas(v => ({ ...v, web: !v.web }))}
-              >
-                Web
-              </button>
-            </div>
+            <button
+              type="button"
+              className={`canal-btn ${form.canal_encuestas ? 'active' : ''}`}
+              onClick={() => toggle('canal_encuestas')}
+            >
+              {form.canal_encuestas ? 'Activado' : 'Desactivado'}
+            </button>
           </div>
 
           <div className="pref-actions">
-            <button type="submit" className="btn-guardar">{tr('ae_saveChanges')}</button>
+            <button type="submit" className="btn-guardar" disabled={saving}>
+              {saving ? tr('saving') : tr('ae_saveChanges')}
+            </button>
             <button
               type="button"
               className="btn-cancelar"

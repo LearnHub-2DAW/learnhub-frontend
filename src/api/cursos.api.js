@@ -26,3 +26,5 @@ export const deleteRecurso = (id) => api.delete(`/recursos/${id}`);
 export const submitEntrega = (id, formData) => api.post(`/recursos/${id}/entregar`, formData);
 export const getMyEntrega = (id) => api.get(`/recursos/${id}/entrega`);
 export const getEntregas = (id) => api.get(`/recursos/${id}/entregas`);
+export const calificarEntrega = (id_recurso, id_usuario, calificacion) =>
+  api.put(`/recursos/${id_recurso}/entregas/${id_usuario}/calificar`, { calificacion });

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useLang } from '../../context/LangContext';
-import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso, getMyEntrega, getEntregas } from '../../api/cursos.api';
+import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso, getMyEntrega, getEntregas, calificarEntrega } from '../../api/cursos.api';
 import { getFileUrl } from '../../api/axios';
 import './DetalleTarea.css';
 
@@ -28,6 +28,8 @@ const DetalleTarea = () => {
   const [todasEntregas, setTodasEntregas] = useState([]);
   const [mostrarEntregas, setMostrarEntregas] = useState(false);
   const [loadingEntregas, setLoadingEntregas] = useState(false);
+  const [gradeInputs, setGradeInputs] = useState({});
+  const [savingGrade, setSavingGrade] = useState(null);
 
   const [editModal, setEditModal] = useState(false);
   const [editForm, setEditForm] = useState(EMPTY_FORM);
@@ -57,12 +59,38 @@ const DetalleTarea = () => {
     setLoadingEntregas(true);
     try {
       const res = await getEntregas(id);
-      setTodasEntregas(res.data);
+      const entregas = res.data;
+      setTodasEntregas(entregas);
       setMostrarEntregas(true);
+      const initGrades = {};
+      entregas.forEach(e => {
+        initGrades[e.id_usuario] = e.calificacion != null ? String(e.calificacion) : '';
+      });
+      setGradeInputs(initGrades);
     } catch (err) {
       toast(err.response?.data?.message || 'Error al cargar entregas', 'error');
     } finally {
       setLoadingEntregas(false);
+    }
+  };
+
+  const handleCalificar = async (idUsuario) => {
+    const val = parseFloat(gradeInputs[idUsuario]);
+    if (isNaN(val) || val < 0 || val > 10) {
+      toast('La calificación debe ser un número entre 0 y 10', 'error');
+      return;
+    }
+    setSavingGrade(idUsuario);
+    try {
+      await calificarEntrega(id, idUsuario, val);
+      toast('Calificación guardada');
+      setTodasEntregas(prev =>
+        prev.map(e => e.id_usuario === idUsuario ? { ...e, calificacion: val } : e)
+      );
+    } catch (err) {
+      toast(err.response?.data?.message || 'Error al calificar', 'error');
+    } finally {
+      setSavingGrade(null);
     }
   };
 
@@ -189,7 +217,9 @@ const DetalleTarea = () => {
                   </tr>
                   <tr>
                     <td className="estado-label">{tr('dt_gradeStatus')}</td>
-                    <td className="estado-value">{tr('dt_notGraded')}</td>
+                    <td className="estado-value">
+                      {miEntrega?.calificacion != null ? `${miEntrega.calificacion}/10` : tr('dt_notGraded')}
+                    </td>
                   </tr>
                   <tr>
                     <td className="estado-label">{tr('dt_dueDate')}</td>
@@ -277,6 +307,28 @@ const DetalleTarea = () => {
                             ))}
                           </div>
                         )}
+                        <div className="entrega-calificar">
+                          <input
+                            type="number"
+                            min="0"
+                            max="10"
+                            step="0.5"
+                            placeholder="0-10"
+                            value={gradeInputs[e.id_usuario] ?? ''}
+                            onChange={ev => setGradeInputs(prev => ({ ...prev, [e.id_usuario]: ev.target.value }))}
+                            className="entrega-grade-input"
+                          />
+                          <button
+                            className="entrega-grade-btn"
+                            onClick={() => handleCalificar(e.id_usuario)}
+                            disabled={savingGrade === e.id_usuario}
+                          >
+                            {savingGrade === e.id_usuario ? 'Guardando…' : 'Calificar'}
+                          </button>
+                          {e.calificacion != null && (
+                            <span className="entrega-grade-saved">✓ {e.calificacion}/10</span>
+                          )}
+                        </div>
                       </div>
                     ))
                   )}
