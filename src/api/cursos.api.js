@@ -16,6 +16,8 @@ export const updateModulo = (id, data) => api.put(`/modulos/${id}`, data);
 export const deleteModulo = (id) => api.delete(`/modulos/${id}`);
 export const enrollModulo = (id) => api.post(`/modulos/${id}/enroll`, {});
 export const unenrollModulo = (id) => api.delete(`/modulos/${id}/enroll`);
+export const enrollUsuario = (id_modulo, id_usuario) => api.post(`/modulos/${id_modulo}/enroll`, { id_usuario });
+export const unenrollUsuario = (id_modulo, id_usuario) => api.delete(`/modulos/${id_modulo}/enroll`, { data: { id_usuario } });
 export const getEnrolledUsers = (id) => api.get(`/modulos/${id}/usuarios`);
 
 export const createRecurso = (formData) => api.post('/recursos', formData);
