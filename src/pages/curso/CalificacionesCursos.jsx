@@ -52,9 +52,9 @@ const CalificacionesCursos = () => {
       <div className="cc-section">
         <h3 className="cc-section-title">
           {user?.roles?.includes('admin')
-            ? 'Todos los cursos'
+            ? tr('cc_all_courses')
             : user?.roles?.includes('profesor')
-              ? 'Mis cursos'
+              ? tr('cc_my_courses')
               : tr('cc_currentCourses')}
         </h3>
         <div className="cc-table-wrapper">

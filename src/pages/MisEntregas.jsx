@@ -48,7 +48,7 @@ const MisEntregas = () => {
                 <tr>
                   <th>{tr('cp_resourceTitle')}</th>
                   <th>{tr('dt_submittedOn')}</th>
-                  <th>Calificación</th>
+                  <th>{tr('me_grade')}</th>
                   <th>{tr('dt_submissionComment')}</th>
                   <th></th>
                 </tr>

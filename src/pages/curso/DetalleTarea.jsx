@@ -156,7 +156,7 @@ const DetalleTarea = () => {
     return `${dias} ${tr('dt_days')} ${horas} ${tr('dt_hours')}`;
   };
 
-  if (loading) return <div className="page-loading">Cargando tarea...</div>;
+  if (loading) return <div className="page-loading">{tr('dt_loading')}</div>;
 
   return (
     <div className="detalle-tarea-page">
@@ -186,9 +186,9 @@ const DetalleTarea = () => {
         </div>
 
         <div className="tarea-body">
-          <h2 className="tarea-titulo">{recurso?.titulo || 'Nombre de la Tarea'}</h2>
+          <h2 className="tarea-titulo">{recurso?.titulo || tr('dt_resourceTitle')}</h2>
           <div className="tarea-descripcion">
-            {recurso?.contenido || 'Descripción del recurso'}
+            {recurso?.contenido || tr('dt_resourceDesc')}
           </div>
 
           {recurso?.ruta_archivo && (
@@ -280,7 +280,7 @@ const DetalleTarea = () => {
                   onClick={mostrarEntregas ? () => setMostrarEntregas(false) : cargarTodasEntregas}
                   disabled={loadingEntregas}
                 >
-                  {loadingEntregas ? tr('loading') : mostrarEntregas ? '▲ Ocultar' : tr('dt_viewSubmissions')}
+                  {loadingEntregas ? tr('loading') : mostrarEntregas ? `▲ ${tr('dt_hide')}` : tr('dt_viewSubmissions')}
                 </button>
               </div>
 
@@ -323,7 +323,7 @@ const DetalleTarea = () => {
                             onClick={() => handleCalificar(e.id_usuario)}
                             disabled={savingGrade === e.id_usuario}
                           >
-                            {savingGrade === e.id_usuario ? 'Guardando…' : 'Calificar'}
+                            {savingGrade === e.id_usuario ? tr('saving') : tr('dt_grade_btn')}
                           </button>
                           {e.calificacion != null && (
                             <span className="entrega-grade-saved">✓ {e.calificacion}/10</span>

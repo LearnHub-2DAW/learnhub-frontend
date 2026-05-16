@@ -79,18 +79,12 @@
   flex-shrink: 0;
 }
 
-.ep-img-btn {
-  background: var(--bg-hover);
+.ep-current-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
   border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 5px 12px;
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.ep-img-btn:hover {
-  background: var(--bg-hover-mid);
 }
 
 .ep-error {

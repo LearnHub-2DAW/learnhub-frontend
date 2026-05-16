@@ -33,7 +33,7 @@ const PreferenciasCalendario = () => {
     try {
       const res = await updatePerfil(form);
       updateUser(res.data);
-      toast('Preferencias de calendario guardadas');
+      toast(tr('pcal_saved'));
       navigate('/perfil/preferencias');
     } catch (err) {
       toast(err.response?.data?.message || 'Error al guardar', 'error');

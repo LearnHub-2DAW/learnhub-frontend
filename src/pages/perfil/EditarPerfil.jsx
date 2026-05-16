@@ -1,30 +1,54 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import { useLang } from '../../context/LangContext';
+import { updatePerfil } from '../../api/usuario.api';
+import { getFileUrl } from '../../api/axios';
 import PerfilHeader from '../../components/PerfilHeader';
 import './EditarPerfil.css';
 
 const EditarPerfil = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
+  const toast = useToast();
   const { tr } = useLang();
+
   const [form, setForm] = useState({
     nombre: user?.nombre || '',
     apellidos: user?.apellidos || '',
     correo_electronico: user?.correo_electronico || '',
-    ciudad: '',
-    pais: '',
+    ciudad: user?.ciudad || '',
+    pais: user?.pais || '',
+    url_imagen_perfil: user?.url_imagen_perfil || '',
   });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('La edición de perfil estará disponible próximamente.');
+    if (!form.nombre.trim()) return setError(tr('error_required'));
+    setSaving(true);
+    setError('');
+    try {
+      const res = await updatePerfil(form);
+      updateUser({ ...user, ...res.data });
+      toast(tr('ep_saved'));
+      navigate('/perfil');
+    } catch (err) {
+      setError(err.response?.data?.message || tr('ep_errorSave'));
+    } finally {
+      setSaving(false);
+    }
   };
+
+  const currentImgUrl = user?.url_imagen_perfil
+    ? (user.url_imagen_perfil.startsWith('http') ? user.url_imagen_perfil : getFileUrl(user.url_imagen_perfil))
+    : null;
 
   return (
     <div className="editar-perfil-page">
@@ -79,19 +103,34 @@ const EditarPerfil = () => {
 
           <div className="ep-section">
             <h4 className="ep-section-label">{tr('ep_userImage')}</h4>
-            <div className="ep-field">
-              <label>{tr('ep_currentImage')}</label>
-              <button type="button" className="ep-img-btn">{tr('ep_currentImage')}</button>
-            </div>
+            {currentImgUrl && (
+              <div className="ep-field">
+                <label>{tr('ep_currentImage')}</label>
+                <img
+                  src={currentImgUrl}
+                  alt="avatar"
+                  className="ep-current-img"
+                  onError={e => { e.target.style.display = 'none'; }}
+                />
+              </div>
+            )}
             <div className="ep-field">
               <label>{tr('ep_newImage')}</label>
-              <button type="button" className="ep-img-btn">{tr('ep_newImage')}</button>
+              <input
+                type="url"
+                name="url_imagen_perfil"
+                value={form.url_imagen_perfil}
+                onChange={handleChange}
+                placeholder="https://..."
+              />
             </div>
           </div>
 
+          {error && <p className="ep-error">{error}</p>}
+
           <div className="ep-actions">
-            <button type="submit" className="btn-guardar">
-              {tr('ep_updateInfo')}
+            <button type="submit" className="btn-guardar" disabled={saving}>
+              {saving ? tr('saving') : tr('ep_updateInfo')}
             </button>
             <button type="button" className="btn-cancelar" onClick={() => navigate('/perfil')}>
               {tr('cancel')}

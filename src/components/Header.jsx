@@ -148,7 +148,7 @@ const Header = () => {
             <button
               className="dark-toggle-btn"
               onClick={toggleDark}
-              title={dark ? 'Modo claro' : 'Modo oscuro'}
+              title={dark ? tr('h_lightMode') : tr('h_darkMode')}
               aria-label="Toggle dark mode"
             >
               {dark ? '☀️' : '🌙'}
@@ -233,7 +233,7 @@ const Header = () => {
 
               {navCursos.length > 0 && (
                 <div className="nav-cursos-section">
-                  <div className="nav-cursos-label">MIS CURSOS</div>
+                  <div className="nav-cursos-label">{tr('h_myCoursesList')}</div>
                   {navCursos.map(curso => {
                     const isExpanded = expandedCursos.has(curso.id);
                     const isCurrent = currentCursoId === curso.id;
@@ -263,7 +263,7 @@ const Header = () => {
                             {!mods ? (
                               <span className="nav-modulo-placeholder">…</span>
                             ) : mods.length === 0 ? (
-                              <span className="nav-modulo-placeholder">Sin módulos</span>
+                              <span className="nav-modulo-placeholder">{tr('h_noModules')}</span>
                             ) : (
                               mods.map(mod => (
                                 <div

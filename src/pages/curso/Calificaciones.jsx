@@ -85,7 +85,7 @@ const Calificaciones = () => {
           <p className="page-breadcrumb">
             <Link to="/dashboard">{tr('home')}</Link>
             <span> / </span>
-            <Link to={`/curso/${id}`}>{curso?.nombre || 'Curso'}</Link>
+            <Link to={`/curso/${id}`}>{curso?.nombre || tr('dt_courseTitle')}</Link>
             <span> / </span>
             <span>{tr('h_grades')}</span>
           </p>
@@ -102,10 +102,10 @@ const Calificaciones = () => {
             <thead>
               <tr>
                 <th>{tr('gr_gradingItem')}</th>
-                <th>Módulo</th>
-                <th>Fecha límite</th>
+                <th>{tr('gr_module')}</th>
+                <th>{tr('gr_dueDate')}</th>
                 {!isStaff && <th>{tr('gr_grade')}</th>}
-                <th>Estado</th>
+                <th>{tr('gr_status')}</th>
               </tr>
             </thead>
             <tbody>
@@ -132,11 +132,11 @@ const Calificaciones = () => {
                     )}
                     <td>
                       {isStaff ? (
-                        <span className="gr-td-muted">Ver entregas →</span>
+                        <span className="gr-td-muted">{tr('gr_viewSubmissions')} →</span>
                       ) : entrega ? (
-                        <span className="gr-badge gr-badge-submitted">Entregada</span>
+                        <span className="gr-badge gr-badge-submitted">{tr('gr_submitted')}</span>
                       ) : (
-                        <span className="gr-badge gr-badge-missing">Sin entregar</span>
+                        <span className="gr-badge gr-badge-missing">{tr('gr_notSubmitted')}</span>
                       )}
                     </td>
                   </tr>

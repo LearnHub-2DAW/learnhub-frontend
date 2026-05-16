@@ -28,7 +28,7 @@ const PreferenciasNotificacion = () => {
     try {
       const res = await updatePerfil(form);
       updateUser(res.data);
-      toast('Preferencias de notificación guardadas');
+      toast(tr('pn_saved'));
       navigate('/perfil/preferencias');
     } catch (err) {
       toast(err.response?.data?.message || 'Error al guardar', 'error');
@@ -62,7 +62,7 @@ const PreferenciasNotificacion = () => {
               className={`canal-btn ${form.canal_tareas ? 'active' : ''}`}
               onClick={() => toggle('canal_tareas')}
             >
-              {form.canal_tareas ? 'Activado' : 'Desactivado'}
+              {form.canal_tareas ? tr('pn_enabled') : tr('pn_disabled')}
             </button>
           </div>
 
@@ -73,7 +73,7 @@ const PreferenciasNotificacion = () => {
               className={`canal-btn ${form.canal_encuestas ? 'active' : ''}`}
               onClick={() => toggle('canal_encuestas')}
             >
-              {form.canal_encuestas ? 'Activado' : 'Desactivado'}
+              {form.canal_encuestas ? tr('pn_enabled') : tr('pn_disabled')}
             </button>
           </div>
 

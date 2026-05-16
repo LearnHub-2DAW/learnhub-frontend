@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo, enrollModulo } from '../api/cursos.api';
 import { getMisModulos } from '../api/usuario.api';
+import { getFileUrl } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useLang } from '../context/LangContext';
@@ -81,10 +82,12 @@ const MiniCalendario = ({ tareas }) => {
   );
 };
 
+const modImgUrl = (u) => !u ? null : u.startsWith('http') ? u : getFileUrl(u);
+
 const ModuloCard = ({ modulo, onClick }) => (
   <div className="course-card" onClick={onClick}>
     {modulo.url_imagen
-      ? <img src={modulo.url_imagen} alt={modulo.nombre} className="course-thumb-img" onError={e => { e.target.style.display = 'none'; }} />
+      ? <img src={modImgUrl(modulo.url_imagen)} alt={modulo.nombre} className="course-thumb-img" onError={e => { e.target.style.display = 'none'; }} />
       : <div className="course-thumb" />
     }
     <span className="course-card-type">{modulo.cursoNombre}</span>
@@ -179,7 +182,7 @@ const Dashboard = () => {
     // debe acceder a la página del curso y pulsar "Matricularse" en el módulo.
     // Guardamos la clave en sessionStorage para que CursoPagina la pre-rellene.
     sessionStorage.setItem('claveMatriculaPendiente', codigoCurso.trim());
-    toast('Selecciona el módulo en el listado de cursos y usa la clave allí');
+    toast(tr('d_enroll_toast'));
     navigate('/calificaciones');
   };
 
@@ -192,7 +195,7 @@ const Dashboard = () => {
       setCursos(prev => [...prev, res.data]);
       setCursoModal(false);
       setNombreCurso('');
-      toast('Curso creado correctamente');
+      toast(tr('d_courseCreated'));
     } catch (err) {
       setCursoError(err.response?.data?.message || tr('d_errorCreate'));
     } finally {
@@ -216,14 +219,14 @@ const Dashboard = () => {
             <span className="reg-label">{tr('d_enroll')}</span>
             <input
               type="text"
-              placeholder="Clave de matrícula del módulo"
+              placeholder={tr('d_enroll_placeholder')}
               value={codigoCurso}
               onChange={e => setCodigoCurso(e.target.value)}
               className="course-code-input"
               onKeyDown={e => e.key === 'Enter' && handleEnrollByCode()}
             />
             <button className="btn-personalize" onClick={handleEnrollByCode}>
-              Matricularse
+              {tr('cp_enroll')}
             </button>
           </div>
 

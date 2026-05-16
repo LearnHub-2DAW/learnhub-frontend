@@ -12,9 +12,11 @@ import {
   getModuloClave, regenerarClave,
 } from '../../api/cursos.api';
 import { getMisModulos, getProfesores } from '../../api/usuario.api';
+import { getFileUrl } from '../../api/axios';
 import './CursoPagina.css';
 
-const EMPTY_MODULO = { nombre: '', url_imagen: '', id_profesor: '' };
+const EMPTY_MODULO = { nombre: '', imagenFile: null, currentImg: '', id_profesor: '' };
+const modImgUrl = (u) => !u ? null : u.startsWith('http') ? u : getFileUrl(u);
 const EMPTY_RECURSO = { titulo: '', contenido: '', es_entregable: false, fecha_entrega: '', archivo: null };
 
 const CursoPagina = () => {
@@ -117,7 +119,7 @@ const CursoPagina = () => {
   };
 
   const submitEditarCurso = async () => {
-    if (!cursoNombre.trim()) return setCursoError('El nombre es obligatorio');
+    if (!cursoNombre.trim()) return setCursoError(tr('cp_nameRequired'));
     setCursoSaving(true);
     setCursoError('');
     try {
@@ -126,7 +128,7 @@ const CursoPagina = () => {
       setCursoModal(false);
       toast(tr('cp_courseUpdated'));
     } catch (err) {
-      setCursoError(err.response?.data?.message || 'Error al guardar');
+      setCursoError(err.response?.data?.message || tr('cp_errorSave'));
     } finally {
       setCursoSaving(false);
     }
@@ -139,7 +141,7 @@ const CursoPagina = () => {
       await deleteCurso(id);
       navigate('/dashboard');
     } catch (err) {
-      toast(err.response?.data?.message || 'Error al eliminar el curso', 'error');
+      toast(err.response?.data?.message || tr('ap_errorDelete'), 'error');
     }
   };
 
@@ -170,7 +172,7 @@ const CursoPagina = () => {
   };
 
   const submitEnroll = async () => {
-    if (!claveInput.trim()) return setEnrollError('Introduce la clave de matrícula');
+    if (!claveInput.trim()) return setEnrollError(tr('cp_key_required'));
     setEnrollingId(enrollModal.mod.id);
     setEnrollError('');
     try {
@@ -210,7 +212,7 @@ const CursoPagina = () => {
       const res = await regenerarClave(claveModal.mod.id);
       setClaveActual(res.data.clave_matricula);
       setCopiado(false);
-      toast('Clave regenerada correctamente');
+      toast(tr('cp_key_regenerated'));
     } catch (err) {
       toast(err.response?.data?.error || 'Error al regenerar', 'error');
     } finally {
@@ -234,32 +236,34 @@ const CursoPagina = () => {
 
   const openEditarModulo = (e, mod) => {
     e.stopPropagation();
-    setModuloForm({ nombre: mod.nombre, url_imagen: mod.url_imagen || '', id_profesor: mod.id_profesor ? String(mod.id_profesor) : '' });
+    setModuloForm({ nombre: mod.nombre, imagenFile: null, currentImg: mod.url_imagen || '', id_profesor: mod.id_profesor ? String(mod.id_profesor) : '' });
     setModalError('');
     setModuloModal({ open: true, modo: 'editar', id: mod.id });
   };
 
   const submitModulo = async () => {
-    if (!moduloForm.nombre.trim()) return setModalError('El nombre es obligatorio');
+    if (!moduloForm.nombre.trim()) return setModalError(tr('cp_nameRequired'));
     setSaving(true);
     setModalError('');
     try {
-      const payload = { nombre: moduloForm.nombre };
-      if (moduloForm.url_imagen.trim()) payload.url_imagen = moduloForm.url_imagen.trim();
-      if (isAdmin) payload.id_profesor = moduloForm.id_profesor ? Number(moduloForm.id_profesor) : null;
+      const fd = new FormData();
+      fd.append('nombre', moduloForm.nombre);
+      if (isAdmin) fd.append('id_profesor', moduloForm.id_profesor ? String(moduloForm.id_profesor) : '');
+      if (moduloForm.imagenFile) fd.append('imagen', moduloForm.imagenFile);
 
       if (moduloModal.modo === 'crear') {
-        const res = await createModulo({ id_curso: Number(id), ...payload });
+        fd.append('id_curso', String(id));
+        const res = await createModulo(fd);
         setModulos(prev => [...prev, res.data]);
         setModuloActivo(res.data);
       } else {
-        const res = await updateModulo(moduloModal.id, payload);
+        const res = await updateModulo(moduloModal.id, fd);
         setModulos(prev => prev.map(m => m.id === moduloModal.id ? res.data : m));
         if (moduloActivo?.id === moduloModal.id) setModuloActivo(res.data);
       }
       setModuloModal({ open: false, modo: 'crear', id: null });
     } catch (err) {
-      setModalError(err.response?.data?.message || 'Error al guardar');
+      setModalError(err.response?.data?.message || tr('cp_errorSave'));
     } finally {
       setSaving(false);
     }
@@ -305,7 +309,7 @@ const CursoPagina = () => {
   };
 
   const submitRecurso = async () => {
-    if (!recursoForm.titulo.trim()) return setModalError('El título es obligatorio');
+    if (!recursoForm.titulo.trim()) return setModalError(tr('cp_titleRequired'));
     setSaving(true);
     setModalError('');
     try {
@@ -328,7 +332,7 @@ const CursoPagina = () => {
       }
       setRecursoModal({ open: false, modo: 'crear', id: null });
     } catch (err) {
-      setModalError(err.response?.data?.message || 'Error al guardar');
+      setModalError(err.response?.data?.message || tr('cp_errorSave'));
     } finally {
       setSaving(false);
     }
@@ -407,14 +411,14 @@ const CursoPagina = () => {
                     >
                       <span className="subcarpeta-nombre">
                         {mod.url_imagen
-                          ? <img src={mod.url_imagen} alt="" className="subcarpeta-img" onError={e => { e.target.style.display = 'none'; }} />
+                          ? <img src={modImgUrl(mod.url_imagen)} alt="" className="subcarpeta-img" onError={e => { e.target.style.display = 'none'; }} />
                           : <span className="subcarpeta-folder">📁</span>
                         }
                         {mod.nombre}
                       </span>
                       {isStaff ? (
                         <span className="subcarpeta-actions">
-                          <button className="icon-action" title="Ver clave de matrícula" onClick={(e) => openClaveModal(e, mod)}>🔑</button>
+                          <button className="icon-action" title={tr('cp_key_view')} onClick={(e) => openClaveModal(e, mod)}>🔑</button>
                           <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
                           {isAdmin && (
                             <button className="icon-action" title={tr('delete')} onClick={(e) => handleDeleteModulo(e, mod)}>🗑️</button>
@@ -492,8 +496,26 @@ const CursoPagina = () => {
 
         <div className="curso-sidebar">
           <div className="widget-box">
-            <div className="widget-header">{tr('cal_title')}</div>
-            <div className="calendar-placeholder" />
+            <div className="widget-header">{tr('cp_upcoming_tasks')}</div>
+            <ul className="sidebar-tasks-list">
+              {(() => {
+                const now = new Date();
+                const tareas = recursos
+                  .filter(r => r.es_entregable === 1 && r.fecha_entrega && new Date(r.fecha_entrega) >= now)
+                  .sort((a, b) => new Date(a.fecha_entrega) - new Date(b.fecha_entrega));
+                if (tareas.length === 0) return (
+                  <li className="sidebar-task-empty">{tr('cp_no_upcoming')}</li>
+                );
+                return tareas.map(t => (
+                  <li key={t.id} className="sidebar-task-item" onClick={() => navigate(`/recurso/${t.id}`)}>
+                    <span className="sidebar-task-fecha">
+                      {new Date(t.fecha_entrega).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+                    </span>
+                    <span className="sidebar-task-titulo">📝 {t.titulo}</span>
+                  </li>
+                ));
+              })()}
+            </ul>
           </div>
         </div>
       </div>
@@ -545,29 +567,27 @@ const CursoPagina = () => {
             <div className="modal-field">
               <label>{tr('cp_moduleImage')}</label>
               <input
-                type="text"
-                value={moduloForm.url_imagen}
-                onChange={e => setModuloForm(f => ({ ...f, url_imagen: e.target.value }))}
-                placeholder="https://ejemplo.com/imagen.jpg"
+                type="file"
+                accept="image/*"
+                onChange={e => setModuloForm(f => ({ ...f, imagenFile: e.target.files[0] || null }))}
               />
-              {moduloForm.url_imagen && (
+              {(moduloForm.imagenFile || moduloForm.currentImg) && (
                 <img
-                  src={moduloForm.url_imagen}
+                  src={moduloForm.imagenFile ? URL.createObjectURL(moduloForm.imagenFile) : modImgUrl(moduloForm.currentImg)}
                   alt={tr('cp_imagePreview')}
                   className="modal-img-preview"
-                  onError={e => { e.target.style.display = 'none'; }}
-                  onLoad={e => { e.target.style.display = 'block'; }}
+                  style={{ display: 'block' }}
                 />
               )}
             </div>
             {isAdmin && (
               <div className="modal-field">
-                <label>Profesor asignado</label>
+                <label>{tr('cp_profesor_label')}</label>
                 <select
                   value={moduloForm.id_profesor}
                   onChange={e => setModuloForm(f => ({ ...f, id_profesor: e.target.value }))}
                 >
-                  <option value="">Sin profesor</option>
+                  <option value="">{tr('cp_no_profesor')}</option>
                   {profesores.map(p => (
                     <option key={p.id} value={p.id}>
                       {p.nombre ? `${p.nombre} ${p.apellidos || ''}`.trim() : p.nombre_usuario}
@@ -593,14 +613,14 @@ const CursoPagina = () => {
       {enrollModal.open && (
         <div className="modal-overlay" onClick={() => setEnrollModal({ open: false, mod: null })}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h3 className="modal-title">Matricularse en {enrollModal.mod?.nombre}</h3>
+            <h3 className="modal-title">{tr('cp_enroll')} — {enrollModal.mod?.nombre}</h3>
             <div className="modal-field">
-              <label>Clave de matrícula</label>
+              <label>{tr('cp_enroll_key_label')}</label>
               <input
                 type="text"
                 value={claveInput}
                 onChange={e => setClaveInput(e.target.value)}
-                placeholder="Introduce la clave del módulo"
+                placeholder={tr('cp_enroll_key_placeholder')}
                 autoFocus
                 onKeyDown={e => e.key === 'Enter' && submitEnroll()}
               />
@@ -620,26 +640,26 @@ const CursoPagina = () => {
       {claveModal.open && (
         <div className="modal-overlay" onClick={() => setClaveModal({ open: false, mod: null })}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h3 className="modal-title">Clave de matrícula — {claveModal.mod?.nombre}</h3>
+            <h3 className="modal-title">{tr('cp_enroll_key_label')} — {claveModal.mod?.nombre}</h3>
             {loadingClave ? (
-              <p style={{ color: 'var(--text-muted)', margin: '12px 0' }}>Cargando…</p>
+              <p style={{ color: 'var(--text-muted)', margin: '12px 0' }}>{tr('loading')}</p>
             ) : (
               <>
                 <div className="clave-display">
                   <code className="clave-code">{claveActual}</code>
                   <button className="btn-copiar-clave" onClick={handleCopiarClave}>
-                    {copiado ? '✓ Copiado' : '📋 Copiar'}
+                    {copiado ? `✓ ${tr('cp_key_copied')}` : `📋 ${tr('cp_key_copy')}`}
                   </button>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '10px 0 0' }}>
-                  Comparte esta clave con los alumnos para que puedan matricularse.
+                  {tr('cp_key_share_hint')}
                 </p>
               </>
             )}
             <div className="modal-actions">
               <button className="btn-modal-cancel" onClick={() => setClaveModal({ open: false, mod: null })}>{tr('cancel')}</button>
               <button className="btn-modal-ok" onClick={handleRegenerar} disabled={loadingClave}>
-                🔄 Regenerar clave
+                🔄 {tr('cp_key_regen')}
               </button>
             </div>
           </div>

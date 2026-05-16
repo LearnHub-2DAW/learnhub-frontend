@@ -138,13 +138,14 @@ const Calendario = () => {
       ]
     : [];
 
+  const maxUpcoming = user?.n_max_eventos || 6;
   const upcoming = [
     ...tareas.map(t => ({ ...t, tipo: 'tarea', _d: new Date(t.fecha_entrega) })),
     ...eventos.map(e => ({ ...e, tipo: 'evento', _d: new Date(e.fecha) })),
   ]
     .filter(x => x._d >= today)
     .sort((a, b) => a._d - b._d)
-    .slice(0, 6);
+    .slice(0, maxUpcoming);
 
   const openEventoModal = () => {
     const pad = n => String(n).padStart(2, '0');
@@ -163,7 +164,7 @@ const Calendario = () => {
 
   const submitEvento = async () => {
     if (!eventoForm.id_modulo || !eventoForm.titulo.trim() || !eventoForm.fecha) {
-      setEventoError('Módulo, título y fecha son obligatorios');
+      setEventoError(tr('cal_error_required'));
       return;
     }
     setSavingEvento(true);
@@ -181,9 +182,9 @@ const Calendario = () => {
       const modulo = modulos.find(m => m.id === Number(eventoForm.id_modulo));
       setEventos(prev => [...prev, { ...nuevoEvento, moduloNombre: modulo?.nombre || '' }]);
       setEventoModal(false);
-      toast('Evento creado');
+      toast(tr('cal_evento_created'));
     } catch (err) {
-      setEventoError(err.response?.data?.message || 'Error al crear evento');
+      setEventoError(err.response?.data?.message || tr('cal_error_create'));
     } finally {
       setSavingEvento(false);
     }
@@ -203,7 +204,7 @@ const Calendario = () => {
 
   const submitEditEvento = async () => {
     if (!editEventoForm.titulo.trim() || !editEventoForm.fecha) {
-      setEditEventoError('Título y fecha son obligatorios');
+      setEditEventoError(tr('cal_error_title_date'));
       return;
     }
     setSavingEditEvento(true);
@@ -214,9 +215,9 @@ const Calendario = () => {
       const res = await updateEvento(editEventoForm.id, payload);
       setEventos(prev => prev.map(ev => ev.id === editEventoForm.id ? { ...ev, ...res.data } : ev));
       setEditEventoModal(false);
-      toast('Evento actualizado');
+      toast(tr('cal_evento_updated'));
     } catch (err) {
-      setEditEventoError(err.response?.data?.message || 'Error al actualizar');
+      setEditEventoError(err.response?.data?.message || tr('cal_error_update'));
     } finally {
       setSavingEditEvento(false);
     }
@@ -224,13 +225,13 @@ const Calendario = () => {
 
   const handleDeleteEvento = async (e, eventoId) => {
     e.stopPropagation();
-    if (!window.confirm('¿Eliminar este evento?')) return;
+    if (!window.confirm(tr('cal_confirm_delete'))) return;
     try {
       await deleteEvento(eventoId);
       setEventos(prev => prev.filter(ev => ev.id !== eventoId));
-      toast('Evento eliminado');
+      toast(tr('cal_evento_deleted'));
     } catch (err) {
-      toast(err.response?.data?.message || 'Error al eliminar', 'error');
+      toast(err.response?.data?.message || tr('cal_error_update'), 'error');
     }
   };
 
@@ -253,10 +254,10 @@ const Calendario = () => {
             <div className="cal-actions-bar">
               <div className="cal-legend">
                 <span className="cal-legend-item">
-                  <span className="cal-dot cal-dot-tarea" />Tareas
+                  <span className="cal-dot cal-dot-tarea" />{tr('cal_legend_tasks')}
                 </span>
                 <span className="cal-legend-item">
-                  <span className="cal-dot cal-dot-evento" />Eventos
+                  <span className="cal-dot cal-dot-evento" />{tr('cal_legend_events')}
                 </span>
               </div>
               {isStaff && (
@@ -330,8 +331,8 @@ const Calendario = () => {
                         </span>
                         {isStaff && item.tipo === 'evento' && (
                           <span className="cal-evento-actions">
-                            <button className="cal-evento-btn-edit" onClick={e => openEditEvento(e, item)} title="Editar">✏️</button>
-                            <button className="cal-evento-btn-del" onClick={e => handleDeleteEvento(e, item.id)} title="Eliminar">🗑️</button>
+                            <button className="cal-evento-btn-edit" onClick={e => openEditEvento(e, item)} title={tr('edit')}>✏️</button>
+                            <button className="cal-evento-btn-del" onClick={e => handleDeleteEvento(e, item.id)} title={tr('delete')}>🗑️</button>
                           </span>
                         )}
                       </li>
@@ -345,9 +346,9 @@ const Calendario = () => {
 
           <div className="cal-sidebar">
             <div className="cal-mini-widget">
-              <div className="cal-mini-header">Próximos</div>
+              <div className="cal-mini-header">{tr('cal_upcoming')}</div>
               {upcoming.length === 0 ? (
-                <p className="cal-upcoming-empty">Sin eventos próximos</p>
+                <p className="cal-upcoming-empty">{tr('cal_no_upcoming')}</p>
               ) : (
                 <ul className="cal-upcoming-list">
                   {upcoming.map((item, i) => (
@@ -376,7 +377,7 @@ const Calendario = () => {
             <h3 className="cal-modal-title">{tr('cal_newEvent')}</h3>
 
             <div className="cal-modal-field">
-              <label>Módulo</label>
+              <label>{tr('cal_module_label')}</label>
               <select
                 value={eventoForm.id_modulo}
                 onChange={e => setEventoForm(f => ({ ...f, id_modulo: e.target.value }))}
@@ -390,7 +391,7 @@ const Calendario = () => {
             </div>
 
             <div className="cal-modal-field">
-              <label>Título</label>
+              <label>{tr('cal_title_label')}</label>
               <input
                 type="text"
                 value={eventoForm.titulo}
@@ -400,7 +401,7 @@ const Calendario = () => {
             </div>
 
             <div className="cal-modal-field">
-              <label>Fecha</label>
+              <label>{tr('cal_date_label')}</label>
               <input
                 type="date"
                 value={eventoForm.fecha}
@@ -409,7 +410,7 @@ const Calendario = () => {
             </div>
 
             <div className="cal-modal-field">
-              <label>Hora (opcional)</label>
+              <label>{tr('cal_time_label')}</label>
               <input
                 type="time"
                 value={eventoForm.hora}
@@ -420,10 +421,10 @@ const Calendario = () => {
             {eventoError && <p className="cal-modal-error">{eventoError}</p>}
             <div className="cal-modal-actions">
               <button className="cal-modal-cancel" onClick={() => setEventoModal(false)}>
-                Cancelar
+                {tr('cancel')}
               </button>
               <button className="cal-modal-ok" onClick={submitEvento} disabled={savingEvento}>
-                {savingEvento ? 'Guardando…' : 'Crear evento'}
+                {savingEvento ? tr('saving') : tr('cal_create_event')}
               </button>
             </div>
           </div>
@@ -432,10 +433,10 @@ const Calendario = () => {
       {editEventoModal && (
         <div className="cal-modal-overlay" onClick={() => setEditEventoModal(false)}>
           <div className="cal-modal-box" onClick={e => e.stopPropagation()}>
-            <h3 className="cal-modal-title">Editar evento</h3>
+            <h3 className="cal-modal-title">{tr('cal_edit_event')}</h3>
 
             <div className="cal-modal-field">
-              <label>Título</label>
+              <label>{tr('cal_title_label')}</label>
               <input
                 type="text"
                 value={editEventoForm.titulo}
@@ -445,7 +446,7 @@ const Calendario = () => {
             </div>
 
             <div className="cal-modal-field">
-              <label>Fecha</label>
+              <label>{tr('cal_date_label')}</label>
               <input
                 type="date"
                 value={editEventoForm.fecha}
@@ -454,7 +455,7 @@ const Calendario = () => {
             </div>
 
             <div className="cal-modal-field">
-              <label>Hora (opcional)</label>
+              <label>{tr('cal_time_label')}</label>
               <input
                 type="time"
                 value={editEventoForm.hora}
@@ -464,9 +465,9 @@ const Calendario = () => {
 
             {editEventoError && <p className="cal-modal-error">{editEventoError}</p>}
             <div className="cal-modal-actions">
-              <button className="cal-modal-cancel" onClick={() => setEditEventoModal(false)}>Cancelar</button>
+              <button className="cal-modal-cancel" onClick={() => setEditEventoModal(false)}>{tr('cancel')}</button>
               <button className="cal-modal-ok" onClick={submitEditEvento} disabled={savingEditEvento}>
-                {savingEditEvento ? 'Guardando…' : 'Guardar'}
+                {savingEditEvento ? tr('saving') : tr('save')}
               </button>
             </div>
           </div>
