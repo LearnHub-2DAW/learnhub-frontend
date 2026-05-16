@@ -84,6 +84,26 @@
   font-size: 0.9rem;
 }
 
+.gr-row-link { cursor: pointer; }
+.gr-row-link:hover td { background: var(--bg-widget); }
+
+.gr-td-name { font-weight: 500; color: var(--text-heading); }
+.gr-td-muted { color: var(--text-muted); }
+
+.gr-grade { font-weight: 600; color: var(--text-base); }
+.gr-graded { color: #16a34a; }
+
+.gr-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.gr-badge-submitted { background: #dcfce7; color: #15803d; }
+.gr-badge-missing   { background: #fee2e2; color: #dc2626; }
+
 @media (max-width: 768px) {
   .calificaciones-page { padding: 16px; }
   .grades-table { font-size: 0.8rem; }

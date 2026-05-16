@@ -170,18 +170,25 @@
   border-color: var(--brand-hover);
 }
 
-.cal-dot {
-  display: block;
-  width: 5px;
-  height: 5px;
-  background: var(--brand-hover);
-  border-radius: 50%;
-  margin: 2px auto 0;
+.cal-dots {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 2px;
 }
 
-.cal-today .cal-dot {
-  background: #a7f3d0;
+.cal-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
 }
+
+.cal-dot-tarea  { background: var(--brand-hover); }
+.cal-dot-evento { background: #f59e0b; }
+
+.cal-today .cal-dot-tarea  { background: #a7f3d0; }
+.cal-today .cal-dot-evento { background: #fde68a; }
 
 .cal-day-tareas {
   margin-top: 16px;
@@ -225,6 +232,37 @@
   border-radius: 3px;
   cursor: pointer;
   transition: background 0.12s;
+  position: relative;
+}
+
+.cal-evento-actions {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  gap: 2px;
+}
+
+.cal-tarea-item:hover .cal-evento-actions {
+  display: flex;
+}
+
+.cal-evento-btn-edit,
+.cal-evento-btn-del {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 4px;
+  border-radius: 3px;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+.cal-evento-btn-edit:hover,
+.cal-evento-btn-del:hover {
+  opacity: 1;
+  background: rgba(0,0,0,0.08);
 }
 
 .cal-tarea-item:hover {
@@ -242,7 +280,25 @@
   color: var(--text-muted);
 }
 
-/* Sidebar mini-calendario */
+.cal-legend {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.cal-item-evento {
+  border-left-color: #f59e0b !important;
+}
+
+/* Sidebar */
 .cal-sidebar {
   padding: 12px;
 }
@@ -262,12 +318,137 @@
   color: var(--text-heading);
 }
 
-.cal-mini-placeholder {
-  height: 100px;
-  background: var(--bg-hover);
-  margin: 10px;
-  border-radius: 3px;
+.cal-upcoming-empty {
+  padding: 10px;
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  margin: 0;
 }
+
+.cal-upcoming-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cal-upcoming-item {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border-sep);
+  border-left: 3px solid transparent;
+}
+
+.cal-upcoming-item:last-child { border-bottom: none; }
+
+.cal-upcoming-tarea { border-left-color: var(--brand-hover); }
+.cal-upcoming-evento { border-left-color: #f59e0b; }
+
+.cal-upcoming-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.cal-upcoming-title {
+  font-size: 0.8rem;
+  color: var(--text-base);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Modal */
+.cal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.cal-modal-box {
+  background: var(--bg-card);
+  border-radius: 6px;
+  padding: 24px 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-modal);
+}
+
+.cal-modal-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin: 0 0 18px;
+}
+
+.cal-modal-field {
+  margin-bottom: 12px;
+}
+
+.cal-modal-field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.cal-modal-field input,
+.cal-modal-field select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--border-input);
+  border-radius: 4px;
+  font-size: 0.88rem;
+  background: var(--bg-input);
+  color: var(--text-base);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cal-modal-field input:focus,
+.cal-modal-field select:focus { border-color: var(--brand-hover); }
+
+.cal-modal-error {
+  color: #ef4444;
+  font-size: 0.83rem;
+  margin: 0 0 10px;
+}
+
+.cal-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cal-modal-cancel {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-base);
+  padding: 7px 16px;
+  border-radius: 4px;
+  font-size: 0.87rem;
+  cursor: pointer;
+}
+
+.cal-modal-cancel:hover { background: var(--bg-hover-mid); }
+
+.cal-modal-ok {
+  background: var(--brand);
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 4px;
+  font-size: 0.87rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cal-modal-ok:hover:not(:disabled) { background: var(--brand-hover); }
+.cal-modal-ok:disabled { opacity: 0.55; cursor: default; }
 
 @media (max-width: 768px) {
   .calendario-page {

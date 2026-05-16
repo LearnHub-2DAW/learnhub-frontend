@@ -1,24 +1,78 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getCursoById } from '../../api/cursos.api';
 import { useLang } from '../../context/LangContext';
+import { getCursoById, getModulosByCurso, getRecursosByModulo } from '../../api/cursos.api';
+import { getMisModulos, getMisEntregas } from '../../api/usuario.api';
 import './Calificaciones.css';
 
 const Calificaciones = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const { tr } = useLang();
+  const navigate = useNavigate();
+  const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
+
   const [curso, setCurso] = useState(null);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [calificaciones] = useState([]);
 
   useEffect(() => {
-    getCursoById(id)
-      .then(res => setCurso(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const load = async () => {
+      if (isStaff) {
+        const [cursoRes, modulosRes] = await Promise.all([
+          getCursoById(id),
+          getModulosByCurso(id),
+        ]);
+        setCurso(cursoRes.data);
+        const modulos = modulosRes.data;
+
+        const recursosGroups = await Promise.all(
+          modulos.map(m =>
+            getRecursosByModulo(m.id)
+              .then(r => r.data.map(rec => ({ ...rec, moduloNombre: m.nombre })))
+              .catch(() => [])
+          )
+        );
+        setItems(
+          recursosGroups.flat()
+            .filter(r => r.es_entregable === 1)
+            .map(r => ({ recurso: r, entrega: null }))
+        );
+      } else {
+        const [cursoRes, misModulosRes, misEntregasRes] = await Promise.all([
+          getCursoById(id),
+          getMisModulos(),
+          getMisEntregas(),
+        ]);
+        setCurso(cursoRes.data);
+
+        const modulosCurso = misModulosRes.data.filter(m => m.id_curso === Number(id));
+        const entregaMap = {};
+        misEntregasRes.data.forEach(e => { entregaMap[e.id_recurso] = e; });
+
+        const recursosGroups = await Promise.all(
+          modulosCurso.map(m =>
+            getRecursosByModulo(m.id)
+              .then(r => r.data.map(rec => ({ ...rec, moduloNombre: m.nombre })))
+              .catch(() => [])
+          )
+        );
+        setItems(
+          recursosGroups.flat()
+            .filter(r => r.es_entregable === 1)
+            .map(r => ({ recurso: r, entrega: entregaMap[r.id] || null }))
+        );
+      }
+    };
+
+    load().catch(console.error).finally(() => setLoading(false));
   }, [id]);
+
+  const formatFecha = (f) => {
+    if (!f) return '—';
+    return new Date(f).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
 
   if (loading) return <div className="page-loading">{tr('loading')}</div>;
 
@@ -38,35 +92,53 @@ const Calificaciones = () => {
         </div>
 
         <div className="grades-body">
-          <div className="grades-username">
-            {user ? `${user.nombre} ${user.apellidos}` : '—'}
-          </div>
+          {!isStaff && (
+            <div className="grades-username">
+              {user ? `${user.nombre || ''} ${user.apellidos || ''}`.trim() : '—'}
+            </div>
+          )}
 
           <table className="grades-table">
             <thead>
               <tr>
                 <th>{tr('gr_gradingItem')}</th>
-                <th>{tr('gr_calcWeight')}</th>
-                <th>{tr('gr_grade')}</th>
-                <th>{tr('gr_percentage')}</th>
-                <th>{tr('gr_courseContrib')}</th>
+                <th>Módulo</th>
+                <th>Fecha límite</th>
+                {!isStaff && <th>{tr('gr_grade')}</th>}
+                <th>Estado</th>
               </tr>
             </thead>
             <tbody>
-              {calificaciones.length === 0 ? (
+              {items.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="no-data">
+                  <td colSpan={isStaff ? 4 : 5} className="no-data">
                     {tr('gr_noGrades')}
                   </td>
                 </tr>
               ) : (
-                calificaciones.map((item, i) => (
-                  <tr key={i}>
-                    <td>{item.nombre}</td>
-                    <td>{item.ponderacion}</td>
-                    <td>{item.calificacion}</td>
-                    <td>{item.porcentaje}%</td>
-                    <td>{item.aportacion}</td>
+                items.map(({ recurso, entrega }) => (
+                  <tr
+                    key={recurso.id}
+                    className="gr-row-link"
+                    onClick={() => navigate(`/recurso/${recurso.id}`)}
+                  >
+                    <td className="gr-td-name">{recurso.titulo}</td>
+                    <td className="gr-td-muted">{recurso.moduloNombre}</td>
+                    <td className="gr-td-muted">{formatFecha(recurso.fecha_entrega)}</td>
+                    {!isStaff && (
+                      <td className={entrega?.calificacion != null ? 'gr-grade gr-graded' : 'gr-grade'}>
+                        {entrega?.calificacion != null ? `${entrega.calificacion}/10` : '—'}
+                      </td>
+                    )}
+                    <td>
+                      {isStaff ? (
+                        <span className="gr-td-muted">Ver entregas →</span>
+                      ) : entrega ? (
+                        <span className="gr-badge gr-badge-submitted">Entregada</span>
+                      ) : (
+                        <span className="gr-badge gr-badge-missing">Sin entregar</span>
+                      )}
+                    </td>
                   </tr>
                 ))
               )}

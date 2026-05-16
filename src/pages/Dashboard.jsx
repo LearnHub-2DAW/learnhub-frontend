@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo } from '../api/cursos.api';
+import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo, enrollModulo } from '../api/cursos.api';
 import { getMisModulos } from '../api/usuario.api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -170,6 +170,19 @@ const Dashboard = () => {
       .finally(() => setLoadingModulos(false));
   }, [cursos]);
 
+  const handleEnrollByCode = () => {
+    if (!codigoCurso.trim()) {
+      navigate('/calificaciones');
+      return;
+    }
+    // La clave de matrícula es específica de cada módulo; para usarla el alumno
+    // debe acceder a la página del curso y pulsar "Matricularse" en el módulo.
+    // Guardamos la clave en sessionStorage para que CursoPagina la pre-rellene.
+    sessionStorage.setItem('claveMatriculaPendiente', codigoCurso.trim());
+    toast('Selecciona el módulo en el listado de cursos y usa la clave allí');
+    navigate('/calificaciones');
+  };
+
   const submitCurso = async () => {
     if (!nombreCurso.trim()) return setCursoError(tr('d_nameRequired'));
     setSavingCurso(true);
@@ -203,12 +216,15 @@ const Dashboard = () => {
             <span className="reg-label">{tr('d_enroll')}</span>
             <input
               type="text"
-              placeholder={tr('d_courseCode')}
+              placeholder="Clave de matrícula del módulo"
               value={codigoCurso}
               onChange={e => setCodigoCurso(e.target.value)}
               className="course-code-input"
+              onKeyDown={e => e.key === 'Enter' && handleEnrollByCode()}
             />
-            <button className="btn-personalize">{tr('d_customize')}</button>
+            <button className="btn-personalize" onClick={handleEnrollByCode}>
+              Matricularse
+            </button>
           </div>
 
           <div className="widget-box">

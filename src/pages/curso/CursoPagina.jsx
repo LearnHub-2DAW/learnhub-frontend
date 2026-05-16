@@ -9,11 +9,12 @@ import {
   createRecurso, updateRecurso, deleteRecurso,
   updateCurso, deleteCurso,
   enrollModulo, unenrollModulo,
+  getModuloClave, regenerarClave,
 } from '../../api/cursos.api';
-import { getMisModulos } from '../../api/usuario.api';
+import { getMisModulos, getProfesores } from '../../api/usuario.api';
 import './CursoPagina.css';
 
-const EMPTY_MODULO = { nombre: '', url_imagen: '' };
+const EMPTY_MODULO = { nombre: '', url_imagen: '', id_profesor: '' };
 const EMPTY_RECURSO = { titulo: '', contenido: '', es_entregable: false, fecha_entrega: '', archivo: null };
 
 const CursoPagina = () => {
@@ -43,12 +44,30 @@ const CursoPagina = () => {
   const [enrolledIds, setEnrolledIds] = useState(new Set());
   const [enrollingId, setEnrollingId] = useState(null);
 
+  // Modal matrícula por clave (alumno)
+  const [enrollModal, setEnrollModal] = useState({ open: false, mod: null });
+  const [claveInput, setClaveInput] = useState('');
+  const [enrollError, setEnrollError] = useState('');
+
+  // Modal ver/regenerar clave (staff)
+  const [claveModal, setClaveModal] = useState({ open: false, mod: null });
+  const [claveActual, setClaveActual] = useState('');
+  const [loadingClave, setLoadingClave] = useState(false);
+  const [copiado, setCopiado] = useState(false);
+
+  const [profesores, setProfesores] = useState([]);
   const [moduloModal, setModuloModal] = useState({ open: false, modo: 'crear', id: null });
   const [moduloForm, setModuloForm] = useState(EMPTY_MODULO);
   const [recursoModal, setRecursoModal] = useState({ open: false, modo: 'crear', id: null });
   const [recursoForm, setRecursoForm] = useState(EMPTY_RECURSO);
   const [saving, setSaving] = useState(false);
   const [modalError, setModalError] = useState('');
+
+  useEffect(() => {
+    if (isAdmin) {
+      getProfesores().then(r => setProfesores(r.data)).catch(() => {});
+    }
+  }, []);
 
   useEffect(() => {
     const promises = [getCursoById(id), getModulosByCurso(id)];
@@ -125,24 +144,85 @@ const CursoPagina = () => {
   };
 
   // ── Matriculación ────────────────────────────────────────
-  const handleEnroll = async (e, mod) => {
+  const handleEnroll = (e, mod) => {
     e.stopPropagation();
+    if (enrolledIds.has(mod.id)) {
+      handleUnenroll(mod);
+    } else {
+      const clavePendiente = sessionStorage.getItem('claveMatriculaPendiente') || '';
+      setClaveInput(clavePendiente);
+      setEnrollError('');
+      setEnrollModal({ open: true, mod });
+    }
+  };
+
+  const handleUnenroll = async (mod) => {
     setEnrollingId(mod.id);
     try {
-      if (enrolledIds.has(mod.id)) {
-        await unenrollModulo(mod.id);
-        setEnrolledIds(prev => { const s = new Set(prev); s.delete(mod.id); return s; });
-        toast(tr('cp_unenroll') + ': ' + mod.nombre);
-      } else {
-        await enrollModulo(mod.id);
-        setEnrolledIds(prev => new Set([...prev, mod.id]));
-        toast(tr('cp_enrolled') + ': ' + mod.nombre);
-      }
+      await unenrollModulo(mod.id);
+      setEnrolledIds(prev => { const s = new Set(prev); s.delete(mod.id); return s; });
+      toast(tr('cp_unenroll') + ': ' + mod.nombre);
     } catch (err) {
       toast(err.response?.data?.message || err.response?.data?.error || 'Error', 'error');
     } finally {
       setEnrollingId(null);
     }
+  };
+
+  const submitEnroll = async () => {
+    if (!claveInput.trim()) return setEnrollError('Introduce la clave de matrícula');
+    setEnrollingId(enrollModal.mod.id);
+    setEnrollError('');
+    try {
+      await enrollModulo(enrollModal.mod.id, claveInput.trim());
+      setEnrolledIds(prev => new Set([...prev, enrollModal.mod.id]));
+      sessionStorage.removeItem('claveMatriculaPendiente');
+      toast(tr('cp_enrolled') + ': ' + enrollModal.mod.nombre);
+      setEnrollModal({ open: false, mod: null });
+    } catch (err) {
+      setEnrollError(err.response?.data?.error || err.response?.data?.message || 'Clave incorrecta');
+    } finally {
+      setEnrollingId(null);
+    }
+  };
+
+  // ── Clave de matrícula (staff) ───────────────────────────
+  const openClaveModal = async (e, mod) => {
+    e.stopPropagation();
+    setClaveActual('');
+    setCopiado(false);
+    setClaveModal({ open: true, mod });
+    setLoadingClave(true);
+    try {
+      const res = await getModuloClave(mod.id);
+      setClaveActual(res.data.clave_matricula);
+    } catch (err) {
+      toast(err.response?.data?.error || 'Error al obtener la clave', 'error');
+      setClaveModal({ open: false, mod: null });
+    } finally {
+      setLoadingClave(false);
+    }
+  };
+
+  const handleRegenerar = async () => {
+    setLoadingClave(true);
+    try {
+      const res = await regenerarClave(claveModal.mod.id);
+      setClaveActual(res.data.clave_matricula);
+      setCopiado(false);
+      toast('Clave regenerada correctamente');
+    } catch (err) {
+      toast(err.response?.data?.error || 'Error al regenerar', 'error');
+    } finally {
+      setLoadingClave(false);
+    }
+  };
+
+  const handleCopiarClave = () => {
+    navigator.clipboard.writeText(claveActual).then(() => {
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    });
   };
 
   // ── Módulo CRUD ──────────────────────────────────────────
@@ -154,7 +234,7 @@ const CursoPagina = () => {
 
   const openEditarModulo = (e, mod) => {
     e.stopPropagation();
-    setModuloForm({ nombre: mod.nombre, url_imagen: mod.url_imagen || '' });
+    setModuloForm({ nombre: mod.nombre, url_imagen: mod.url_imagen || '', id_profesor: mod.id_profesor ? String(mod.id_profesor) : '' });
     setModalError('');
     setModuloModal({ open: true, modo: 'editar', id: mod.id });
   };
@@ -166,6 +246,7 @@ const CursoPagina = () => {
     try {
       const payload = { nombre: moduloForm.nombre };
       if (moduloForm.url_imagen.trim()) payload.url_imagen = moduloForm.url_imagen.trim();
+      if (isAdmin) payload.id_profesor = moduloForm.id_profesor ? Number(moduloForm.id_profesor) : null;
 
       if (moduloModal.modo === 'crear') {
         const res = await createModulo({ id_curso: Number(id), ...payload });
@@ -333,6 +414,7 @@ const CursoPagina = () => {
                       </span>
                       {isStaff ? (
                         <span className="subcarpeta-actions">
+                          <button className="icon-action" title="Ver clave de matrícula" onClick={(e) => openClaveModal(e, mod)}>🔑</button>
                           <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
                           {isAdmin && (
                             <button className="icon-action" title={tr('delete')} onClick={(e) => handleDeleteModulo(e, mod)}>🗑️</button>
@@ -478,6 +560,22 @@ const CursoPagina = () => {
                 />
               )}
             </div>
+            {isAdmin && (
+              <div className="modal-field">
+                <label>Profesor asignado</label>
+                <select
+                  value={moduloForm.id_profesor}
+                  onChange={e => setModuloForm(f => ({ ...f, id_profesor: e.target.value }))}
+                >
+                  <option value="">Sin profesor</option>
+                  {profesores.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.nombre ? `${p.nombre} ${p.apellidos || ''}`.trim() : p.nombre_usuario}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             {modalError && <p className="modal-error">{modalError}</p>}
             <div className="modal-actions">
               <button className="btn-modal-cancel" onClick={() => setModuloModal(m => ({ ...m, open: false }))}>
@@ -485,6 +583,63 @@ const CursoPagina = () => {
               </button>
               <button className="btn-modal-ok" onClick={submitModulo} disabled={saving}>
                 {saving ? tr('saving') : tr('save')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Matricularse por clave (alumno) */}
+      {enrollModal.open && (
+        <div className="modal-overlay" onClick={() => setEnrollModal({ open: false, mod: null })}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <h3 className="modal-title">Matricularse en {enrollModal.mod?.nombre}</h3>
+            <div className="modal-field">
+              <label>Clave de matrícula</label>
+              <input
+                type="text"
+                value={claveInput}
+                onChange={e => setClaveInput(e.target.value)}
+                placeholder="Introduce la clave del módulo"
+                autoFocus
+                onKeyDown={e => e.key === 'Enter' && submitEnroll()}
+              />
+            </div>
+            {enrollError && <p className="modal-error">{enrollError}</p>}
+            <div className="modal-actions">
+              <button className="btn-modal-cancel" onClick={() => setEnrollModal({ open: false, mod: null })}>{tr('cancel')}</button>
+              <button className="btn-modal-ok" onClick={submitEnroll} disabled={enrollingId === enrollModal.mod?.id}>
+                {enrollingId === enrollModal.mod?.id ? tr('cp_enrolling') : tr('cp_enroll')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Clave de matrícula (staff) */}
+      {claveModal.open && (
+        <div className="modal-overlay" onClick={() => setClaveModal({ open: false, mod: null })}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <h3 className="modal-title">Clave de matrícula — {claveModal.mod?.nombre}</h3>
+            {loadingClave ? (
+              <p style={{ color: 'var(--text-muted)', margin: '12px 0' }}>Cargando…</p>
+            ) : (
+              <>
+                <div className="clave-display">
+                  <code className="clave-code">{claveActual}</code>
+                  <button className="btn-copiar-clave" onClick={handleCopiarClave}>
+                    {copiado ? '✓ Copiado' : '📋 Copiar'}
+                  </button>
+                </div>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '10px 0 0' }}>
+                  Comparte esta clave con los alumnos para que puedan matricularse.
+                </p>
+              </>
+            )}
+            <div className="modal-actions">
+              <button className="btn-modal-cancel" onClick={() => setClaveModal({ open: false, mod: null })}>{tr('cancel')}</button>
+              <button className="btn-modal-ok" onClick={handleRegenerar} disabled={loadingClave}>
+                🔄 Regenerar clave
               </button>
             </div>
           </div>

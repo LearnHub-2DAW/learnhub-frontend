@@ -407,6 +407,7 @@
 
 .modal-field input[type="text"],
 .modal-field input[type="date"],
+.modal-field select,
 .modal-field textarea {
   width: 100%;
   padding: 8px 10px;
@@ -421,6 +422,7 @@
 
 .modal-field input[type="text"]:focus,
 .modal-field input[type="date"]:focus,
+.modal-field select:focus,
 .modal-field textarea:focus {
   border-color: var(--brand-hover);
 }
@@ -526,6 +528,41 @@
   font-size: 0.78rem;
   color: var(--text-faint);
   white-space: nowrap;
+}
+
+.clave-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin: 4px 0;
+}
+
+.clave-code {
+  flex: 1;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--text-heading);
+  word-break: break-all;
+}
+
+.btn-copiar-clave {
+  flex-shrink: 0;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-copiar-clave:hover {
+  background: var(--brand-hover);
 }
 
 @media (max-width: 900px) {

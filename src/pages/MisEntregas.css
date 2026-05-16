@@ -90,6 +90,15 @@
   font-size: 0.82rem;
 }
 
+.calificacion-cell {
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.calificacion-nota     { color: #16a34a; }
+.calificacion-pendiente { color: var(--text-faint); }
+
 .contenido-cell {
   color: var(--text-secondary);
   max-width: 300px;

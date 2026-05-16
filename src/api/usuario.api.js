@@ -16,6 +16,7 @@ export const leerConversacion = (id) => api.put(`/mensajes/${id}/leer`);
 
 export const buscarUsuarios = (q) => api.get('/usuarios/buscar', { params: q ? { q } : {} });
 
+export const getProfesores = () => api.get('/usuarios/profesores');
 export const getUsuarios = () => api.get('/usuarios');
 export const getUsuarioById = (id) => api.get(`/usuarios/${id}`);
 export const updateUsuarioAdmin = (id, datos) => api.put(`/usuarios/${id}`, datos);
