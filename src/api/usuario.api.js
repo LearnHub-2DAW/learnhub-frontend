@@ -22,5 +22,8 @@ export const leerConversacion = (id) => api.put(`/mensajes/${id}/leer`);
 export const buscarUsuarios = (q) => api.get('/usuarios/buscar', { params: q ? { q } : {} });
 
 export const getUsuarios = () => api.get('/usuarios');
+export const getUsuarioById = (id) => api.get(`/usuarios/${id}`);
+export const updateUsuarioAdmin = (id, datos) => api.put(`/usuarios/${id}`, datos);
 export const deleteUsuarioAdmin = (id) => api.delete(`/usuarios/${id}`);
 export const changeRolUsuario = (id, rol) => api.put(`/usuarios/${id}/rol`, { rol });
+export const getModulosDeUsuario = (id) => api.get(`/usuarios/${id}/modulos`);
