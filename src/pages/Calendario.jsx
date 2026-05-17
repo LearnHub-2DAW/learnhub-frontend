@@ -10,14 +10,31 @@ import { useToast } from '../context/ToastContext';
 import { useLang } from '../context/LangContext';
 import './Calendario.css';
 
-const buildCalendar = (year, month) => {
+// startDay: JS getDay() value (0=Dom, 1=Lun, ..., 6=Sáb)
+const buildCalendar = (year, month, startDay = 1) => {
   const firstDay = new Date(year, month, 1).getDay();
-  const offset = (firstDay + 6) % 7;
+  const offset = (firstDay - startDay + 7) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const cells = [];
   for (let i = 0; i < offset; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
   return cells;
+};
+
+const DIA_SEMANA_JS = {
+  'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4,
+  'Viernes': 5, 'Sábado': 6, 'Domingo': 0,
+};
+
+const formatHora = (hora, formato) => {
+  if (!hora) return '';
+  const [h, m] = hora.split(':').map(Number);
+  if (formato === '12h') {
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+  }
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
 
 const dayKey = (dateStr) => {
@@ -52,7 +69,11 @@ const Calendario = () => {
 
   const MESES = tr('cal_months');
   const DIAS_SEMANA = tr('cal_days');
-  const cells = buildCalendar(year, month);
+  const startDay = DIA_SEMANA_JS[user?.primer_dia_semana] ?? 1;
+  // cal_days siempre empieza en lunes (índice 0). Convertir startDay JS a índice del array:
+  const startIdx = startDay === 0 ? 6 : startDay - 1;
+  const DIAS_ROTADOS = [...DIAS_SEMANA.slice(startIdx), ...DIAS_SEMANA.slice(0, startIdx)];
+  const cells = buildCalendar(year, month, startDay);
 
   useEffect(() => {
     const load = async () => {
@@ -274,8 +295,8 @@ const Calendario = () => {
             </div>
 
             <div className="cal-grid">
-              {DIAS_SEMANA.map(d => (
-                <div key={d} className="cal-day-header">{d}</div>
+              {DIAS_ROTADOS.map((d, i) => (
+                <div key={i} className="cal-day-header">{d}</div>
               ))}
               {cells.map((day, i) => {
                 const k = `${year}-${month}-${day}`;
@@ -325,7 +346,7 @@ const Calendario = () => {
                         </span>
                         <span className="cal-tarea-curso">
                           {item.tipo === 'evento'
-                            ? `${item.moduloNombre}${item.hora ? ' · ' + item.hora.slice(0, 5) : ''}`
+                            ? `${item.moduloNombre}${item.hora ? ' · ' + formatHora(item.hora, user?.formato_hora) : ''}`
                             : item.cursoNombre
                           }
                         </span>

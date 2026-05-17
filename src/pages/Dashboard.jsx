@@ -12,9 +12,9 @@ import './Dashboard.css';
 
 const VISIBLE_CAROUSEL = 3;
 
-const buildCells = (year, month) => {
+const buildCells = (year, month, startDay = 1) => {
   const firstDay = new Date(year, month, 1).getDay();
-  const offset = (firstDay + 6) % 7;
+  const offset = (firstDay - startDay + 7) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const cells = [];
   for (let i = 0; i < offset; i++) cells.push(null);
@@ -22,15 +22,24 @@ const buildCells = (year, month) => {
   return cells;
 };
 
+const DIA_SEMANA_JS = {
+  'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4,
+  'Viernes': 5, 'Sábado': 6, 'Domingo': 0,
+};
+
 const MiniCalendario = ({ tareas }) => {
   const today = new Date();
   const { tr } = useLang();
+  const { user } = useAuth();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
-  const cells = buildCells(year, month);
 
   const MESES = tr('cal_months');
   const DIAS_MINI = tr('cal_daysMini');
+  const startDay = DIA_SEMANA_JS[user?.primer_dia_semana] ?? 1;
+  const startIdx = startDay === 0 ? 6 : startDay - 1;
+  const DIAS_ROTADOS = [...DIAS_MINI.slice(startIdx), ...DIAS_MINI.slice(0, startIdx)];
+  const cells = buildCells(year, month, startDay);
 
   const diasConTarea = new Set(
     tareas
@@ -58,7 +67,7 @@ const MiniCalendario = ({ tareas }) => {
         <button onClick={nextMonth}>›</button>
       </div>
       <div className="mini-cal-grid">
-        {DIAS_MINI.map((d, i) => <span key={i} className="mini-cal-head">{d}</span>)}
+        {DIAS_ROTADOS.map((d, i) => <span key={i} className="mini-cal-head">{d}</span>)}
         {cells.map((day, i) => {
           const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
           const hasTarea = day && diasConTarea.has(day);
