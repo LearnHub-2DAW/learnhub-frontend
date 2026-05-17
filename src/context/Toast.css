@@ -60,3 +60,14 @@
   flex: 1;
   line-height: 1.35;
 }
+
+@media (max-width: 480px) {
+  .toast-container {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+  }
+  .toast {
+    max-width: 100%;
+  }
+}

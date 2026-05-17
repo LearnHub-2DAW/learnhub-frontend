@@ -122,8 +122,14 @@
 
 @media (max-width: 768px) {
   .mis-entregas-page { padding: 16px; }
-  .entregas-table { font-size: 0.8rem; }
+  .mis-entregas-body { padding: 12px; overflow-x: auto; }
+  .entregas-table { font-size: 0.8rem; min-width: 400px; }
   .entregas-table th,
   .entregas-table td { padding: 8px 10px; }
   .contenido-cell { max-width: 160px; }
+}
+
+@media (max-width: 480px) {
+  .mis-entregas-page { padding: 10px; }
+  .fecha-cell { display: none; }
 }

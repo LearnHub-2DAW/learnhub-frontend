@@ -48,3 +48,15 @@
 .btn-notfound:hover {
   background: var(--brand-hover);
 }
+
+@media (max-width: 480px) {
+  .notfound-card {
+    padding: 40px 20px;
+  }
+  .notfound-code {
+    font-size: 4.5rem;
+  }
+  .notfound-title {
+    font-size: 1.1rem;
+  }
+}

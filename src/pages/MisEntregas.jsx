@@ -49,7 +49,6 @@ const MisEntregas = () => {
                   <th>{tr('cp_resourceTitle')}</th>
                   <th>{tr('dt_submittedOn')}</th>
                   <th>{tr('me_grade')}</th>
-                  <th>{tr('dt_submissionComment')}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -64,13 +63,6 @@ const MisEntregas = () => {
                     <td className="fecha-cell">{formatFecha(e.fecha_entregado)}</td>
                     <td className={e.calificacion != null ? 'calificacion-cell calificacion-nota' : 'calificacion-cell calificacion-pendiente'}>
                       {e.calificacion != null ? `${e.calificacion}/10` : '—'}
-                    </td>
-                    <td className="contenido-cell">
-                      {e.contenido_enviado
-                        ? e.contenido_enviado.length > 80
-                          ? e.contenido_enviado.slice(0, 80) + '…'
-                          : e.contenido_enviado
-                        : '—'}
                     </td>
                     <td>
                       <Link

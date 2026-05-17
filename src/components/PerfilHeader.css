@@ -86,3 +86,17 @@
   background: var(--bg-hover);
   color: var(--text-heading);
 }
+
+@media (max-width: 480px) {
+  .perfil-header-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .ph-gear-wrapper {
+    align-self: flex-end;
+  }
+  .ph-gear-dropdown {
+    min-width: 200px;
+  }
+}
