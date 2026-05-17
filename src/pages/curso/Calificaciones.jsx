@@ -12,6 +12,8 @@ const Calificaciones = () => {
   const { tr } = useLang();
   const navigate = useNavigate();
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
+  const isAdmin = user?.roles?.includes('admin');
+  const isProfesor = user?.roles?.includes('profesor') && !isAdmin;
 
   const [curso, setCurso] = useState(null);
   const [items, setItems] = useState([]);
@@ -25,7 +27,9 @@ const Calificaciones = () => {
           getModulosByCurso(id),
         ]);
         setCurso(cursoRes.data);
-        const modulos = modulosRes.data;
+        const modulos = isProfesor
+          ? modulosRes.data.filter(m => m.id_profesor === user?.id)
+          : modulosRes.data;
 
         const recursosGroups = await Promise.all(
           modulos.map(m =>

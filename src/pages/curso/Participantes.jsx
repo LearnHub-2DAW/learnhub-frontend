@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { getCursoById, getModulosByCurso, getEnrolledUsers } from '../../api/cursos.api';
 import { useLang } from '../../context/LangContext';
 import './Participantes.css';
@@ -8,7 +9,10 @@ const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 const Participantes = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const { tr } = useLang();
+  const isAdmin = user?.roles?.includes('admin');
+  const isProfesor = user?.roles?.includes('profesor') && !isAdmin;
   const [curso, setCurso] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState('');
@@ -24,8 +28,12 @@ const Participantes = () => {
         ]);
         setCurso(cursoRes.data);
 
+        const modulosFiltrados = isProfesor
+          ? modulosRes.data.filter(m => m.id_profesor === user?.id)
+          : modulosRes.data;
+
         const usuariosPorModulo = await Promise.all(
-          modulosRes.data.map(m =>
+          modulosFiltrados.map(m =>
             getEnrolledUsers(m.id)
               .then(r => (r.data || []).map(u => ({ ...u, _moduloNombre: m.nombre })))
               .catch(() => [])
@@ -115,15 +123,13 @@ const Participantes = () => {
             <thead>
               <tr>
                 <th>{tr('pt_colName')}</th>
-                <th>{tr('pt_colEmail')}</th>
-                <th>{tr('pt_colRoles')}</th>
                 <th>{tr('pt_module')}</th>
               </tr>
             </thead>
             <tbody>
               {participantesFiltrados.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="no-data">
+                  <td colSpan={2} className="no-data">
                     {tr('pt_noParticipants')}
                   </td>
                 </tr>
@@ -138,8 +144,6 @@ const Participantes = () => {
                         <span className="pt-username">@{p.nombre_usuario}</span>
                       </div>
                     </td>
-                    <td className="pt-email">{p.correo_electronico || '—'}</td>
-                    <td>{Array.isArray(p.roles) ? p.roles.join(', ') : (p.rol || p.roles || '—')}</td>
                     <td>
                       <div className="pt-modulos">
                         {p._modulos.map((m, i) => <span key={i} className="pt-modulo-tag">{m}</span>)}
