@@ -400,7 +400,7 @@ const CursoPagina = () => {
                     <li onClick={() => { navigate(`/curso/${id}/participantes`); setGearOpen(false); }}>
                       {tr('cp_participants')}
                     </li>
-                    {canManageCurso && <li onClick={openEditarCurso}>{tr('cp_editSettings')}</li>}
+                    {isAdmin && <li onClick={openEditarCurso}>{tr('cp_editSettings')}</li>}
                     {isAdmin && <li className="gear-item-danger" onClick={handleEliminarCurso}>{tr('cp_deleteCourse')}</li>}
                   </ul>
                 )}
@@ -454,7 +454,7 @@ const CursoPagina = () => {
                     </div>
                   ))
                 )}
-                {canManageCurso && (
+                {isAdmin && (
                   <button className="btn-add-item" onClick={openCrearModulo}>{tr('cp_newModule')}</button>
                 )}
               </div>
