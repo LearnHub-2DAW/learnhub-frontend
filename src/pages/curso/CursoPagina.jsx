@@ -27,6 +27,7 @@ const CursoPagina = () => {
 
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
   const isAdmin = user?.roles?.includes('admin');
+  const isProfesor = user?.roles?.includes('profesor') && !isAdmin;
   const toast = useToast();
   const { tr } = useLang();
 
@@ -356,6 +357,11 @@ const CursoPagina = () => {
 
   if (loading) return <div className="curso-loading">{tr('cp_loadingCourse')}</div>;
 
+  const esProfesorDelCurso = isProfesor && modulos.some(m => m.id_profesor === user?.id);
+  const canManageCurso = isAdmin || esProfesorDelCurso;
+  const canManageModulo = (mod) => isAdmin || mod.id_profesor === user?.id;
+  const canManageActiveModulo = isAdmin || moduloActivo?.id_profesor === user?.id;
+
   return (
     <div className="curso-page">
       <div className="curso-grid">
@@ -394,7 +400,7 @@ const CursoPagina = () => {
                     <li onClick={() => { navigate(`/curso/${id}/participantes`); setGearOpen(false); }}>
                       {tr('cp_participants')}
                     </li>
-                    {isStaff && <li onClick={openEditarCurso}>{tr('cp_editSettings')}</li>}
+                    {canManageCurso && <li onClick={openEditarCurso}>{tr('cp_editSettings')}</li>}
                     {isAdmin && <li className="gear-item-danger" onClick={handleEliminarCurso}>{tr('cp_deleteCourse')}</li>}
                   </ul>
                 )}
@@ -422,8 +428,12 @@ const CursoPagina = () => {
                       </span>
                       {isStaff ? (
                         <span className="subcarpeta-actions">
-                          <button className="icon-action" title={tr('cp_key_view')} onClick={(e) => openClaveModal(e, mod)}>🔑</button>
-                          <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
+                          {canManageModulo(mod) && (
+                            <>
+                              <button className="icon-action" title={tr('cp_key_view')} onClick={(e) => openClaveModal(e, mod)}>🔑</button>
+                              <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarModulo(e, mod)}>✏️</button>
+                            </>
+                          )}
                           {isAdmin && (
                             <button className="icon-action" title={tr('delete')} onClick={(e) => handleDeleteModulo(e, mod)}>🗑️</button>
                           )}
@@ -444,7 +454,7 @@ const CursoPagina = () => {
                     </div>
                   ))
                 )}
-                {isStaff && (
+                {canManageCurso && (
                   <button className="btn-add-item" onClick={openCrearModulo}>{tr('cp_newModule')}</button>
                 )}
               </div>
@@ -455,7 +465,7 @@ const CursoPagina = () => {
                 <div className="contenido-body">
                   <div className="contenido-header-row">
                     <h3 className="contenido-modulo-title">{moduloActivo.nombre}</h3>
-                    {isStaff && (
+                    {canManageActiveModulo && (
                       <button className="btn-add-recurso" onClick={openCrearRecurso}>{tr('cp_newResource')}</button>
                     )}
                   </div>
@@ -489,7 +499,7 @@ const CursoPagina = () => {
                               {tr('cp_dueDate')}: {new Date(r.fecha_entrega).toLocaleDateString()}
                             </span>
                           )}
-                          {isStaff && (
+                          {canManageActiveModulo && (
                             <span className="recurso-actions">
                               <button className="icon-action" title={tr('edit')} onClick={(e) => openEditarRecurso(e, r)}>✏️</button>
                               {isAdmin && (
