@@ -44,6 +44,22 @@
   border-color: var(--brand-hover);
 }
 
+.enroll-input-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.enroll-error-msg {
+  font-size: 0.78rem;
+  color: var(--error, #e53e3e);
+}
+
+.course-code-input.input-error {
+  border-color: var(--error, #e53e3e);
+}
+
 .btn-personalize {
   background: var(--brand);
   color: white;
@@ -144,6 +160,28 @@
   border-radius: 4px;
   border: 1px solid var(--border-light);
   display: block;
+}
+
+.course-thumb-wrapper {
+  position: relative;
+}
+
+.course-enrolled-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: var(--brand);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
 
 .course-card-type {

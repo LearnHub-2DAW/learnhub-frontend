@@ -150,6 +150,58 @@
   font-size: 0.9rem;
 }
 
+.pt-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 1px 9px;
+  vertical-align: middle;
+}
+
+.pt-nombre-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pt-nombre {
+  font-weight: 500;
+  color: var(--text-heading);
+}
+
+.pt-username {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.pt-email {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.pt-modulos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pt-modulo-tag {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  font-size: 0.78rem;
+  padding: 2px 7px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .participantes-page { padding: 16px; }
   .participantes-table { font-size: 0.8rem; }

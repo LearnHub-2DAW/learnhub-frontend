@@ -27,22 +27,22 @@ const Participantes = () => {
         const usuariosPorModulo = await Promise.all(
           modulosRes.data.map(m =>
             getEnrolledUsers(m.id)
-              .then(r => (r.data || []).map(u => ({ ...u, _modulo: m.nombre })))
+              .then(r => (r.data || []).map(u => ({ ...u, _moduloNombre: m.nombre })))
               .catch(() => [])
           )
         );
 
-        const vistos = new Set();
-        const agregados = [];
+        const mapaUsuarios = new Map();
         for (const lista of usuariosPorModulo) {
           for (const u of lista) {
-            if (!vistos.has(u.id)) {
-              vistos.add(u.id);
-              agregados.push(u);
+            if (mapaUsuarios.has(u.id)) {
+              mapaUsuarios.get(u.id)._modulos.push(u._moduloNombre);
+            } else {
+              mapaUsuarios.set(u.id, { ...u, _modulos: [u._moduloNombre] });
             }
           }
         }
-        setParticipantes(agregados);
+        setParticipantes([...mapaUsuarios.values()]);
       } catch (err) {
         console.error(err);
       } finally {
@@ -53,8 +53,8 @@ const Participantes = () => {
   }, [id]);
 
   const participantesFiltrados = participantes.filter(p => {
-    const nombre = `${p.nombre || ''} ${p.apellidos || ''} ${p.nombre_usuario || ''}`.toLowerCase();
-    const coincideFiltro = nombre.includes(filtro.toLowerCase());
+    const texto = `${p.nombre || ''} ${p.apellidos || ''} ${p.nombre_usuario || ''} ${p.correo_electronico || ''}`.toLowerCase();
+    const coincideFiltro = texto.includes(filtro.toLowerCase());
     const coincideLetra = letraActiva
       ? (p.nombre || p.nombre_usuario || '').toUpperCase().startsWith(letraActiva)
       : true;
@@ -79,7 +79,12 @@ const Participantes = () => {
         </div>
 
         <div className="participantes-body">
-          <h2 className="section-title">{tr('cp_participants')}</h2>
+          <h2 className="section-title">
+            {tr('cp_participants')}
+            {participantes.length > 0 && (
+              <span className="pt-count">{participantesFiltrados.length}</span>
+            )}
+          </h2>
 
           <div className="filter-box">
             <input
@@ -110,9 +115,9 @@ const Participantes = () => {
             <thead>
               <tr>
                 <th>{tr('pt_colName')}</th>
+                <th>{tr('pt_colEmail')}</th>
                 <th>{tr('pt_colRoles')}</th>
                 <th>{tr('pt_module')}</th>
-                <th>{tr('pt_colLastAccess')}</th>
               </tr>
             </thead>
             <tbody>
@@ -125,10 +130,21 @@ const Participantes = () => {
               ) : (
                 participantesFiltrados.map((p) => (
                   <tr key={p.id}>
-                    <td>{p.nombre ? `${p.nombre} ${p.apellidos || ''}`.trim() : p.nombre_usuario}</td>
+                    <td>
+                      <div className="pt-nombre-row">
+                        {p.nombre && (
+                          <span className="pt-nombre">{`${p.nombre} ${p.apellidos || ''}`.trim()}</span>
+                        )}
+                        <span className="pt-username">@{p.nombre_usuario}</span>
+                      </div>
+                    </td>
+                    <td className="pt-email">{p.correo_electronico || '—'}</td>
                     <td>{Array.isArray(p.roles) ? p.roles.join(', ') : (p.rol || p.roles || '—')}</td>
-                    <td>{p._modulo || '—'}</td>
-                    <td>{tr('pt_never')}</td>
+                    <td>
+                      <div className="pt-modulos">
+                        {p._modulos.map((m, i) => <span key={i} className="pt-modulo-tag">{m}</span>)}
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}

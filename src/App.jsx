@@ -26,6 +26,7 @@ import Calendario from './pages/Calendario';
 import MisEntregas from './pages/MisEntregas';
 import Chat from './pages/Chat';
 import AdminPanel from './pages/admin/AdminPanel';
+import CursosLista from './pages/CursosLista';
 import NotFound from './pages/NotFound';
 
 const PrivateRoute = ({ children }) => {
@@ -52,6 +53,7 @@ function App() {
                   <Route path="/register" element={<Register />} />
                   <Route index element={<Navigate to="/dashboard" replace />} />
                   <Route path="/dashboard" element={<P><Dashboard /></P>} />
+                  <Route path="/cursos" element={<P><CursosLista /></P>} />
                   <Route path="/calendario" element={<P><Calendario /></P>} />
                   <Route path="/calificaciones" element={<P><CalificacionesCursos /></P>} />
                   <Route path="/curso/:id" element={<P><CursoPagina /></P>} />

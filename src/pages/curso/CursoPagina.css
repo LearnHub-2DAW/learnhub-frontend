@@ -224,6 +224,21 @@
   font-size: 0.9rem;
 }
 
+.contenido-not-enrolled {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.contenido-not-enrolled-msg {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
 .widget-box {
   background: var(--bg-card);
   border: 1px solid var(--border);

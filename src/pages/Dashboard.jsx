@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo, enrollModulo } from '../api/cursos.api';
+import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo } from '../api/cursos.api';
 import { getMisModulos } from '../api/usuario.api';
 import { getFileUrl } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -131,8 +131,7 @@ const Dashboard = () => {
           const idsCursosMatriculados = new Set(
             (misModulosRes.data || []).map(m => m.id_curso)
           );
-          const cursosAlumno = cursosRes.data.filter(c => idsCursosMatriculados.has(c.id));
-          setCursos(cursosAlumno);
+          setCursos(cursosRes.data.filter(c => idsCursosMatriculados.has(c.id)));
         })
         .catch(console.error)
         .finally(() => setLoading(false));
@@ -174,16 +173,11 @@ const Dashboard = () => {
   }, [cursos]);
 
   const handleEnrollByCode = () => {
-    if (!codigoCurso.trim()) {
-      navigate('/calificaciones');
-      return;
+    if (codigoCurso.trim()) {
+      sessionStorage.setItem('claveMatriculaPendiente', codigoCurso.trim());
+      setCodigoCurso('');
     }
-    // La clave de matrícula es específica de cada módulo; para usarla el alumno
-    // debe acceder a la página del curso y pulsar "Matricularse" en el módulo.
-    // Guardamos la clave en sessionStorage para que CursoPagina la pre-rellene.
-    sessionStorage.setItem('claveMatriculaPendiente', codigoCurso.trim());
-    toast(tr('d_enroll_toast'));
-    navigate('/calificaciones');
+    navigate('/cursos');
   };
 
   const submitCurso = async () => {
@@ -226,7 +220,7 @@ const Dashboard = () => {
               onKeyDown={e => e.key === 'Enter' && handleEnrollByCode()}
             />
             <button className="btn-personalize" onClick={handleEnrollByCode}>
-              {tr('cp_enroll')}
+              {codigoCurso.trim() ? tr('cp_enroll') : tr('d_browse_courses')}
             </button>
           </div>
 

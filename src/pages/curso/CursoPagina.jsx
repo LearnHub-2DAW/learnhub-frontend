@@ -95,12 +95,16 @@ const CursoPagina = () => {
 
   useEffect(() => {
     if (!moduloActivo) return;
+    if (!isStaff && !enrolledIds.has(moduloActivo.id)) {
+      setRecursos([]);
+      return;
+    }
     setLoadingRecursos(true);
     getRecursosByModulo(moduloActivo.id)
       .then(res => setRecursos(res.data))
       .catch(console.error)
       .finally(() => setLoadingRecursos(false));
-  }, [moduloActivo?.id]);
+  }, [moduloActivo?.id, enrolledIds]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -455,7 +459,18 @@ const CursoPagina = () => {
                       <button className="btn-add-recurso" onClick={openCrearRecurso}>{tr('cp_newResource')}</button>
                     )}
                   </div>
-                  {loadingRecursos ? (
+                  {!isStaff && !enrolledIds.has(moduloActivo.id) ? (
+                    <div className="contenido-not-enrolled">
+                      <p className="contenido-not-enrolled-msg">{tr('cp_notEnrolledMsg')}</p>
+                      <button
+                        className="btn-enroll-modulo"
+                        onClick={(e) => handleEnroll(e, moduloActivo)}
+                        disabled={enrollingId === moduloActivo.id}
+                      >
+                        {enrollingId === moduloActivo.id ? tr('cp_enrolling') : tr('cp_enroll')}
+                      </button>
+                    </div>
+                  ) : loadingRecursos ? (
                     <p className="contenido-placeholder-txt">{tr('cp_loadingResources')}</p>
                   ) : recursos.length === 0 ? (
                     <p className="contenido-placeholder-txt">{tr('cp_noResources')}</p>
