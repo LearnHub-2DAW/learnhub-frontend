@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo } from '../api/cursos.api';
+import { getCursos, createCurso, getModulosByCurso, getRecursosByModulo, enrollModulo } from '../api/cursos.api';
 import { getMisModulos } from '../api/usuario.api';
 import { getFileUrl } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -120,6 +120,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [loadingModulos, setLoadingModulos] = useState(false);
 
+  const [enrolling, setEnrolling] = useState(false);
+
   const [cursoModal, setCursoModal] = useState(false);
   const [nombreCurso, setNombreCurso] = useState('');
   const [savingCurso, setSavingCurso] = useState(false);
@@ -181,12 +183,44 @@ const Dashboard = () => {
       .finally(() => setLoadingModulos(false));
   }, [cursos]);
 
-  const handleEnrollByCode = () => {
-    if (codigoCurso.trim()) {
-      sessionStorage.setItem('claveMatriculaPendiente', codigoCurso.trim());
+  const handleEnrollByCode = async () => {
+    const clave = codigoCurso.trim();
+    if (!clave) return navigate('/cursos');
+
+    setEnrolling(true);
+    try {
+      const cursosRes = await getCursos();
+      const moduloGroups = await Promise.all(
+        cursosRes.data.map(c =>
+          getModulosByCurso(c.id)
+            .then(r => r.data.map(m => ({ ...m, cursoNombre: c.nombre })))
+            .catch(() => [])
+        )
+      );
+      const target = moduloGroups.flat().find(m => m.clave_matricula === clave);
+      if (!target) {
+        toast(tr('d_enroll_not_found') || 'No se encontró ningún módulo con esa clave');
+        return;
+      }
+      await enrollModulo(target.id, clave);
+      toast(`✓ Matriculado en "${target.nombre}"`);
       setCodigoCurso('');
+      // Recargar cursos para que aparezca el nuevo
+      const [cursosRes2, misModulosRes] = await Promise.all([
+        getCursos(),
+        getMisModulos().catch(() => ({ data: [] })),
+      ]);
+      if (!isStaff) {
+        const ids = new Set((misModulosRes.data || []).map(m => m.id_curso));
+        setCursos(cursosRes2.data.filter(c => ids.has(c.id)));
+      } else {
+        setCursos(cursosRes2.data);
+      }
+    } catch (err) {
+      toast(err.response?.data?.error || tr('d_enroll_error') || 'Error al matricularse');
+    } finally {
+      setEnrolling(false);
     }
-    navigate('/cursos');
   };
 
   const submitCurso = async () => {
@@ -228,8 +262,8 @@ const Dashboard = () => {
               className="course-code-input"
               onKeyDown={e => e.key === 'Enter' && handleEnrollByCode()}
             />
-            <button className="btn-personalize" onClick={handleEnrollByCode}>
-              {codigoCurso.trim() ? tr('cp_enroll') : tr('d_browse_courses')}
+            <button className="btn-personalize" onClick={handleEnrollByCode} disabled={enrolling}>
+              {enrolling ? '...' : codigoCurso.trim() ? tr('cp_enroll') : tr('d_browse_courses')}
             </button>
           </div>
 
