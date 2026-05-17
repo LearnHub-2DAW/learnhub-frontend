@@ -1,0 +1,293 @@
+/* ── Shell del modo demo ─────────────────────────────────────────────────── */
+.demo-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-page);
+  overflow: hidden;
+}
+
+.demo-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 52px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.demo-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-logo {
+  height: 26px;
+  width: 26px;
+  object-fit: contain;
+}
+
+.demo-brand {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.demo-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: var(--brand);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.demo-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-btn-register {
+  padding: 6px 16px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.demo-btn-register:hover { background: var(--brand-hover); }
+
+.demo-btn-exit {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.demo-btn-exit:hover { background: var(--bg-hover); }
+
+/* ── Tabs ─────────────────────────────────────────────────────────────────── */
+.demo-tabs {
+  display: flex;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow-x: auto;
+  padding: 0 16px;
+  scrollbar-width: none;
+}
+
+.demo-tabs::-webkit-scrollbar { display: none; }
+
+.demo-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.demo-tab:hover { color: var(--text-base); }
+
+.demo-tab-active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+  font-weight: 500;
+}
+
+.demo-tab-icon { font-size: 0.9rem; }
+
+/* ── Zona de pantalla ─────────────────────────────────────────────────────── */
+.demo-screen-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 150px;
+}
+
+/* Evita que los layouts de página rompan dentro del contenedor scrollable */
+.demo-screen-wrap .dashboard-page,
+.demo-screen-wrap .cl-page,
+.demo-screen-wrap .curso-page,
+.demo-screen-wrap .mis-entregas-page,
+.demo-screen-wrap .editar-perfil-page {
+  min-height: auto;
+}
+
+/* El dashboard ya tiene padding propio; quitamos el extra */
+.demo-screen-wrap .dashboard-page {
+  padding: 0;
+}
+
+/* course-card deshabilitado visualmente (sin cursor pointer) */
+.demo-screen-wrap .course-card {
+  cursor: default;
+}
+
+.demo-screen-wrap .course-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.demo-screen-wrap .subcarpeta-item {
+  cursor: pointer;
+}
+
+.demo-screen-wrap .recurso-item {
+  cursor: default;
+}
+
+.demo-screen-wrap .entrega-row {
+  cursor: default;
+}
+
+.demo-screen-wrap .online-user-row {
+  cursor: default;
+}
+
+/* ── Footer de navegación ─────────────────────────────────────────────────── */
+.demo-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border-top: 2px solid var(--brand);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.14);
+  z-index: 500;
+  padding: 12px 24px;
+}
+
+.demo-footer-inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.demo-footer-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.demo-footer-step {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--brand);
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
+}
+
+.demo-footer-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.demo-footer-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.demo-dots {
+  display: flex;
+  gap: 6px;
+  margin-right: 6px;
+}
+
+.demo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.demo-dot-active { background: var(--brand); }
+
+.demo-nav-btn {
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-hover);
+  color: var(--text-base);
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.demo-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.demo-nav-btn:hover:not(:disabled) { background: var(--bg-hover-mid); }
+
+.demo-nav-next {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.demo-nav-next:hover:not(:disabled) {
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
+}
+
+.demo-nav-finish {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+
+.demo-nav-finish:hover:not(:disabled) {
+  background: #15803d;
+  border-color: #15803d;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .demo-topbar { padding: 0 12px; }
+  .demo-btn-register { display: none; }
+  .demo-tabs { padding: 0 8px; }
+  .demo-tab-label { display: none; }
+  .demo-tab { padding: 10px 14px; font-size: 1rem; }
+  .demo-footer { padding: 10px 14px; }
+  .demo-footer-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .demo-footer-nav { width: 100%; justify-content: flex-end; }
+  .demo-screen-wrap { padding-bottom: 190px; }
+  .demo-footer-desc { -webkit-line-clamp: 3; }
+}
+
+@media (max-width: 480px) {
+  .demo-brand { display: none; }
+  .demo-dots { display: none; }
+}

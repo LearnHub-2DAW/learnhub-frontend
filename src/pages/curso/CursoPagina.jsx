@@ -591,7 +591,6 @@ const CursoPagina = () => {
                   src={moduloForm.imagenFile ? URL.createObjectURL(moduloForm.imagenFile) : modImgUrl(moduloForm.currentImg)}
                   alt={tr('cp_imagePreview')}
                   className="modal-img-preview"
-                  style={{ display: 'block' }}
                 />
               )}
             </div>

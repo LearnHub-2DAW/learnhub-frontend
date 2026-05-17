@@ -27,6 +27,7 @@ import MisEntregas from './pages/MisEntregas';
 import Chat from './pages/Chat';
 import AdminPanel from './pages/admin/AdminPanel';
 import CursosLista from './pages/CursosLista';
+import Demo from './pages/Demo';
 import NotFound from './pages/NotFound';
 
 const PrivateRoute = ({ children }) => {
@@ -71,6 +72,7 @@ function App() {
                   <Route path="/chat/:id" element={<P><Chat /></P>} />
                   <Route path="/admin" element={<P><AdminPanel /></P>} />
                 </Route>
+                <Route path="/demo" element={<Demo />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

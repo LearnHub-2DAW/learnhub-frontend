@@ -180,7 +180,7 @@
 }
 
 .modal-img-preview {
-  display: none;
+  display: block;
   width: 100%;
   max-height: 120px;
   object-fit: cover;

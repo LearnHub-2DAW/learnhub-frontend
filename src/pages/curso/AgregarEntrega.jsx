@@ -24,6 +24,11 @@ const AgregarEntrega = () => {
     getRecursoById(id)
       .then(async (res) => {
         const r = res.data;
+        if (r.fecha_entrega && new Date(r.fecha_entrega) < new Date()) {
+          toast(tr('dt_deadlineClosed'), 'error');
+          navigate(`/recurso/${id}`, { replace: true });
+          return;
+        }
         setRecurso(r);
         const modRes = await getModuloById(r.id_modulo);
         const m = modRes.data;

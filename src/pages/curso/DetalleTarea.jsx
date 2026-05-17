@@ -261,12 +261,16 @@ const DetalleTarea = () => {
               </table>
 
               <div className="tarea-actions">
-                <button
-                  className="btn-agregar-entrega"
-                  onClick={() => navigate(`/recurso/${id}/entrega`)}
-                >
-                  {miEntrega ? tr('dt_editSubmission') : tr('dt_addSubmission')}
-                </button>
+                {recurso?.fecha_entrega && new Date(recurso.fecha_entrega) < new Date() ? (
+                  <p className="deadline-closed-msg">{tr('dt_deadlineClosed')}</p>
+                ) : (
+                  <button
+                    className="btn-agregar-entrega"
+                    onClick={() => navigate(`/recurso/${id}/entrega`)}
+                  >
+                    {miEntrega ? tr('dt_editSubmission') : tr('dt_addSubmission')}
+                  </button>
+                )}
               </div>
             </>
           )}

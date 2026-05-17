@@ -93,7 +93,7 @@ const Login = () => {
           </div>
 
           <div className="guest-row-custom">
-            <button type="button" className="btn-guest-custom">{tr('l_guest')}</button>
+            <button type="button" className="btn-guest-custom" onClick={() => navigate('/demo')}>{tr('l_guest')}</button>
           </div>
         </form>
       </div>
