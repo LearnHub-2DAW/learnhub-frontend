@@ -630,3 +630,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .curso-page { padding: 8px; }
+  .curso-card-header { flex-direction: column; gap: 10px; }
+  .gear-wrapper { margin-left: 0; }
+  .curso-title { font-size: 1.2rem; }
+  .subcarpeta-item { padding: 8px 12px; }
+}

@@ -156,4 +156,20 @@
     flex-direction: column;
     align-items: flex-start;
   }
+  .login-container-custom,
+  .register-invite-box-custom {
+    padding: 24px 24px;
+    width: 96%;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container-custom,
+  .register-invite-box-custom {
+    padding: 20px 16px;
+    width: 98%;
+  }
+  .login-title-custom {
+    font-size: 1.4rem;
+  }
 }

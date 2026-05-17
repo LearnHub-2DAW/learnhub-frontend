@@ -622,3 +622,10 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .dashboard-page { padding: 8px; }
+  .courses-grid { grid-template-columns: 1fr; }
+  .carousel-container { padding: 8px; }
+  .register-course-row { padding: 8px 10px; }
+}

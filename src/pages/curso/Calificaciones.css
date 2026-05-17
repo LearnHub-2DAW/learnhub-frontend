@@ -106,7 +106,13 @@
 
 @media (max-width: 768px) {
   .calificaciones-page { padding: 16px; }
-  .grades-table { font-size: 0.8rem; }
+  .grades-body { overflow-x: auto; }
+  .grades-table { font-size: 0.8rem; min-width: 480px; }
   .grades-table th,
   .grades-table td { padding: 8px 10px; }
+}
+
+@media (max-width: 480px) {
+  .calificaciones-page { padding: 8px; }
+  .page-title { font-size: 1.2rem; }
 }

@@ -257,6 +257,7 @@
   .logo-bar {
     padding: 8px 16px;
     min-height: 64px;
+    justify-content: center;
   }
 
   .main-logo {
