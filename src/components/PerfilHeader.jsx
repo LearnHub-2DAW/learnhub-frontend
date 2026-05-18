@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LangContext';
+import { getFileUrl } from '../api/axios';
 import './PerfilHeader.css';
 
 const PerfilHeader = () => {
@@ -22,6 +23,9 @@ const PerfilHeader = () => {
   }, []);
 
   const initial = user?.nombre?.[0]?.toUpperCase() || 'U';
+  const avatarUrl = user?.url_imagen_perfil
+    ? (user.url_imagen_perfil.startsWith('http') ? user.url_imagen_perfil : getFileUrl(user.url_imagen_perfil))
+    : null;
 
   const goTo = (path) => {
     setGearOpen(false);
@@ -31,7 +35,11 @@ const PerfilHeader = () => {
   return (
     <div className="perfil-header-card">
       <div className="ph-user-info">
-        <div className="ph-avatar">{initial}</div>
+        <div className="ph-avatar">
+          {avatarUrl
+            ? <img src={avatarUrl} alt="avatar" className="ph-avatar-img" onError={e => { e.target.style.display = 'none'; }} />
+            : initial}
+        </div>
         <span className="ph-name">
           {user ? `${user.nombre} ${user.apellidos}` : '—'}
         </span>

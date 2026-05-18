@@ -49,18 +49,29 @@ const EditarPerfil = () => {
     setSaving(true);
     setError('');
     try {
-      const formData = new FormData();
-      formData.append('nombre', form.nombre);
-      formData.append('apellidos', form.apellidos || '');
-      formData.append('ciudad', form.ciudad || '');
-      formData.append('pais', form.pais || '');
-      if (imagenFile) formData.append('imagen_perfil', imagenFile);
-      const res = await updatePerfil(formData);
+      let payload;
+      if (imagenFile) {
+        const formData = new FormData();
+        formData.append('nombre', form.nombre);
+        if (form.apellidos) formData.append('apellidos', form.apellidos);
+        if (form.ciudad) formData.append('ciudad', form.ciudad);
+        if (form.pais) formData.append('pais', form.pais);
+        formData.append('imagen', imagenFile);
+        payload = formData;
+      } else {
+        payload = {
+          nombre: form.nombre,
+          ...(form.apellidos && { apellidos: form.apellidos }),
+          ...(form.ciudad && { ciudad: form.ciudad }),
+          ...(form.pais && { pais: form.pais }),
+        };
+      }
+      const res = await updatePerfil(payload);
       updateUser({ ...user, ...res.data });
       toast(tr('ep_saved'));
       navigate('/perfil');
     } catch (err) {
-      setError(err.response?.data?.message || tr('ep_errorSave'));
+      setError(err.response?.data?.errors?.[0] || err.response?.data?.error || err.response?.data?.message || tr('ep_errorSave'));
     } finally {
       setSaving(false);
     }
