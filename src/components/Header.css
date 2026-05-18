@@ -128,6 +128,14 @@
   color: white;
 }
 
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
 .user-avatar-container:hover .user-dropdown-menu {
   display: flex;
 }
@@ -252,6 +260,34 @@
   background-color: rgba(0, 0, 0, 0.3);
 }
 
+/* ── SELECTOR DE IDIOMA MÓVIL ── */
+.mobile-lang-select {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-lang-select {
+    display: block;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 4px;
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 6px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 36px;
+    text-align: center;
+  }
+
+  .mobile-lang-select option {
+    background: #1a2e26;
+    color: white;
+  }
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .logo-bar {
@@ -277,8 +313,7 @@
   .top-bar {
     padding: 0 12px;
   }
-
-  .icon-btn + .icon-btn {
+  .not-logged-txt {
     display: none;
   }
 }
@@ -320,6 +355,8 @@
 .nav-drawer-links {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .nav-drawer-links a {
@@ -431,4 +468,33 @@
   font-size: 0.82rem;
   color: var(--text-faint);
   display: block;
+}
+
+/* ── LANGUAGE SECTION IN DRAWER ── */
+.nav-lang-section {
+  border-top: 1px solid var(--border-sep);
+  padding: 10px 16px 14px;
+}
+
+.nav-drawer-lang-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin: 3px 4px 3px 0;
+  transition: background 0.12s;
+}
+
+.nav-drawer-lang-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-heading);
+}
+
+.nav-drawer-lang-btn.active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
 }

@@ -164,10 +164,14 @@
 }
 
 @media (max-width: 480px) {
+  .auth-page {
+    padding: 0;
+  }
   .login-container-custom,
   .register-invite-box-custom {
     padding: 20px 16px;
-    width: 98%;
+    width: 100%;
+    border-radius: 0;
   }
   .login-title-custom {
     font-size: 1.4rem;

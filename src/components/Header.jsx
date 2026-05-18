@@ -7,6 +7,7 @@ import { useChatDrawer } from '../context/ChatDrawerContext';
 import { useSocket } from '../context/SocketContext';
 import { getCursos, getModulosByCurso } from '../api/cursos.api';
 import { getMisModulos } from '../api/usuario.api';
+import { getFileUrl } from '../api/axios';
 import './Header.css';
 
 const LANG_NAMES = {
@@ -29,6 +30,9 @@ const Header = () => {
   const { noLeidos } = useSocket();
 
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
+  const avatarUrl = user?.url_imagen_perfil
+    ? (user.url_imagen_perfil.startsWith('http') ? user.url_imagen_perfil : getFileUrl(user.url_imagen_perfil))
+    : null;
   const cursoIdMatch = location.pathname.match(/^\/curso\/(\d+)/);
   const currentCursoId = cursoIdMatch ? Number(cursoIdMatch[1]) : null;
 
@@ -110,6 +114,17 @@ const Header = () => {
           </button>
 
           <div className="top-right">
+            <select
+              className="mobile-lang-select"
+              value={lang}
+              onChange={e => setLang(e.target.value)}
+              aria-label="Idioma"
+            >
+              {Object.entries(LANG_NAMES).map(([code, name]) => (
+                <option key={code} value={code}>{code.toUpperCase()}</option>
+              ))}
+            </select>
+
             {!user ? (
               <span className="not-logged-txt">{tr('h_notLoggedIn')}</span>
             ) : (
@@ -129,7 +144,12 @@ const Header = () => {
                 </span>
                 <div className="user-avatar-container">
                   <span className="user-name">{user.nombre} {user.apellidos}</span>
-                  <div className="user-avatar-circle">{user.nombre?.[0]?.toUpperCase()}</div>
+                  <div className="user-avatar-circle">
+                    {avatarUrl
+                      ? <img src={avatarUrl} alt="avatar" className="user-avatar-img" onError={e => { e.target.style.display = 'none'; }} />
+                      : user.nombre?.[0]?.toUpperCase()
+                    }
+                  </div>
                   <div className="user-dropdown-menu">
                     <Link to="/perfil">{tr('h_myProfile')}</Link>
                     <Link to="/dashboard">{tr('h_personalArea')}</Link>

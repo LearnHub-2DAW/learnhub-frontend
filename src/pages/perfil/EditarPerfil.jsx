@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -20,13 +20,27 @@ const EditarPerfil = () => {
     correo_electronico: user?.correo_electronico || '',
     ciudad: user?.ciudad || '',
     pais: user?.pais || '',
-    url_imagen_perfil: user?.url_imagen_perfil || '',
   });
+  const [imagenFile, setImagenFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    return () => { if (previewUrl) URL.revokeObjectURL(previewUrl); };
+  }, [previewUrl]);
+
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setImagenFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -35,7 +49,13 @@ const EditarPerfil = () => {
     setSaving(true);
     setError('');
     try {
-      const res = await updatePerfil(form);
+      const formData = new FormData();
+      formData.append('nombre', form.nombre);
+      formData.append('apellidos', form.apellidos || '');
+      formData.append('ciudad', form.ciudad || '');
+      formData.append('pais', form.pais || '');
+      if (imagenFile) formData.append('imagen_perfil', imagenFile);
+      const res = await updatePerfil(formData);
       updateUser({ ...user, ...res.data });
       toast(tr('ep_saved'));
       navigate('/perfil');
@@ -70,7 +90,7 @@ const EditarPerfil = () => {
             </div>
 
             <div className="ep-field">
-              <label>{tr('ep_surnameLabel')} <span className="required">*</span></label>
+              <label>{tr('ep_surnameLabel')}</label>
               <div className="ep-input-row">
                 <input name="apellidos" value={form.apellidos} onChange={handleChange} />
                 <span className="ep-info" title={tr('error_required')}>ℹ</span>
@@ -78,15 +98,15 @@ const EditarPerfil = () => {
             </div>
 
             <div className="ep-field">
-              <label>{tr('ep_emailAddr')} <span className="required">*</span></label>
+              <label>{tr('ep_emailAddr')}</label>
               <div className="ep-input-row">
                 <input
                   type="email"
                   name="correo_electronico"
                   value={form.correo_electronico}
-                  onChange={handleChange}
+                  readOnly
+                  className="ep-input-readonly"
                 />
-                <span className="ep-info" title={tr('error_required')}>ℹ</span>
               </div>
             </div>
 
@@ -103,25 +123,34 @@ const EditarPerfil = () => {
 
           <div className="ep-section">
             <h4 className="ep-section-label">{tr('ep_userImage')}</h4>
-            {currentImgUrl && (
-              <div className="ep-field">
-                <label>{tr('ep_currentImage')}</label>
-                <img
-                  src={currentImgUrl}
-                  alt="avatar"
-                  className="ep-current-img"
-                  onError={e => { e.target.style.display = 'none'; }}
-                />
-              </div>
-            )}
             <div className="ep-field">
               <label>{tr('ep_newImage')}</label>
+              <div>
+                <div className="ep-img-upload" onClick={() => fileInputRef.current?.click()}>
+                  {previewUrl || currentImgUrl ? (
+                    <img
+                      src={previewUrl || currentImgUrl}
+                      alt="avatar"
+                      onError={e => { e.target.style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div className="ep-img-placeholder">
+                      <span>+</span>
+                      <p>Subir</p>
+                    </div>
+                  )}
+                  <div className="ep-img-overlay">
+                    <span>{tr('ep_changeImage') || 'Cambiar'}</span>
+                  </div>
+                </div>
+                {imagenFile && <p className="ep-img-filename">{imagenFile.name}</p>}
+              </div>
               <input
-                type="url"
-                name="url_imagen_perfil"
-                value={form.url_imagen_perfil}
-                onChange={handleChange}
-                placeholder="https://..."
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
               />
             </div>
           </div>

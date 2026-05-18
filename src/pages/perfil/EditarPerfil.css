@@ -72,6 +72,12 @@
   border-color: var(--brand-hover);
 }
 
+.ep-input-readonly {
+  background: var(--bg-page) !important;
+  color: var(--text-faint) !important;
+  cursor: default;
+}
+
 .ep-info {
   font-size: 0.85rem;
   color: var(--text-muted);
@@ -85,6 +91,75 @@
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--border);
+}
+
+.ep-img-upload {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px dashed var(--border-input);
+  flex-shrink: 0;
+}
+
+.ep-img-upload img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ep-img-upload:hover .ep-img-overlay {
+  opacity: 1;
+}
+
+.ep-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.ep-img-overlay span {
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.ep-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  gap: 2px;
+}
+
+.ep-img-placeholder span {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.ep-img-placeholder p {
+  font-size: 0.6rem;
+  margin: 0;
+  text-align: center;
+}
+
+.ep-img-filename {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 6px 0 0;
+  word-break: break-all;
+  max-width: 120px;
 }
 
 .ep-error {

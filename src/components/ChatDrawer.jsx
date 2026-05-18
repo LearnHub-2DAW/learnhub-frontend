@@ -12,9 +12,13 @@ const getRecents = () => {
   catch { return []; }
 };
 
-const saveRecent = ({ id, nombre_usuario }) => {
-  const list = getRecents().filter(r => r.id !== id);
-  localStorage.setItem(RECENT_KEY, JSON.stringify([{ id, nombre_usuario }, ...list].slice(0, 30)));
+// Stores { id, nombre_usuario, lastMsg? } — lastMsg is preserved if not provided
+const saveRecent = ({ id, nombre_usuario, lastMsg }) => {
+  const list = getRecents();
+  const existing = list.find(r => r.id === id);
+  const filtered = list.filter(r => r.id !== id);
+  const entry = { id, nombre_usuario, lastMsg: lastMsg !== undefined ? lastMsg : existing?.lastMsg };
+  localStorage.setItem(RECENT_KEY, JSON.stringify([entry, ...filtered].slice(0, 30)));
 };
 
 const ChatDrawer = () => {
@@ -23,7 +27,7 @@ const ChatDrawer = () => {
   const { socket, usuariosOnline, noLeidos, marcarLeido, setReadingId } = useSocket();
 
   const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState(null); // null = not searching
+  const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [recents, setRecents] = useState(getRecents);
   const [mensajes, setMensajes] = useState([]);
@@ -47,38 +51,68 @@ const ChatDrawer = () => {
     return () => clearTimeout(searchTimer.current);
   }, [search]);
 
-  // Notify SocketContext which conversation is open so chat:no_leidos is filtered
+  // Notify SocketContext which conversation is open
   useEffect(() => {
     setReadingId(isOpen && activeChat ? activeChat.id : null);
   }, [activeChat?.id, isOpen]);
+
+  // Seed recents from unread conversations (catches offline senders)
+  useEffect(() => {
+    if (!noLeidos.conversaciones?.length) return;
+    const currentIds = new Set(getRecents().map(r => r.id));
+    let changed = false;
+    noLeidos.conversaciones.forEach(c => {
+      if (!currentIds.has(c.id_emisor)) {
+        saveRecent({ id: c.id_emisor, nombre_usuario: c.nombre_usuario });
+        changed = true;
+      }
+    });
+    if (changed) setRecents(getRecents());
+  }, [noLeidos.conversaciones]);
 
   // Load conversation history when activeChat changes
   useEffect(() => {
     if (!activeChat) return;
     setLoading(true);
     setMensajes([]);
-    getConversacion(activeChat.id)
-      .then(res => setMensajes(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
     saveRecent({ id: activeChat.id, nombre_usuario: activeChat.nombre_usuario });
     setRecents(getRecents());
     marcarLeido(activeChat.id);
+
+    getConversacion(activeChat.id)
+      .then(res => {
+        setMensajes(res.data);
+        if (res.data.length > 0) {
+          const last = res.data[res.data.length - 1];
+          saveRecent({
+            id: activeChat.id,
+            nombre_usuario: activeChat.nombre_usuario,
+            lastMsg: { contenido: last.contenido, fecha_envio: last.fecha_envio, esMio: last.id_emisor === user.id },
+          });
+          setRecents(getRecents());
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, [activeChat?.id]);
 
   // Real-time socket messages
   useEffect(() => {
     if (!socket || !user) return;
     const handler = (msg) => {
-      const otherId = msg.id_emisor === user.id ? msg.id_receptor : msg.id_emisor;
-      const otherName = msg.id_emisor !== user.id ? msg.nombre_usuario : null;
+      const isMine = msg.id_emisor === user.id;
+      const otherId = isMine ? msg.id_receptor : msg.id_emisor;
+      const otherName = isMine ? activeChat?.nombre_usuario : msg.nombre_usuario;
+      const lastMsg = { contenido: msg.contenido, fecha_envio: msg.fecha_envio, esMio: isMine };
+
       if (otherName) {
-        saveRecent({ id: otherId, nombre_usuario: otherName });
+        saveRecent({ id: otherId, nombre_usuario: otherName, lastMsg });
         setRecents(getRecents());
       }
+
       if (!activeChat) return;
-      const mio = msg.id_emisor === user.id && msg.id_receptor === activeChat.id;
-      const suyo = msg.id_emisor === activeChat.id && msg.id_receptor === user.id;
+      const mio = isMine && msg.id_receptor === activeChat.id;
+      const suyo = !isMine && msg.id_emisor === activeChat.id;
       if (mio || suyo) {
         setMensajes(prev => [...prev, msg]);
         if (suyo) marcarLeido(activeChat.id);
@@ -112,12 +146,49 @@ const ChatDrawer = () => {
   const formatHora = (fecha) =>
     new Date(fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
+  const truncate = (str, max = 38) =>
+    str && str.length > max ? str.slice(0, max) + '…' : str;
+
   const onlineIds = new Set(usuariosOnline.map(u => u.id));
   const filteredRecents = recents.filter(r => !onlineIds.has(r.id));
   const isSearching = search.trim().length > 0;
 
   const unreadFor = (id) =>
     noLeidos.conversaciones.find(c => c.id_emisor === id)?.total || 0;
+
+  const renderContactRow = (u, isOnline) => {
+    const unread = unreadFor(u.id);
+    const recentData = recents.find(r => r.id === u.id);
+    const lastMsg = u.lastMsg ?? recentData?.lastMsg;
+    const previewText = lastMsg
+      ? (lastMsg.esMio ? `Tú: ${lastMsg.contenido}` : lastMsg.contenido)
+      : null;
+
+    return (
+      <button
+        key={u.id}
+        className="cd-contact-row"
+        onClick={() => openChat(u.id, u.nombre_usuario)}
+      >
+        <div className="cd-avatar-wrap">
+          <span className="cd-avatar">{u.nombre_usuario[0]?.toUpperCase()}</span>
+          {isOnline && <span className="cd-status-dot" />}
+        </div>
+        <div className="cd-contact-info">
+          <div className="cd-contact-top">
+            <span className={`cd-contact-name${unread > 0 ? ' cd-contact-bold' : ''}`}>
+              {u.nombre_usuario}
+            </span>
+            {lastMsg && <span className="cd-contact-time">{formatHora(lastMsg.fecha_envio)}</span>}
+          </div>
+          {previewText && (
+            <span className="cd-contact-preview">{truncate(previewText)}</span>
+          )}
+        </div>
+        {unread > 0 && <span className="cd-unread-badge">{unread}</span>}
+      </button>
+    );
+  };
 
   if (!isOpen) return null;
 
@@ -173,37 +244,14 @@ const ChatDrawer = () => {
                   {usuariosOnline.length > 0 && (
                     <div className="cd-section">
                       <div className="cd-section-title">EN LÍNEA ({usuariosOnline.length})</div>
-                      {usuariosOnline.map(u => {
-                        const unread = unreadFor(u.id);
-                        return (
-                          <button key={u.id} className="cd-contact-row" onClick={() => openChat(u.id, u.nombre_usuario)}>
-                            <div className="cd-avatar-wrap">
-                              <span className="cd-avatar">{u.nombre_usuario[0]?.toUpperCase()}</span>
-                              <span className="cd-status-dot" />
-                            </div>
-                            <span className="cd-contact-name">{u.nombre_usuario}</span>
-                            {unread > 0 && <span className="cd-unread-badge">{unread}</span>}
-                          </button>
-                        );
-                      })}
+                      {usuariosOnline.map(u => renderContactRow(u, true))}
                     </div>
                   )}
 
                   {filteredRecents.length > 0 && (
                     <div className="cd-section">
                       <div className="cd-section-title">RECIENTES</div>
-                      {filteredRecents.map(r => {
-                        const unread = unreadFor(r.id);
-                        return (
-                          <button key={r.id} className="cd-contact-row" onClick={() => openChat(r.id, r.nombre_usuario)}>
-                            <div className="cd-avatar-wrap">
-                              <span className="cd-avatar">{r.nombre_usuario[0]?.toUpperCase()}</span>
-                            </div>
-                            <span className="cd-contact-name">{r.nombre_usuario}</span>
-                            {unread > 0 && <span className="cd-unread-badge">{unread}</span>}
-                          </button>
-                        );
-                      })}
+                      {filteredRecents.map(r => renderContactRow(r, false))}
                     </div>
                   )}
 

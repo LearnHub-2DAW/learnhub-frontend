@@ -206,6 +206,33 @@
   text-overflow: ellipsis;
 }
 
+.cd-contact-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cd-contact-time {
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.cd-contact-preview {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.cd-contact-bold {
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
 .cd-unread-badge {
   background: #e74c3c;
   color: #fff;
