@@ -3,6 +3,9 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useLang } from '../../context/LangContext';
 import { useToast } from '../../context/ToastContext';
+import usePagination from '../../hooks/usePagination';
+import Pagination from '../../components/Pagination';
+import '../../components/Pagination.css';
 import {
   getUsuarios, getUsuarioById, updateUsuarioAdmin,
   deleteUsuarioAdmin, changeRolUsuario, getModulosDeUsuario,
@@ -372,6 +375,10 @@ const AdminPanel = () => {
     } catch { toast(tr('ap_errorDelete'), 'error'); }
   };
 
+  // ── PAGINACIÓN ───────────────────────────────────────────────────────────
+  const { paginated: usuariosPaginados, ...pgUsuarios } = usePagination(usuariosFiltrados);
+  const { paginated: cursosPaginados,   ...pgCursos   } = usePagination(cursos);
+
   // ── RENDER ────────────────────────────────────────────────────────────────
   return (
     <div className="ap-layout">
@@ -419,7 +426,7 @@ const AdminPanel = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {usuariosFiltrados.map(u => (
+                  {usuariosPaginados.map(u => (
                     <React.Fragment key={u.id}>
                       <tr className={`ap-tr ${expandedId === u.id ? 'ap-tr-open' : ''}`}>
                         <td className="ap-td-expand" onClick={() => toggleExpand(u)}>
@@ -528,6 +535,7 @@ const AdminPanel = () => {
                   ))}
                 </tbody>
               </table>
+              <Pagination {...pgUsuarios} />
             </div>
           </div>
         )}
@@ -546,8 +554,9 @@ const AdminPanel = () => {
             {loadingCursos ? <p className="ap-loading">{tr('loading')}</p> : cursos.length === 0 ? (
               <p className="ap-empty">{tr('ap_noCourses')}</p>
             ) : (
+              <>
               <div className="ap-cursos-list">
-                {cursos.map(curso => {
+                {cursosPaginados.map(curso => {
                   const expanded    = expandidosCurso.has(curso.id);
                   const mods        = modulos[curso.id];
                   const editingThis = editandoCurso?.id === curso.id;
@@ -695,6 +704,8 @@ const AdminPanel = () => {
                   );
                 })}
               </div>
+              <Pagination {...pgCursos} />
+              </>
             )}
           </div>
         )}

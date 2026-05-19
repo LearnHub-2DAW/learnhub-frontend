@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getMisEntregas } from '../api/usuario.api';
 import { useLang } from '../context/LangContext';
+import usePagination from '../hooks/usePagination';
+import Pagination from '../components/Pagination';
+import '../components/Pagination.css';
 import './MisEntregas.css';
 
 const MisEntregas = () => {
@@ -23,6 +26,8 @@ const MisEntregas = () => {
       day: '2-digit', month: 'short', year: 'numeric',
     });
   };
+
+  const { paginated, ...pg } = usePagination(entregas);
 
   if (loading) return <div className="page-loading">{tr('me_loading')}</div>;
 
@@ -53,7 +58,7 @@ const MisEntregas = () => {
                 </tr>
               </thead>
               <tbody>
-                {entregas.map((e, i) => (
+                {paginated.map((e, i) => (
                   <tr
                     key={i}
                     className="entrega-row"
@@ -78,6 +83,7 @@ const MisEntregas = () => {
               </tbody>
             </table>
           )}
+          <Pagination {...pg} />
         </div>
       </div>
     </div>

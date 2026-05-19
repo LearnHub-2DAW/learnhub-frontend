@@ -1,0 +1,74 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 8px;
+}
+
+.pagination-info {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pg-btn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-base);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.pg-btn:hover:not(:disabled) {
+  background: var(--bg-hover-mid);
+}
+
+.pg-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pg-current {
+  font-size: 0.82rem;
+  color: var(--text-base);
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+.pagination-sizes {
+  display: flex;
+  gap: 4px;
+}
+
+.pg-size-btn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 3px 7px;
+}
+
+.pg-size-btn:hover {
+  background: var(--bg-hover-mid);
+  color: var(--text-base);
+}
+
+.pg-size-btn.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}

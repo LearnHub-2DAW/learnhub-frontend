@@ -3,6 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getCursoById, getModulosByCurso, getEnrolledUsers } from '../../api/cursos.api';
 import { useLang } from '../../context/LangContext';
+import usePagination from '../../hooks/usePagination';
+import Pagination from '../../components/Pagination';
+import '../../components/Pagination.css';
 import './Participantes.css';
 
 const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -69,6 +72,8 @@ const Participantes = () => {
     return coincideFiltro && coincideLetra;
   });
 
+  const { paginated, ...pg } = usePagination(participantesFiltrados);
+
   if (loading) return <div className="page-loading">{tr('pt_loadingParticipants')}</div>;
 
   return (
@@ -134,7 +139,7 @@ const Participantes = () => {
                   </td>
                 </tr>
               ) : (
-                participantesFiltrados.map((p) => (
+                paginated.map((p) => (
                   <tr key={p.id}>
                     <td>
                       <div className="pt-nombre-row">
@@ -154,6 +159,7 @@ const Participantes = () => {
               )}
             </tbody>
           </table>
+          <Pagination {...pg} />
         </div>
       </div>
     </div>

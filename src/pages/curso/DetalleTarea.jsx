@@ -5,6 +5,9 @@ import { useToast } from '../../context/ToastContext';
 import { useLang } from '../../context/LangContext';
 import { getRecursoById, getModuloById, getCursoById, updateRecurso, deleteRecurso, getMyEntrega, getEntregas, calificarEntrega } from '../../api/cursos.api';
 import { getFileUrl } from '../../api/axios';
+import usePagination from '../../hooks/usePagination';
+import Pagination from '../../components/Pagination';
+import '../../components/Pagination.css';
 import './DetalleTarea.css';
 
 const EMPTY_FORM = { titulo: '', contenido: '', es_entregable: false, fecha_entrega: '', archivo: null };
@@ -156,6 +159,8 @@ const DetalleTarea = () => {
     return `${dias} ${tr('dt_days')} ${horas} ${tr('dt_hours')}`;
   };
 
+  const { paginated: entregasPaginadas, ...pgEntregas } = usePagination(todasEntregas);
+
   if (loading) return <div className="page-loading">{tr('dt_loading')}</div>;
 
   return (
@@ -293,7 +298,7 @@ const DetalleTarea = () => {
                   {todasEntregas.length === 0 ? (
                     <p className="no-data">{tr('dt_noSubmissions')}</p>
                   ) : (
-                    todasEntregas.map((e, i) => (
+                    entregasPaginadas.map((e, i) => (
                       <div key={i} className="entrega-card">
                         <div className="entrega-card-header">
                           <strong>{e.nombre ? `${e.nombre} ${e.apellidos || ''}`.trim() : e.nombre_usuario}</strong>
@@ -336,6 +341,7 @@ const DetalleTarea = () => {
                       </div>
                     ))
                   )}
+                  <Pagination {...pgEntregas} />
                 </div>
               )}
             </div>

@@ -4,6 +4,9 @@ import { useAuth } from '../../context/AuthContext';
 import { useLang } from '../../context/LangContext';
 import { getCursoById, getModulosByCurso, getRecursosByModulo } from '../../api/cursos.api';
 import { getMisModulos, getMisEntregas } from '../../api/usuario.api';
+import usePagination from '../../hooks/usePagination';
+import Pagination from '../../components/Pagination';
+import '../../components/Pagination.css';
 import './Calificaciones.css';
 
 const Calificaciones = () => {
@@ -78,6 +81,8 @@ const Calificaciones = () => {
     return new Date(f).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
+  const { paginated, ...pg } = usePagination(items);
+
   if (loading) return <div className="page-loading">{tr('loading')}</div>;
 
   return (
@@ -120,7 +125,7 @@ const Calificaciones = () => {
                   </td>
                 </tr>
               ) : (
-                items.map(({ recurso, entrega }) => (
+                paginated.map(({ recurso, entrega }) => (
                   <tr
                     key={recurso.id}
                     className="gr-row-link"
@@ -148,6 +153,7 @@ const Calificaciones = () => {
               )}
             </tbody>
           </table>
+          <Pagination {...pg} />
         </div>
       </div>
     </div>

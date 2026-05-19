@@ -5,6 +5,9 @@ import { getCursos, getModulosByCurso } from '../../api/cursos.api';
 import { getMisModulos } from '../../api/usuario.api';
 import { useLang } from '../../context/LangContext';
 import PerfilHeader from '../../components/PerfilHeader';
+import usePagination from '../../hooks/usePagination';
+import Pagination from '../../components/Pagination';
+import '../../components/Pagination.css';
 import './CalificacionesCursos.css';
 
 const CalificacionesCursos = () => {
@@ -45,6 +48,8 @@ const CalificacionesCursos = () => {
     load().catch(console.error).finally(() => setLoading(false));
   }, []);
 
+  const { paginated, ...pg } = usePagination(cursos);
+
   return (
     <div className="cal-cursos-page">
       <PerfilHeader />
@@ -63,31 +68,34 @@ const CalificacionesCursos = () => {
           ) : cursos.length === 0 ? (
             <p className="cc-empty">{tr('cc_noCourses')}</p>
           ) : (
-            <table className="cc-table">
-              <thead>
-                <tr>
-                  <th>{tr('cc_courseName')}</th>
-                  <th>{tr('h_grades')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cursos.map(c => (
-                  <tr key={c.id}>
-                    <td className="cc-curso-link" onClick={() => navigate(`/curso/${c.id}`)}>
-                      {c.nombre}
-                    </td>
-                    <td>
-                      <button
-                        className="cc-btn"
-                        onClick={() => navigate(`/curso/${c.id}/calificaciones`)}
-                      >
-                        {tr('cc_gradingTable')}
-                      </button>
-                    </td>
+            <>
+              <table className="cc-table">
+                <thead>
+                  <tr>
+                    <th>{tr('cc_courseName')}</th>
+                    <th>{tr('h_grades')}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginated.map(c => (
+                    <tr key={c.id}>
+                      <td className="cc-curso-link" onClick={() => navigate(`/curso/${c.id}`)}>
+                        {c.nombre}
+                      </td>
+                      <td>
+                        <button
+                          className="cc-btn"
+                          onClick={() => navigate(`/curso/${c.id}/calificaciones`)}
+                        >
+                          {tr('cc_gradingTable')}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <Pagination {...pg} />
+            </>
           )}
         </div>
       </div>

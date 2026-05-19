@@ -5,6 +5,9 @@ import { getMisModulos } from '../api/usuario.api';
 import { getFileUrl } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LangContext';
+import usePagination from '../hooks/usePagination';
+import Pagination from '../components/Pagination';
+import '../components/Pagination.css';
 import './CursosLista.css';
 
 const modImgUrl = (u) => !u ? null : u.startsWith('http') ? u : getFileUrl(u);
@@ -51,6 +54,8 @@ const CursosLista = () => {
     c.nombre.toLowerCase().includes(filtro.toLowerCase())
   );
 
+  const { paginated, ...pg } = usePagination(cursosFiltrados);
+
   if (loading) return <div className="cl-loading">{tr('d_loadingCourses')}</div>;
 
   return (
@@ -70,7 +75,7 @@ const CursosLista = () => {
         <p className="cl-empty">{tr('d_noCourses')}</p>
       ) : (
         <div className="cl-list">
-          {cursosFiltrados.map(curso => {
+          {paginated.map(curso => {
             const modulos = modulosPorCurso[curso.id] || [];
             return (
               <div key={curso.id} className="cl-curso-card">
@@ -108,6 +113,7 @@ const CursosLista = () => {
               </div>
             );
           })}
+          <Pagination {...pg} />
         </div>
       )}
     </div>
