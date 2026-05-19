@@ -112,6 +112,7 @@ const Dashboard = () => {
   const { usuariosOnline } = useSocket();
   const { openChat } = useChatDrawer();
   const isStaff = user?.roles?.includes('admin') || user?.roles?.includes('profesor');
+  const isAdmin = user?.roles?.includes('admin');
 
   const [cursos, setCursos] = useState([]);
   const [modulos, setModulos] = useState([]);
@@ -289,7 +290,7 @@ const Dashboard = () => {
           <div className="widget-box">
             <div className="widget-header dash-header-row">
               <span>{tr('d_overview')}</span>
-              {isStaff && (
+              {isAdmin && (
                 <button className="btn-dash-create" onClick={() => { setNombreCurso(''); setCursoError(''); setCursoModal(true); }}>
                   {tr('d_newCourse')}
                 </button>

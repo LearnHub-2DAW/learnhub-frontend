@@ -86,9 +86,9 @@ const Login = () => {
           </div>
 
           <div className="extra-links-custom">
-            <a href="#" className="forgot-link-custom">{tr('l_forgotPwd')}</a>
+            <a href="#" className="forgot-link-custom">{tr('l_forgotPwd')} <span className="future-impl">(futura implementación)</span></a>
             <label className="remember-custom">
-              <input type="checkbox" /> {tr('l_remember')}
+              <input type="checkbox" /> {tr('l_remember')} <span className="future-impl">(futura implementación)</span>
             </label>
           </div>
 

@@ -177,3 +177,9 @@
     font-size: 1.4rem;
   }
 }
+
+.future-impl {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  font-style: italic;
+}

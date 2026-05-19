@@ -565,3 +565,34 @@
 
   .ap-content { padding: 16px; }
 }
+
+/* ── NOTIFICACIONES ── */
+.ap-notif-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ap-notif-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px 24px;
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ap-notif-card h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-heading);
+}
+
+.ap-notif-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

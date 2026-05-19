@@ -14,6 +14,7 @@ import {
   enrollUsuario, unenrollUsuario, getEnrolledUsers,
 } from '../../api/cursos.api';
 import { buscarUsuarios } from '../../api/usuario.api';
+import { lanzarBoletinDiario, lanzarBoletinSemanal } from '../../api/notificaciones.api';
 import './AdminPanel.css';
 
 const ROLES = ['admin', 'profesor', 'alumno'];
@@ -27,7 +28,7 @@ const AdminPanel = () => {
   const isProfesor = user?.roles?.includes('profesor');
   if (!isAdmin && !isProfesor) return <Navigate to="/dashboard" replace />;
 
-  const secciones = isAdmin ? ['usuarios', 'cursos'] : ['cursos'];
+  const secciones = isAdmin ? ['usuarios', 'cursos', 'notificaciones'] : ['cursos'];
   const [activa, setActiva] = useState(secciones[0]);
 
   // ── DATOS COMPARTIDOS ─────────────────────────────────────────────────────
@@ -177,6 +178,34 @@ const AdminPanel = () => {
     `${u.nombre_usuario} ${u.nombre || ''} ${u.apellidos || ''} ${u.correo_electronico}`
       .toLowerCase().includes(filtro.toLowerCase())
   );
+
+  // ── SECCIÓN NOTIFICACIONES ────────────────────────────────────────────────
+  const [sendingDiario,  setSendingDiario]  = useState(false);
+  const [sendingSemanal, setSendingSemanal] = useState(false);
+
+  const handleBoletinDiario = async () => {
+    setSendingDiario(true);
+    try {
+      await lanzarBoletinDiario();
+      toast('Boletín diario enviado correctamente');
+    } catch {
+      toast('Error al enviar el boletín diario', 'error');
+    } finally {
+      setSendingDiario(false);
+    }
+  };
+
+  const handleBoletinSemanal = async () => {
+    setSendingSemanal(true);
+    try {
+      await lanzarBoletinSemanal();
+      toast('Boletín semanal enviado correctamente');
+    } catch {
+      toast('Error al enviar el boletín semanal', 'error');
+    } finally {
+      setSendingSemanal(false);
+    }
+  };
 
   // ── SECCIÓN CURSOS ────────────────────────────────────────────────────────
   const [loadingCursos,   setLoadingCursos]   = useState(false);
@@ -357,6 +386,11 @@ const AdminPanel = () => {
           <button className={`ap-nav-item ${activa === 'cursos' ? 'ap-nav-active' : ''}`} onClick={() => setActiva('cursos')}>
             <span className="ap-nav-icon">📚</span> {tr('ap_courses')}
           </button>
+          {isAdmin && (
+            <button className={`ap-nav-item ${activa === 'notificaciones' ? 'ap-nav-active' : ''}`} onClick={() => setActiva('notificaciones')}>
+              <span className="ap-nav-icon">🔔</span> Notificaciones
+            </button>
+          )}
         </nav>
       </aside>
 
@@ -502,10 +536,12 @@ const AdminPanel = () => {
         {activa === 'cursos' && (
           <div>
             <h2 className="ap-section-h">{tr('ap_courses')}</h2>
-            <div className="ap-new-row">
-              <input className="ap-input" placeholder={tr('ap_newCoursePlaceholder')} value={nuevoCursoNombre} onChange={e => setNuevoCursoNombre(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleCreateCurso()} />
-              <button className="ap-btn ap-btn-save" onClick={handleCreateCurso} disabled={savingCurso || !nuevoCursoNombre.trim()}>{tr('ap_createCourse')}</button>
-            </div>
+            {isAdmin && (
+              <div className="ap-new-row">
+                <input className="ap-input" placeholder={tr('ap_newCoursePlaceholder')} value={nuevoCursoNombre} onChange={e => setNuevoCursoNombre(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleCreateCurso()} />
+                <button className="ap-btn ap-btn-save" onClick={handleCreateCurso} disabled={savingCurso || !nuevoCursoNombre.trim()}>{tr('ap_createCourse')}</button>
+              </div>
+            )}
 
             {loadingCursos ? <p className="ap-loading">{tr('loading')}</p> : cursos.length === 0 ? (
               <p className="ap-empty">{tr('ap_noCourses')}</p>
@@ -660,6 +696,30 @@ const AdminPanel = () => {
                 })}
               </div>
             )}
+          </div>
+        )}
+
+        {/* ══════════ NOTIFICACIONES ══════════ */}
+        {activa === 'notificaciones' && isAdmin && (
+          <div>
+            <h2 className="ap-section-h">Notificaciones</h2>
+            <p className="ap-empty" style={{ marginBottom: '20px' }}>Lanza manualmente los boletines de notificación para todos los usuarios.</p>
+            <div className="ap-notif-actions">
+              <div className="ap-notif-card">
+                <h4>Boletín diario</h4>
+                <p>Envía el resumen diario de actividad a todos los usuarios con notificaciones activas.</p>
+                <button className="ap-btn ap-btn-save" onClick={handleBoletinDiario} disabled={sendingDiario}>
+                  {sendingDiario ? 'Enviando...' : 'Lanzar boletín diario'}
+                </button>
+              </div>
+              <div className="ap-notif-card">
+                <h4>Boletín semanal</h4>
+                <p>Envía el resumen semanal de actividad a todos los usuarios con notificaciones activas.</p>
+                <button className="ap-btn ap-btn-save" onClick={handleBoletinSemanal} disabled={sendingSemanal}>
+                  {sendingSemanal ? 'Enviando...' : 'Lanzar boletín semanal'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
